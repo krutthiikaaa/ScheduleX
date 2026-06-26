@@ -1,76 +1,55 @@
-import AppLayout from "../components/AppLayout";
 import { useState } from "react";
+import AppLayout from "../components/AppLayout";
 
 function Settings() {
-  const [notif, setNotif] = useState(true);
+  const [notifications, setNotifications] = useState(true);
   const [darkMode, setDarkMode] = useState(false);
 
   return (
     <AppLayout>
-      <div className="page-header">
-        <h1>Settings</h1>
-        <p>Manage your preferences and account</p>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 32 }}>
+        <div>
+          <h1 style={{ fontSize: "2rem", marginBottom: 4 }}>Settings</h1>
+          <p style={{ color: "var(--text-muted)" }}>Manage your account preferences and application settings.</p>
+        </div>
       </div>
 
-      <div style={{ maxWidth: 640 }}>
-        <div className="card" style={{ marginBottom: 20 }}>
-          <h2 style={{ marginBottom: 20 }}>General</h2>
-
-          <div className="settings-row">
-            <div>
-              <div className="settings-label">Notifications</div>
-              <div className="settings-desc">Receive schedule reminders and updates</div>
-            </div>
-            <button
-              className={`toggle-btn${notif ? " on" : ""}`}
-              onClick={() => setNotif(!notif)}
-              id="toggle-notifications"
-            >
-              <span className="toggle-knob"></span>
-            </button>
-          </div>
-
-          <div className="settings-row">
-            <div>
-              <div className="settings-label">Dark Mode</div>
-              <div className="settings-desc">Switch to a darker color theme</div>
-            </div>
-            <button
-              className={`toggle-btn${darkMode ? " on" : ""}`}
-              onClick={() => setDarkMode(!darkMode)}
-              id="toggle-dark-mode"
-            >
-              <span className="toggle-knob"></span>
-            </button>
-          </div>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: 32 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          <button className="btn btn-primary" style={{ justifyContent: "flex-start" }}>General</button>
+          <button className="btn btn-secondary" style={{ justifyContent: "flex-start", background: "transparent" }}>Notifications</button>
+          <button className="btn btn-secondary" style={{ justifyContent: "flex-start", background: "transparent" }}>Privacy & Security</button>
+          <button className="btn btn-secondary" style={{ justifyContent: "flex-start", background: "transparent" }}>Data Export</button>
         </div>
 
-        <div className="card" style={{ marginBottom: 20 }}>
-          <h2 style={{ marginBottom: 20 }}>Account</h2>
-          <div className="form-group">
-            <label htmlFor="settings-email">Email Address</label>
-            <input id="settings-email" className="form-input" defaultValue="jane@university.edu" />
-          </div>
-          <div className="form-group">
-            <label htmlFor="settings-timezone">Timezone</label>
-            <select id="settings-timezone" className="form-input form-select">
-              <option>UTC+4 (Gulf Standard Time)</option>
-              <option>UTC+0 (GMT)</option>
-              <option>UTC-5 (EST)</option>
-              <option>UTC+5:30 (IST)</option>
-            </select>
-          </div>
-          <button className="btn btn-primary" style={{ marginTop: 8 }}>Save Changes</button>
-        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+          <div className="card">
+            <h3 style={{ marginBottom: 24 }}>Preferences</h3>
+            
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px 0", borderBottom: "1px solid var(--border-light)" }}>
+              <div>
+                <h4 style={{ margin: 0, marginBottom: 4 }}>Enable Notifications</h4>
+                <p style={{ margin: 0, fontSize: "0.85rem", color: "var(--text-muted)" }}>Receive alerts for upcoming deadlines and classes.</p>
+              </div>
+              <input type="checkbox" checked={notifications} onChange={() => setNotifications(!notifications)} style={{ width: 20, height: 20, accentColor: "var(--primary)" }} />
+            </div>
 
-        <div className="card">
-          <h2 style={{ marginBottom: 12, color: "#C24A3A" }}>Danger Zone</h2>
-          <p style={{ color: "var(--text-muted)", fontSize: "0.9rem", marginBottom: 16 }}>
-            Permanently delete your account and all associated data.
-          </p>
-          <button className="btn" style={{ background: "#FDECEB", color: "#C24A3A", border: "1px solid #F5D0CC" }}>
-            Delete Account
-          </button>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px 0" }}>
+              <div>
+                <h4 style={{ margin: 0, marginBottom: 4 }}>Dark Mode (Preview)</h4>
+                <p style={{ margin: 0, fontSize: "0.85rem", color: "var(--text-muted)" }}>Toggle the application dark theme.</p>
+              </div>
+              <input type="checkbox" checked={darkMode} onChange={() => setDarkMode(!darkMode)} style={{ width: 20, height: 20, accentColor: "var(--primary)" }} />
+            </div>
+          </div>
+
+          <div className="card">
+            <h3 style={{ marginBottom: 24 }}>Data Management</h3>
+            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              <button className="btn btn-secondary" style={{ width: "fit-content" }}>Export All Data (JSON)</button>
+              <button className="btn btn-secondary" style={{ width: "fit-content", background: "var(--danger-light)", color: "var(--danger)" }}>Delete Account</button>
+            </div>
+          </div>
         </div>
       </div>
     </AppLayout>

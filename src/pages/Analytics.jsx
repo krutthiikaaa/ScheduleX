@@ -1,105 +1,60 @@
+import { useState, useEffect } from "react";
 import AppLayout from "../components/AppLayout";
+import { fetchAssignments, fetchTasks, fetchFocusSessions } from "../utils/api";
 
 function Analytics() {
-  const stats = [
-    { label: "Study Hours", value: "42h", sub: "This week", icon: "⏱️", accent: "terracotta" },
-    { label: "Productivity Score", value: "87%", sub: "+5% vs last week", icon: "📈", accent: "sage" },
-    { label: "Completed Tasks", value: "28", sub: "Out of 34", icon: "✅", accent: "clay" },
-    { label: "Upcoming Tasks", value: "6", sub: "Next 7 days", icon: "📋", accent: "brown" },
-  ];
+  const [stats, setStats] = useState({ assignmentsDone: 0, tasksDone: 0, focusMins: 0, totalFocusSessions: 0 });
 
-  const weekData = [
-    { day: "Mon", hours: 6, pct: 75 },
-    { day: "Tue", hours: 7, pct: 87 },
-    { day: "Wed", hours: 5, pct: 62 },
-    { day: "Thu", hours: 8, pct: 100 },
-    { day: "Fri", hours: 6, pct: 75 },
-    { day: "Sat", hours: 3, pct: 37 },
-    { day: "Sun", hours: 2, pct: 25 },
-  ];
-
-  const categories = [
-    { name: "Computer Science", hours: 14, color: "var(--primary)" },
-    { name: "Mathematics", hours: 10, color: "var(--accent)" },
-    { name: "Physics", hours: 8, color: "var(--secondary)" },
-    { name: "Engineering", hours: 6, color: "var(--cat-brown)" },
-    { name: "Other", hours: 4, color: "var(--text-muted)" },
-  ];
-
-  const totalHours = categories.reduce((s, c) => s + c.hours, 0);
+  useEffect(() => {
+    Promise.all([fetchAssignments(), fetchTasks(), fetchFocusSessions()]).then(([assigns, tasksData, focusData]) => {
+      setStats({
+        assignmentsDone: assigns.filter(a => a.status === 'Completed').length,
+        tasksDone: tasksData.filter(t => t.isCompleted).length,
+        focusMins: focusData.reduce((acc, curr) => acc + curr.durationMinutes, 0),
+        totalFocusSessions: focusData.length
+      });
+    });
+  }, []);
 
   return (
     <AppLayout>
-      <div className="page-header">
-        <h1>Analytics</h1>
-        <p>Track your productivity and study patterns</p>
-      </div>
-
-      <div className="stats-grid">
-        {stats.map((s, i) => (
-          <div className="stat-card" key={s.label} style={{ animationDelay: `${i * 80}ms` }}>
-            <div className={`stat-icon ${s.accent}`}>{s.icon}</div>
-            <div className="stat-value">{s.value}</div>
-            <div className="stat-label">{s.label}</div>
-            <div style={{ fontSize: "0.78rem", color: "var(--text-muted)", marginTop: 4 }}>{s.sub}</div>
-          </div>
-        ))}
-      </div>
-
-      <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 20, marginBottom: 24 }}>
-        {/* Weekly Chart */}
-        <div className="card" style={{ animationDelay: "320ms" }}>
-          <h2 style={{ marginBottom: 4 }}>Weekly Study Hours</h2>
-          <p style={{ color: "var(--text-muted)", fontSize: "0.85rem", marginBottom: 24 }}>Hours spent studying each day</p>
-          <div className="bar-chart">
-            {weekData.map((d) => (
-              <div className="bar-col" key={d.day}>
-                <div className="bar-value">{d.hours}h</div>
-                <div className="bar-track">
-                  <div className="bar-fill" style={{ height: `${d.pct}%` }}></div>
-                </div>
-                <div className="bar-label">{d.day}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Category Breakdown */}
-        <div className="card" style={{ animationDelay: "400ms" }}>
-          <h2 style={{ marginBottom: 4 }}>Category Breakdown</h2>
-          <p style={{ color: "var(--text-muted)", fontSize: "0.85rem", marginBottom: 24 }}>Hours by subject area</p>
-          <div className="category-list">
-            {categories.map((c) => (
-              <div className="category-item" key={c.name}>
-                <div className="category-info">
-                  <span className="category-dot" style={{ background: c.color }}></span>
-                  <span>{c.name}</span>
-                </div>
-                <div className="category-bar-wrap">
-                  <div className="category-bar" style={{ width: `${(c.hours / totalHours) * 100}%`, background: c.color }}></div>
-                </div>
-                <span className="category-hours">{c.hours}h</span>
-              </div>
-            ))}
-          </div>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 32 }}>
+        <div>
+          <h1 style={{ fontSize: "2rem", marginBottom: 4 }}>Analytics</h1>
+          <p style={{ color: "var(--text-muted)" }}>Track your academic and productivity progress over time.</p>
         </div>
       </div>
 
-      {/* Calendar Heatmap */}
-      <div className="card" style={{ animationDelay: "480ms" }}>
-        <h2 style={{ marginBottom: 4 }}>Productivity Heatmap</h2>
-        <p style={{ color: "var(--text-muted)", fontSize: "0.85rem", marginBottom: 20 }}>Your activity over the past 12 weeks</p>
-        <div className="heatmap-grid">
-          {Array.from({ length: 84 }, (_, i) => {
-            const intensity = Math.random();
-            const level = intensity < 0.2 ? 0 : intensity < 0.4 ? 1 : intensity < 0.65 ? 2 : intensity < 0.85 ? 3 : 4;
-            return <div className={`heatmap-cell level-${level}`} key={i}></div>;
-          })}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 24, marginBottom: 32 }}>
+        <div className="card">
+          <h3 style={{ fontSize: "1rem", color: "var(--text-muted)", marginBottom: 8 }}>Study Hours</h3>
+          <p style={{ fontSize: "2rem", fontWeight: "bold" }}>{(stats.focusMins / 60).toFixed(1)} <span style={{ fontSize: "1rem", color: "var(--text-muted)" }}>hrs</span></p>
         </div>
-        <div className="heatmap-legend">
-          <span>Less</span>
-          {[0,1,2,3,4].map((l) => <div className={`heatmap-cell level-${l}`} key={l}></div>)}
-          <span>More</span>
+        <div className="card">
+          <h3 style={{ fontSize: "1rem", color: "var(--text-muted)", marginBottom: 8 }}>Pomodoros</h3>
+          <p style={{ fontSize: "2rem", fontWeight: "bold" }}>{stats.totalFocusSessions}</p>
+        </div>
+        <div className="card">
+          <h3 style={{ fontSize: "1rem", color: "var(--text-muted)", marginBottom: 8 }}>Assignments Done</h3>
+          <p style={{ fontSize: "2rem", fontWeight: "bold" }}>{stats.assignmentsDone}</p>
+        </div>
+        <div className="card">
+          <h3 style={{ fontSize: "1rem", color: "var(--text-muted)", marginBottom: 8 }}>Tasks Completed</h3>
+          <p style={{ fontSize: "2rem", fontWeight: "bold" }}>{stats.tasksDone}</p>
+        </div>
+      </div>
+
+      <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 24 }}>
+        <div className="card" style={{ minHeight: 400, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <p style={{ color: "var(--text-muted)" }}>[Weekly Productivity Bar Chart Placeholder]</p>
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+          <div className="card" style={{ minHeight: 188, display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <p style={{ color: "var(--text-muted)" }}>[Course Progress Pie Chart]</p>
+          </div>
+          <div className="card" style={{ minHeight: 188, display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <p style={{ color: "var(--text-muted)" }}>[Heatmap Placeholder]</p>
+          </div>
         </div>
       </div>
     </AppLayout>

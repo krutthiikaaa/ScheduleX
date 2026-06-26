@@ -1,83 +1,114 @@
+import { useState, useEffect } from "react";
 import AppLayout from "../components/AppLayout";
+import { fetchTimetableEvents, createTimetableEvent, deleteTimetableEvent, fetchCourses } from "../utils/api";
 
 function Timetable() {
+  const [events, setEvents] = useState([]);
+  const [courses, setCourses] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [newEvent, setNewEvent] = useState({ courseId: "", day: "Mon", startTime: "09:00", endTime: "10:30", venue: "" });
+
+  useEffect(() => { loadData(); }, []);
+
+  const loadData = async () => {
+    const [evtData, crsData] = await Promise.all([fetchTimetableEvents(), fetchCourses()]);
+    setEvents(evtData);
+    setCourses(crsData);
+  };
+
+  const handleCreate = async (e) => {
+    e.preventDefault();
+    if (!newEvent.courseId) return;
+    await createTimetableEvent(newEvent);
+    setShowModal(false);
+    setNewEvent({ courseId: "", day: "Mon", startTime: "09:00", endTime: "10:30", venue: "" });
+    loadData();
+  };
+
+  const handleDelete = async (id) => {
+    await deleteTimetableEvent(id);
+    loadData();
+  };
+
+  const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const times = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
+
   return (
     <AppLayout>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 32 }}>
         <div>
           <h1 style={{ fontSize: "2rem", marginBottom: 4 }}>Timetable</h1>
-          <p style={{ color: "var(--text-muted)" }}>Manage your weekly classes and schedule.</p>
+          <p style={{ color: "var(--text-muted)" }}>Manage your weekly class schedule.</p>
         </div>
-        <div style={{ display: "flex", gap: 12 }}>
-          <button className="btn btn-secondary">Export</button>
-          <button className="btn btn-primary">+ Add Class</button>
-        </div>
+        <button className="btn btn-primary" onClick={() => setShowModal(true)}>+ Add Class</button>
       </div>
 
-      <div className="card">
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
-          <div style={{ display: "flex", gap: 8 }}>
-            <button className="btn btn-primary">Weekly</button>
-            <button className="btn btn-secondary">Daily</button>
+      <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+        <table style={{ width: "100%", borderCollapse: "collapse", tableLayout: "fixed" }}>
+          <thead>
+            <tr>
+              <th style={{ width: 80, borderBottom: "1px solid var(--border)", borderRight: "1px solid var(--border-light)", padding: 16, background: "var(--bg-secondary)" }}>Time</th>
+              {days.map(d => (
+                <th key={d} style={{ borderBottom: "1px solid var(--border)", borderRight: "1px solid var(--border-light)", padding: 16, background: "var(--bg-secondary)" }}>{d}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {times.map((t, idx) => (
+              <tr key={t}>
+                <td style={{ borderBottom: "1px solid var(--border-light)", borderRight: "1px solid var(--border-light)", padding: 16, textAlign: "center", color: "var(--text-muted)", fontSize: "0.85rem" }}>
+                  {t}
+                </td>
+                {days.map(d => {
+                  const dayEvents = events.filter(e => e.day === d && parseInt(e.startTime) === parseInt(t));
+                  return (
+                    <td key={d} style={{ borderBottom: "1px solid var(--border-light)", borderRight: "1px solid var(--border-light)", padding: 4, verticalAlign: 'top', height: 100 }}>
+                      {dayEvents.map(evt => (
+                        <div key={evt._id} style={{ background: evt.courseId?.color || "var(--primary)", color: "#FFF", padding: 8, borderRadius: "var(--radius-sm)", fontSize: "0.8rem", position: "relative", marginBottom: 4 }}>
+                          <div style={{ fontWeight: "bold", marginBottom: 4 }}>{evt.courseId?.name || "Class"}</div>
+                          <div>{evt.startTime} - {evt.endTime}</div>
+                          <div>{evt.venue}</div>
+                          <button style={{ position: "absolute", top: 4, right: 4, background: "none", border: "none", color: "#FFF", cursor: "pointer", fontSize: "0.8rem" }} onClick={() => handleDelete(evt._id)}>✕</button>
+                        </div>
+                      ))}
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {showModal && (
+        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 100 }}>
+          <div className="card" style={{ width: 400 }}>
+            <h2 style={{ marginBottom: 24 }}>Add Class</h2>
+            <form onSubmit={handleCreate} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              <select className="form-input form-select" value={newEvent.courseId} onChange={e => setNewEvent({...newEvent, courseId: e.target.value})} required>
+                <option value="">Select Course</option>
+                {courses.map(c => <option key={c._id} value={c._id}>{c.name}</option>)}
+              </select>
+
+              <select className="form-input form-select" value={newEvent.day} onChange={e => setNewEvent({...newEvent, day: e.target.value})}>
+                {days.map(d => <option key={d} value={d}>{d}</option>)}
+              </select>
+
+              <div style={{ display: "flex", gap: 12 }}>
+                <input type="time" className="form-input" value={newEvent.startTime} onChange={e => setNewEvent({...newEvent, startTime: e.target.value})} required />
+                <input type="time" className="form-input" value={newEvent.endTime} onChange={e => setNewEvent({...newEvent, endTime: e.target.value})} required />
+              </div>
+
+              <input className="form-input" placeholder="Venue / Room" value={newEvent.venue} onChange={e => setNewEvent({...newEvent, venue: e.target.value})} />
+
+              <div style={{ display: "flex", justifyContent: "flex-end", gap: 12, marginTop: 16 }}>
+                <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>Cancel</button>
+                <button type="submit" className="btn btn-primary">Save Class</button>
+              </div>
+            </form>
           </div>
-          <h3 style={{ fontSize: "1.2rem", margin: 0 }}>Fall Semester 2026</h3>
         </div>
-
-        <div style={{ display: "grid", gridTemplateColumns: "60px repeat(5, 1fr)", gap: 1, background: "var(--border)", border: "1px solid var(--border)", borderRadius: "var(--radius-sm)", overflow: "hidden" }}>
-          {/* Header */}
-          <div style={{ background: "var(--bg-secondary)", padding: 12, textAlign: "center", fontWeight: "bold" }}>Time</div>
-          <div style={{ background: "var(--bg-secondary)", padding: 12, textAlign: "center", fontWeight: "bold" }}>Monday</div>
-          <div style={{ background: "var(--bg-secondary)", padding: 12, textAlign: "center", fontWeight: "bold" }}>Tuesday</div>
-          <div style={{ background: "var(--bg-secondary)", padding: 12, textAlign: "center", fontWeight: "bold" }}>Wednesday</div>
-          <div style={{ background: "var(--bg-secondary)", padding: 12, textAlign: "center", fontWeight: "bold" }}>Thursday</div>
-          <div style={{ background: "var(--bg-secondary)", padding: 12, textAlign: "center", fontWeight: "bold" }}>Friday</div>
-
-          {/* Rows */}
-          {["09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00"].map((time, idx) => (
-            <div key={time} style={{ display: "contents" }}>
-              <div style={{ background: "var(--bg-secondary)", padding: "16px 8px", textAlign: "center", fontSize: "0.8rem", color: "var(--text-muted)" }}>{time}</div>
-              {/* Monday */}
-              <div style={{ background: "#FFF", position: "relative" }}>
-                {time === "09:00" && (
-                  <div style={{ position: "absolute", top: 4, left: 4, right: 4, height: "90%", background: "var(--primary-light)", borderLeft: "4px solid var(--primary)", borderRadius: "4px", padding: 8, fontSize: "0.8rem" }}>
-                    <div style={{ fontWeight: "bold", color: "var(--primary)" }}>Data Structures</div>
-                    <div style={{ color: "var(--text-muted)", fontSize: "0.7rem" }}>A-201</div>
-                  </div>
-                )}
-              </div>
-              {/* Tuesday */}
-              <div style={{ background: "#FFF", position: "relative" }}>
-                {time === "10:00" && (
-                  <div style={{ position: "absolute", top: 4, left: 4, right: 4, height: "190%", zIndex: 1, background: "var(--info-light)", borderLeft: "4px solid var(--info)", borderRadius: "4px", padding: 8, fontSize: "0.8rem" }}>
-                    <div style={{ fontWeight: "bold", color: "var(--info)" }}>Lab: Operating Systems</div>
-                    <div style={{ color: "var(--text-muted)", fontSize: "0.7rem" }}>Lab 3</div>
-                  </div>
-                )}
-              </div>
-              {/* Wednesday */}
-              <div style={{ background: "#FFF", position: "relative" }}></div>
-              {/* Thursday */}
-              <div style={{ background: "#FFF", position: "relative" }}>
-                {time === "14:00" && (
-                  <div style={{ position: "absolute", top: 4, left: 4, right: 4, height: "90%", background: "var(--warning-light)", borderLeft: "4px solid var(--warning)", borderRadius: "4px", padding: 8, fontSize: "0.8rem" }}>
-                    <div style={{ fontWeight: "bold", color: "var(--warning)" }}>Database Systems</div>
-                    <div style={{ color: "var(--text-muted)", fontSize: "0.7rem" }}>Lab 3</div>
-                  </div>
-                )}
-              </div>
-              {/* Friday */}
-              <div style={{ background: "#FFF", position: "relative" }}>
-                {time === "09:00" && (
-                  <div style={{ position: "absolute", top: 4, left: 4, right: 4, height: "90%", background: "var(--primary-light)", borderLeft: "4px solid var(--primary)", borderRadius: "4px", padding: 8, fontSize: "0.8rem" }}>
-                    <div style={{ fontWeight: "bold", color: "var(--primary)" }}>Data Structures</div>
-                    <div style={{ color: "var(--text-muted)", fontSize: "0.7rem" }}>A-201</div>
-                  </div>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+      )}
     </AppLayout>
   );
 }

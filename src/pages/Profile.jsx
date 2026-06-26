@@ -1,72 +1,62 @@
+import { useState, useEffect } from "react";
 import AppLayout from "../components/AppLayout";
+import { fetchFocusSessions } from "../utils/api";
 
 function Profile() {
+  const [focusStats, setFocusStats] = useState({ count: 0, minutes: 0 });
+
+  useEffect(() => {
+    fetchFocusSessions().then(data => {
+      const minutes = data.reduce((acc, curr) => acc + curr.durationMinutes, 0);
+      setFocusStats({ count: data.length, minutes });
+    });
+  }, []);
+
   return (
     <AppLayout>
-      <div className="page-header">
-        <h1>Profile</h1>
-        <p>Your personal information and activity</p>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 32 }}>
+        <div>
+          <h1 style={{ fontSize: "2rem", marginBottom: 4 }}>Student Profile</h1>
+          <p style={{ color: "var(--text-muted)" }}>Manage your academic information and settings.</p>
+        </div>
+        <button className="btn btn-secondary">Edit Profile</button>
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: 24 }}>
-        {/* Profile Card */}
-        <div className="card" style={{ textAlign: "center" }}>
-          <div className="profile-avatar-lg">JD</div>
-          <h2 style={{ marginTop: 16, marginBottom: 2 }}>Jane Doe</h2>
-          <p style={{ color: "var(--text-muted)", fontSize: "0.9rem" }}>jane@university.edu</p>
-          <p style={{ marginTop: 8 }}>
-            <span className="schedule-tag sage">Student</span>
-          </p>
-          <div className="profile-stats-row">
-            <div><strong>12</strong><span>Schedules</span></div>
-            <div><strong>87%</strong><span>Productivity</span></div>
-            <div><strong>42h</strong><span>This Week</span></div>
+        <div className="card" style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
+          <div style={{ width: 120, height: 120, borderRadius: "50%", background: "var(--primary)", color: "#FFF", fontSize: "3rem", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 16, fontWeight: "bold" }}>JD</div>
+          <h2>Jane Doe</h2>
+          <p style={{ color: "var(--text-muted)", marginBottom: 16 }}>B.Sc. Computer Science • Semester 5</p>
+          <div style={{ width: "100%", padding: 16, background: "var(--bg-secondary)", borderRadius: "var(--radius-sm)" }}>
+            <h3 style={{ fontSize: "0.9rem", color: "var(--text-muted)", marginBottom: 4 }}>University</h3>
+            <p style={{ fontWeight: "bold" }}>State Technical University</p>
           </div>
-          <button className="btn btn-secondary" style={{ width: "100%", marginTop: 16 }}>Edit Profile</button>
         </div>
 
-        {/* Details */}
-        <div>
-          <div className="card" style={{ marginBottom: 20 }}>
-            <h2 style={{ marginBottom: 20 }}>Personal Information</h2>
-            <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="profile-fname">First Name</label>
-                <input id="profile-fname" className="form-input" defaultValue="Jane" />
+        <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+          <div className="card" style={{ background: "linear-gradient(135deg, var(--primary), var(--primary-hover))", color: "#FFF", border: "none" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div>
+                <h3 style={{ fontSize: "1.2rem", color: "rgba(255,255,255,0.8)", marginBottom: 8 }}>Cumulative GPA</h3>
+                <div style={{ fontSize: "4rem", fontWeight: "900", lineHeight: 1 }}>3.85</div>
               </div>
-              <div className="form-group">
-                <label htmlFor="profile-lname">Last Name</label>
-                <input id="profile-lname" className="form-input" defaultValue="Doe" />
+              <div style={{ textAlign: "right" }}>
+                <p style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.8)" }}>Credits Earned</p>
+                <p style={{ fontSize: "1.5rem", fontWeight: "bold" }}>81 / 120</p>
               </div>
             </div>
-            <div className="form-group">
-              <label htmlFor="profile-email">Email</label>
-              <input id="profile-email" className="form-input" defaultValue="jane@university.edu" />
-            </div>
-            <div className="form-group">
-              <label htmlFor="profile-dept">Department</label>
-              <input id="profile-dept" className="form-input" defaultValue="Computer Science" />
-            </div>
-            <button className="btn btn-primary" style={{ marginTop: 8 }}>Update Profile</button>
           </div>
 
-          <div className="card">
-            <h2 style={{ marginBottom: 16 }}>Recent Activity</h2>
-            <div className="activity-list">
-              {[
-                { action: "Created", item: "CS Department — Spring 2027", time: "2 hours ago", icon: "✏️" },
-                { action: "Updated", item: "Math Department — Fall 2026", time: "1 day ago", icon: "📝" },
-                { action: "Completed", item: "Weekly Study Goal", time: "2 days ago", icon: "✅" },
-                { action: "Viewed", item: "Physics Lab Schedule", time: "3 days ago", icon: "👁️" },
-              ].map((a, i) => (
-                <div className="activity-item" key={i}>
-                  <span className="activity-icon">{a.icon}</span>
-                  <div className="activity-info">
-                    <span><strong>{a.action}</strong> {a.item}</span>
-                    <span className="activity-time">{a.time}</span>
-                  </div>
-                </div>
-              ))}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
+            <div className="card">
+              <h3 style={{ fontSize: "1rem", color: "var(--text-muted)", marginBottom: 8 }}>Study Streak 🔥</h3>
+              <p style={{ fontSize: "2rem", fontWeight: "bold" }}>12 Days</p>
+              <p style={{ fontSize: "0.85rem", color: "var(--success)" }}>Longest: 18 Days</p>
+            </div>
+            <div className="card">
+              <h3 style={{ fontSize: "1rem", color: "var(--text-muted)", marginBottom: 8 }}>Focus Mode 🍅</h3>
+              <p style={{ fontSize: "2rem", fontWeight: "bold" }}>{focusStats.count} Sessions</p>
+              <p style={{ fontSize: "0.85rem", color: "var(--info)" }}>Total: {focusStats.minutes} mins</p>
             </div>
           </div>
         </div>

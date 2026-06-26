@@ -5,14 +5,12 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import Timetable from "./pages/Timetable";
-import Subjects from "./pages/Subjects";
+import Courses from "./pages/Courses";
 import Assignments from "./pages/Assignments";
-import Notes from "./pages/Notes";
 import Resources from "./pages/Resources";
-import Attendance from "./pages/Attendance";
-import CGPATracker from "./pages/CGPATracker";
-import Exams from "./pages/Exams";
 import TasksGoals from "./pages/TasksGoals";
+import FocusMode from "./pages/FocusMode";
+import CalendarView from "./pages/CalendarView";
 import Analytics from "./pages/Analytics";
 import Settings from "./pages/Settings";
 import Profile from "./pages/Profile";
@@ -27,14 +25,13 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/timetable" element={<Timetable />} />
-        <Route path="/subjects" element={<Subjects />} />
+        <Route path="/courses" element={<Courses />} />
+        <Route path="/courses/:courseId" element={<Courses />} />
         <Route path="/assignments" element={<Assignments />} />
-        <Route path="/notes" element={<Notes />} />
         <Route path="/resources" element={<Resources />} />
-        <Route path="/attendance" element={<Attendance />} />
-        <Route path="/cgpa" element={<CGPATracker />} />
-        <Route path="/exams" element={<Exams />} />
         <Route path="/tasks" element={<TasksGoals />} />
+        <Route path="/focus" element={<FocusMode />} />
+        <Route path="/calendar" element={<CalendarView />} />
         <Route path="/analytics" element={<Analytics />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/profile" element={<Profile />} />

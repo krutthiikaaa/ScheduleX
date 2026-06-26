@@ -6,16 +6,13 @@ function Sidebar() {
   const navItems = [
     { path: "/dashboard", label: "Dashboard", icon: "🏠" },
     { path: "/timetable", label: "Timetable", icon: "📅" },
-    { path: "/subjects", label: "Subjects", icon: "📚" },
-    { path: "/assignments", label: "Assignments", icon: "📝" },
-    { path: "/notes", label: "Notes", icon: "📖" },
+    { path: "/courses", label: "My Courses", icon: "📚" },
     { path: "/resources", label: "Resources", icon: "📂" },
-    { path: "/attendance", label: "Attendance", icon: "📊" },
-    { path: "/cgpa", label: "CGPA Tracker", icon: "🧮" },
-    { path: "/exams", label: "Exams", icon: "📆" },
+    { path: "/assignments", label: "Assignments", icon: "📝" },
     { path: "/tasks", label: "Tasks & Goals", icon: "🎯" },
+    { path: "/focus", label: "Focus Mode", icon: "🍅" },
+    { path: "/calendar", label: "Calendar", icon: "📆" },
     { path: "/analytics", label: "Analytics", icon: "📈" },
-    { path: "/settings", label: "Settings", icon: "⚙️" },
     { path: "/profile", label: "Profile", icon: "👤" },
   ];
 
