@@ -92,7 +92,7 @@ function Dashboard() {
               <thead>
                 <tr style={{ borderBottom: "1px solid var(--border)", color: "var(--text-muted)", fontSize: "0.85rem" }}>
                   <th style={{ paddingBottom: 12, fontWeight: 500 }}>Assignment</th>
-                  <th style={{ paddingBottom: 12, fontWeight: 500 }}>Course</th>
+                  <th style={{ paddingBottom: 12, fontWeight: 500 }}>Subject</th>
                   <th style={{ paddingBottom: 12, fontWeight: 500 }}>Time Left</th>
                   <th style={{ paddingBottom: 12, fontWeight: 500 }}>Priority</th>
                   <th style={{ paddingBottom: 12, fontWeight: 500 }}>Status</th>
@@ -102,7 +102,7 @@ function Dashboard() {
                 {pendingAssignments.slice(0, 4).map(ast => (
                   <tr key={ast._id} style={{ borderBottom: "1px solid var(--border-light)" }}>
                     <td style={{ padding: "12px 0", fontWeight: "bold", fontSize: "0.95rem" }}>{ast.title}</td>
-                    <td style={{ padding: "12px 0", color: "var(--text-muted)", fontSize: "0.9rem" }}>{ast.courseId?.name || "General"}</td>
+                    <td style={{ padding: "12px 0", color: "var(--text-muted)", fontSize: "0.9rem" }}>{ast.subject || "General"}</td>
                     <td style={{ padding: "12px 0", color: "var(--danger)", fontSize: "0.9rem", fontWeight: 600 }}>{calculateDaysLeft(ast.dueDate)}</td>
                     <td style={{ padding: "12px 0" }}>
                       <span style={{ padding: "4px 8px", borderRadius: "12px", fontSize: "0.75rem", background: ast.priority === "High" ? "var(--danger-light)" : "var(--warning-light)", color: ast.priority === "High" ? "var(--danger)" : "var(--warning)" }}>
@@ -131,7 +131,7 @@ function Dashboard() {
               <thead>
                 <tr style={{ borderBottom: "1px solid var(--border)", color: "var(--text-muted)", fontSize: "0.85rem" }}>
                   <th style={{ paddingBottom: 12, fontWeight: 500 }}>Name</th>
-                  <th style={{ paddingBottom: 12, fontWeight: 500 }}>Course</th>
+                  <th style={{ paddingBottom: 12, fontWeight: 500 }}>Subject</th>
                   <th style={{ paddingBottom: 12, fontWeight: 500 }}>Type</th>
                   <th style={{ paddingBottom: 12, fontWeight: 500 }}>Opened</th>
                   <th style={{ paddingBottom: 12, fontWeight: 500 }}></th>
@@ -141,7 +141,7 @@ function Dashboard() {
                 {resources.slice(0, 4).map(res => (
                   <tr key={res._id} style={{ borderBottom: "1px solid var(--border-light)" }}>
                     <td style={{ padding: "12px 0", fontWeight: 600, fontSize: "0.95rem" }}>{res.title}</td>
-                    <td style={{ padding: "12px 0", color: "var(--text-muted)", fontSize: "0.9rem" }}>{res.courseId?.name || "General"}</td>
+                    <td style={{ padding: "12px 0", color: "var(--text-muted)", fontSize: "0.9rem" }}>{res.subject || "General"}</td>
                     <td style={{ padding: "12px 0" }}>
                        <span style={{ padding: "4px 8px", borderRadius: "6px", fontSize: "0.75rem", background: "var(--bg-secondary)", color: "var(--text-muted)" }}>{res.type}</span>
                     </td>

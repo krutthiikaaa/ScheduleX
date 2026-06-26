@@ -1,9 +1,5 @@
 const API_URL = 'http://localhost:5000/api';
 
-export const fetchCourses = () => fetch(`${API_URL}/courses`).then(res => res.json());
-export const createCourse = (data) => fetch(`${API_URL}/courses`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(res => res.json());
-export const updateCourse = (id, data) => fetch(`${API_URL}/courses/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(res => res.json());
-export const deleteCourse = (id) => fetch(`${API_URL}/courses/${id}`, { method: 'DELETE' }).then(res => res.json());
 
 export const fetchAssignments = () => fetch(`${API_URL}/assignments`).then(res => res.json());
 export const createAssignment = (data) => fetch(`${API_URL}/assignments`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(res => res.json());

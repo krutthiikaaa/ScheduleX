@@ -1,15 +1,14 @@
 import { useState, useEffect } from "react";
 import AppLayout from "../components/AppLayout";
-import { fetchAssignments, createAssignment, updateAssignment, deleteAssignment, fetchCourses } from "../utils/api";
+import { fetchAssignments, createAssignment, updateAssignment, deleteAssignment } from "../utils/api";
 
 function Assignments() {
   const [assignments, setAssignments] = useState([]);
-  const [courses, setCourses] = useState([]);
   const [filter, setFilter] = useState("All");
   const [showModal, setShowModal] = useState(false);
   
   const [newAssignment, setNewAssignment] = useState({
-    title: "", courseId: "", dueDate: "", priority: "Medium", status: "Pending", description: ""
+    title: "", subject: "", dueDate: "", priority: "Medium", status: "Pending", description: ""
   });
 
   useEffect(() => {
@@ -17,17 +16,16 @@ function Assignments() {
   }, []);
 
   const loadData = async () => {
-    const [assigns, courseList] = await Promise.all([fetchAssignments(), fetchCourses()]);
+    const assigns = await fetchAssignments();
     setAssignments(assigns);
-    setCourses(courseList);
   };
 
   const handleCreate = async (e) => {
     e.preventDefault();
-    if (!newAssignment.title || !newAssignment.courseId) return;
+    if (!newAssignment.title || !newAssignment.subject) return;
     await createAssignment(newAssignment);
     setShowModal(false);
-    setNewAssignment({ title: "", courseId: "", dueDate: "", priority: "Medium", status: "Pending", description: "" });
+    setNewAssignment({ title: "", subject: "", dueDate: "", priority: "Medium", status: "Pending", description: "" });
     loadData();
   };
 
@@ -78,7 +76,7 @@ function Assignments() {
             <tr style={{ borderBottom: "1px solid var(--border)", textAlign: "left" }}>
               <th style={{ padding: 12, color: "var(--text-muted)", fontWeight: "normal" }}>Done</th>
               <th style={{ padding: 12, color: "var(--text-muted)", fontWeight: "normal" }}>Title</th>
-              <th style={{ padding: 12, color: "var(--text-muted)", fontWeight: "normal" }}>Course</th>
+              <th style={{ padding: 12, color: "var(--text-muted)", fontWeight: "normal" }}>Subject</th>
               <th style={{ padding: 12, color: "var(--text-muted)", fontWeight: "normal" }}>Due Date</th>
               <th style={{ padding: 12, color: "var(--text-muted)", fontWeight: "normal" }}>Priority</th>
               <th style={{ padding: 12, color: "var(--text-muted)", fontWeight: "normal" }}>Actions</th>
@@ -91,7 +89,7 @@ function Assignments() {
                   <input type="checkbox" checked={ast.status === 'Completed'} onChange={() => toggleStatus(ast)} style={{ width: 18, height: 18 }} />
                 </td>
                 <td style={{ padding: 16, fontWeight: "bold" }}>{ast.title}</td>
-                <td style={{ padding: 16, color: "var(--text-muted)" }}>{ast.courseId?.name || 'Unknown'}</td>
+                <td style={{ padding: 16, color: "var(--text-muted)" }}>{ast.subject || 'Unknown'}</td>
                 <td style={{ padding: 16 }}>{ast.dueDate ? new Date(ast.dueDate).toLocaleDateString() : 'N/A'}</td>
                 <td style={{ padding: 16 }}>
                   <span style={{ padding: "4px 8px", borderRadius: "12px", fontSize: "0.75rem", background: ast.priority === "High" ? "var(--danger-light)" : "var(--warning-light)", color: ast.priority === "High" ? "var(--danger)" : "var(--warning)" }}>
@@ -117,10 +115,7 @@ function Assignments() {
             <form onSubmit={handleCreate} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
               <input className="form-input" placeholder="Title" value={newAssignment.title} onChange={e => setNewAssignment({...newAssignment, title: e.target.value})} required />
               
-              <select className="form-input form-select" value={newAssignment.courseId} onChange={e => setNewAssignment({...newAssignment, courseId: e.target.value})} required>
-                <option value="">Select Course</option>
-                {courses.map(c => <option key={c._id} value={c._id}>{c.name}</option>)}
-              </select>
+              <input className="form-input" placeholder="Subject Name (e.g. Database Systems)" value={newAssignment.subject} onChange={e => setNewAssignment({...newAssignment, subject: e.target.value})} required />
 
               <input className="form-input" type="date" value={newAssignment.dueDate} onChange={e => setNewAssignment({...newAssignment, dueDate: e.target.value})} />
               

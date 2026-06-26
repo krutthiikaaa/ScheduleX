@@ -8,7 +8,6 @@ function Sidebar() {
   const navItems = [
     { path: "/dashboard", label: "Dashboard", icon: "🏠" },
     { path: "/timetable", label: "Timetable", icon: "📅" },
-    { path: "/courses", label: "My Courses", icon: "📚" },
     { path: "/resources", label: "Resources", icon: "📂" },
     { path: "/assignments", label: "Assignments", icon: "📝" },
     { path: "/tasks", label: "Tasks & Goals", icon: "🎯" },

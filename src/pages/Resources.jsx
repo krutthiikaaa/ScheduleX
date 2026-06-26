@@ -1,28 +1,26 @@
 import { useState, useEffect } from "react";
 import AppLayout from "../components/AppLayout";
-import { fetchResources, createResource, deleteResource, fetchCourses } from "../utils/api";
+import { fetchResources, createResource, deleteResource } from "../utils/api";
 
 function Resources() {
   const [resources, setResources] = useState([]);
-  const [courses, setCourses] = useState([]);
   const [filter, setFilter] = useState("All");
   const [showModal, setShowModal] = useState(false);
-  const [newRes, setNewRes] = useState({ title: "", type: "PDF", courseId: "", url: "" });
+  const [newRes, setNewRes] = useState({ title: "", type: "PDF", subject: "", url: "" });
 
   useEffect(() => { loadData(); }, []);
 
   const loadData = async () => {
-    const [resData, courseData] = await Promise.all([fetchResources(), fetchCourses()]);
+    const resData = await fetchResources();
     setResources(resData);
-    setCourses(courseData);
   };
 
   const handleCreate = async (e) => {
     e.preventDefault();
-    if (!newRes.title || !newRes.courseId) return;
+    if (!newRes.title || !newRes.subject) return;
     await createResource(newRes);
     setShowModal(false);
-    setNewRes({ title: "", type: "PDF", courseId: "", url: "" });
+    setNewRes({ title: "", type: "PDF", subject: "", url: "" });
     loadData();
   };
 
@@ -63,7 +61,7 @@ function Resources() {
                 </div>
                 <div>
                   <h3 style={{ fontSize: "1.1rem", marginBottom: 4 }}>{res.title}</h3>
-                  <p style={{ fontSize: "0.85rem", color: "var(--text-muted)" }}>{res.courseId?.name || "General"} • {res.type}</p>
+                  <p style={{ fontSize: "0.85rem", color: "var(--text-muted)" }}>{res.subject || "General"} • {res.type}</p>
                 </div>
               </div>
               <div style={{ display: "flex", gap: 12 }}>
@@ -83,10 +81,7 @@ function Resources() {
             <form onSubmit={handleCreate} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
               <input className="form-input" placeholder="Resource Title" value={newRes.title} onChange={e => setNewRes({...newRes, title: e.target.value})} required />
               
-              <select className="form-input form-select" value={newRes.courseId} onChange={e => setNewRes({...newRes, courseId: e.target.value})} required>
-                <option value="">Select Course</option>
-                {courses.map(c => <option key={c._id} value={c._id}>{c.name}</option>)}
-              </select>
+              <input className="form-input" placeholder="Subject Name (e.g. Data Structures)" value={newRes.subject} onChange={e => setNewRes({...newRes, subject: e.target.value})} required />
 
               <select className="form-input form-select" value={newRes.type} onChange={e => setNewRes({...newRes, type: e.target.value})}>
                 <option value="PDF">Document / PDF</option>

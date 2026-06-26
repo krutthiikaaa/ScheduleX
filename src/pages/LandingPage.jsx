@@ -131,7 +131,7 @@ function LandingPage() {
             { title: "Smart Timetable Management", desc: "Conflict-free weekly planner.", icon: "📅" },
             { title: "Assignment Tracker", desc: "Never miss a deadline.", icon: "📝" },
             { title: "Resource Library", desc: "Cloud storage for materials.", icon: "📂" },
-            { title: "Study Planner", desc: "Dedicated spaces per course.", icon: "📚" },
+            { title: "Study Planner", desc: "Dedicated spaces per subject.", icon: "📚" },
             { title: "Pomodoro Focus Mode", desc: "Track deep work sessions.", icon: "🍅" },
             { title: "Tasks & Goals", desc: "Daily and weekly checklists.", icon: "🎯" },
             { title: "Productivity Analytics", desc: "Deep insights into study habits.", icon: "📈" },

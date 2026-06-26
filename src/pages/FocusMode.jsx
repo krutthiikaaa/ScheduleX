@@ -1,12 +1,11 @@
 import { useState, useEffect, useRef } from "react";
 import AppLayout from "../components/AppLayout";
-import { fetchCourses, fetchTasks, createFocusSession } from "../utils/api";
+import { fetchTasks, createFocusSession } from "../utils/api";
 
 function FocusMode() {
-  const [courses, setCourses] = useState([]);
   const [tasks, setTasks] = useState([]);
   
-  const [selectedCourse, setSelectedCourse] = useState("");
+  const [subject, setSubject] = useState("");
   const [selectedTask, setSelectedTask] = useState("");
   const [duration, setDuration] = useState(25); // Minutes
   const [timeLeft, setTimeLeft] = useState(25 * 60);
@@ -17,7 +16,6 @@ function FocusMode() {
   const timerRef = useRef(null);
 
   useEffect(() => {
-    fetchCourses().then(setCourses);
     fetchTasks().then(setTasks);
   }, []);
 
@@ -39,7 +37,7 @@ function FocusMode() {
     setShowCompletion(true);
     await createFocusSession({
       durationMinutes: duration,
-      courseId: selectedCourse || undefined,
+      subject: subject || undefined,
       taskId: selectedTask || undefined
     });
   };
@@ -98,11 +96,8 @@ function FocusMode() {
             <h3 style={{ marginBottom: 16 }}>Session Details</h3>
             <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
               <div>
-                <label style={{ display: "block", marginBottom: 8, fontSize: "0.85rem", color: "var(--text-muted)" }}>Link to Course</label>
-                <select className="form-input form-select" value={selectedCourse} onChange={e => setSelectedCourse(e.target.value)}>
-                  <option value="">None</option>
-                  {courses.map(c => <option key={c._id} value={c._id}>{c.name}</option>)}
-                </select>
+                <label style={{ display: "block", marginBottom: 8, fontSize: "0.85rem", color: "var(--text-muted)" }}>Subject</label>
+                <input className="form-input" placeholder="Optional Subject" value={subject} onChange={e => setSubject(e.target.value)} />
               </div>
               <div>
                 <label style={{ display: "block", marginBottom: 8, fontSize: "0.85rem", color: "var(--text-muted)" }}>Link to Task</label>

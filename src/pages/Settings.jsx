@@ -3,7 +3,6 @@ import AppLayout from "../components/AppLayout";
 
 function Settings() {
   const [notifications, setNotifications] = useState(true);
-  const [darkMode, setDarkMode] = useState(false);
 
   return (
     <AppLayout>
@@ -26,20 +25,12 @@ function Settings() {
           <div className="card">
             <h3 style={{ marginBottom: 24 }}>Preferences</h3>
             
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px 0", borderBottom: "1px solid var(--border-light)" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px 0" }}>
               <div>
                 <h4 style={{ margin: 0, marginBottom: 4 }}>Enable Notifications</h4>
                 <p style={{ margin: 0, fontSize: "0.85rem", color: "var(--text-muted)" }}>Receive alerts for upcoming deadlines and classes.</p>
               </div>
               <input type="checkbox" checked={notifications} onChange={() => setNotifications(!notifications)} style={{ width: 20, height: 20, accentColor: "var(--primary)" }} />
-            </div>
-
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px 0" }}>
-              <div>
-                <h4 style={{ margin: 0, marginBottom: 4 }}>Dark Mode (Preview)</h4>
-                <p style={{ margin: 0, fontSize: "0.85rem", color: "var(--text-muted)" }}>Toggle the application dark theme.</p>
-              </div>
-              <input type="checkbox" checked={darkMode} onChange={() => setDarkMode(!darkMode)} style={{ width: 20, height: 20, accentColor: "var(--primary)" }} />
             </div>
           </div>
 

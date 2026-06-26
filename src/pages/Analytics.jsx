@@ -50,7 +50,7 @@ function Analytics() {
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
           <div className="card" style={{ minHeight: 188, display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <p style={{ color: "var(--text-muted)" }}>[Course Progress Pie Chart]</p>
+            <p style={{ color: "var(--text-muted)" }}>[Subject Progress Pie Chart]</p>
           </div>
           <div className="card" style={{ minHeight: 188, display: "flex", alignItems: "center", justifyContent: "center" }}>
             <p style={{ color: "var(--text-muted)" }}>[Heatmap Placeholder]</p>

@@ -6,7 +6,6 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import Timetable from "./pages/Timetable";
-import Courses from "./pages/Courses";
 import Assignments from "./pages/Assignments";
 import Resources from "./pages/Resources";
 import TasksGoals from "./pages/TasksGoals";
@@ -27,8 +26,6 @@ function App() {
           
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/timetable" element={<ProtectedRoute><Timetable /></ProtectedRoute>} />
-          <Route path="/courses" element={<ProtectedRoute><Courses /></ProtectedRoute>} />
-          <Route path="/courses/:courseId" element={<ProtectedRoute><Courses /></ProtectedRoute>} />
           <Route path="/assignments" element={<ProtectedRoute><Assignments /></ProtectedRoute>} />
           <Route path="/resources" element={<ProtectedRoute><Resources /></ProtectedRoute>} />
           <Route path="/tasks" element={<ProtectedRoute><TasksGoals /></ProtectedRoute>} />

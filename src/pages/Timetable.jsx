@@ -1,27 +1,25 @@
 import { useState, useEffect } from "react";
 import AppLayout from "../components/AppLayout";
-import { fetchTimetableEvents, createTimetableEvent, deleteTimetableEvent, fetchCourses } from "../utils/api";
+import { fetchTimetableEvents, createTimetableEvent, deleteTimetableEvent } from "../utils/api";
 
 function Timetable() {
   const [events, setEvents] = useState([]);
-  const [courses, setCourses] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const [newEvent, setNewEvent] = useState({ courseId: "", day: "Mon", startTime: "09:00", endTime: "10:30", venue: "" });
+  const [newEvent, setNewEvent] = useState({ subject: "", day: "Mon", startTime: "09:00", endTime: "10:30", venue: "" });
 
   useEffect(() => { loadData(); }, []);
 
   const loadData = async () => {
-    const [evtData, crsData] = await Promise.all([fetchTimetableEvents(), fetchCourses()]);
+    const evtData = await fetchTimetableEvents();
     setEvents(evtData);
-    setCourses(crsData);
   };
 
   const handleCreate = async (e) => {
     e.preventDefault();
-    if (!newEvent.courseId) return;
+    if (!newEvent.subject) return;
     await createTimetableEvent(newEvent);
     setShowModal(false);
-    setNewEvent({ courseId: "", day: "Mon", startTime: "09:00", endTime: "10:30", venue: "" });
+    setNewEvent({ subject: "", day: "Mon", startTime: "09:00", endTime: "10:30", venue: "" });
     loadData();
   };
 
@@ -64,8 +62,8 @@ function Timetable() {
                   return (
                     <td key={d} style={{ borderBottom: "1px solid var(--border-light)", borderRight: "1px solid var(--border-light)", padding: 4, verticalAlign: 'top', height: 100 }}>
                       {dayEvents.map(evt => (
-                        <div key={evt._id} style={{ background: evt.courseId?.color || "var(--primary)", color: "#FFF", padding: 8, borderRadius: "var(--radius-sm)", fontSize: "0.8rem", position: "relative", marginBottom: 4 }}>
-                          <div style={{ fontWeight: "bold", marginBottom: 4 }}>{evt.courseId?.name || "Class"}</div>
+                        <div key={evt._id} style={{ background: "var(--primary)", color: "#FFF", padding: 8, borderRadius: "var(--radius-sm)", fontSize: "0.8rem", position: "relative", marginBottom: 4 }}>
+                          <div style={{ fontWeight: "bold", marginBottom: 4 }}>{evt.subject || "Class"}</div>
                           <div>{evt.startTime} - {evt.endTime}</div>
                           <div>{evt.venue}</div>
                           <button style={{ position: "absolute", top: 4, right: 4, background: "none", border: "none", color: "#FFF", cursor: "pointer", fontSize: "0.8rem" }} onClick={() => handleDelete(evt._id)}>✕</button>
@@ -85,10 +83,7 @@ function Timetable() {
           <div className="card" style={{ width: 400 }}>
             <h2 style={{ marginBottom: 24 }}>Add Class</h2>
             <form onSubmit={handleCreate} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-              <select className="form-input form-select" value={newEvent.courseId} onChange={e => setNewEvent({...newEvent, courseId: e.target.value})} required>
-                <option value="">Select Course</option>
-                {courses.map(c => <option key={c._id} value={c._id}>{c.name}</option>)}
-              </select>
+              <input className="form-input" placeholder="Subject Name (e.g. Data Structures)" value={newEvent.subject} onChange={e => setNewEvent({...newEvent, subject: e.target.value})} required />
 
               <select className="form-input form-select" value={newEvent.day} onChange={e => setNewEvent({...newEvent, day: e.target.value})}>
                 {days.map(d => <option key={d} value={d}>{d}</option>)}
