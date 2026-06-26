@@ -20,7 +20,7 @@ function SplashScreen() {
           <div className="splash-logo">S</div>
         </div>
         <h1 className="splash-title">ScheduleX</h1>
-        <p className="splash-tagline">Your Complete Student Productivity Workspace</p>
+        <p className="splash-tagline">Your Personal Student Productivity Workspace</p>
         <div className="splash-loader">
           <div className="splash-loader-bar"></div>
         </div>

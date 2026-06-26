@@ -19,10 +19,10 @@ export function AuthProvider({ children }) {
   }, []);
 
   useEffect(() => {
-    // Redirect if logged in and trying to access public pages
+    // Redirect if logged in and trying to access auth pages (login/register)
     if (isAuthenticated) {
-      const publicRoutes = ["/", "/login", "/register", "/landing"];
-      if (publicRoutes.includes(location.pathname)) {
+      const authRoutes = ["/login", "/register"];
+      if (authRoutes.includes(location.pathname)) {
         navigate("/dashboard", { replace: true });
       }
     }

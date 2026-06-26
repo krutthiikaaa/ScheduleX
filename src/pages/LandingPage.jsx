@@ -1,7 +1,9 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 function LandingPage() {
+  const { isAuthenticated } = useAuth();
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
@@ -31,8 +33,14 @@ function LandingPage() {
             <a href="#features">Features</a>
             <a href="#about">About</a>
             <a href="#contact">Contact</a>
-            <Link to="/login" className="nav-link-btn">Login</Link>
-            <Link to="/register" className="nav-cta-btn">Get Started</Link>
+            {isAuthenticated ? (
+              <Link to="/dashboard" className="nav-cta-btn">Go to Dashboard</Link>
+            ) : (
+              <>
+                <Link to="/login" className="nav-link-btn">Login</Link>
+                <Link to="/register" className="nav-cta-btn">Get Started</Link>
+              </>
+            )}
           </div>
         </div>
       </nav>
@@ -42,10 +50,16 @@ function LandingPage() {
         <div className="hero-content">
           <div className="hero-text">
             <h1>Organize Your Entire Academic Life in One Place.</h1>
-            <p>Manage your timetable, assignments, notes, exams, goals and academic progress through one beautifully designed workspace.</p>
+            <p>ScheduleX helps students manage their timetable, assignments, study sessions, resources, goals, and productivity through one organized workspace.</p>
             <div className="hero-btns">
-              <Link to="/register" className="btn btn-primary btn-lg">Get Started</Link>
-              <Link to="/login" className="btn btn-secondary btn-lg">Login</Link>
+              {isAuthenticated ? (
+                <Link to="/dashboard" className="btn btn-primary btn-lg">Go to Dashboard</Link>
+              ) : (
+                <>
+                  <Link to="/register" className="btn btn-primary btn-lg">Get Started</Link>
+                  <Link to="/login" className="btn btn-secondary btn-lg">Login</Link>
+                </>
+              )}
             </div>
           </div>
           <div className="hero-visual">
@@ -89,13 +103,14 @@ function LandingPage() {
         </div>
         <div className="features-grid">
           {[
-            { title: "Smart Timetable", desc: "Conflict-free weekly planner.", icon: "📅" },
-            { title: "Assignment Management", desc: "Never miss a deadline.", icon: "📝" },
-            { title: "Subject Workspace", desc: "Dedicated spaces per course.", icon: "📚" },
-            { title: "Exam Planner", desc: "Countdowns and syllabus.", icon: "📆" },
-            { title: "Notes & Resources", desc: "Cloud storage for materials.", icon: "📂" },
-            { title: "Goal Tracking", desc: "Daily and weekly checklists.", icon: "🎯" },
-            { title: "Analytics", desc: "Deep insights into study habits.", icon: "📈" }
+            { title: "Smart Timetable Management", desc: "Conflict-free weekly planner.", icon: "📅" },
+            { title: "Assignment Tracker", desc: "Never miss a deadline.", icon: "📝" },
+            { title: "Resource Library", desc: "Cloud storage for materials.", icon: "📂" },
+            { title: "Study Planner", desc: "Dedicated spaces per course.", icon: "📚" },
+            { title: "Pomodoro Focus Mode", desc: "Track deep work sessions.", icon: "🍅" },
+            { title: "Tasks & Goals", desc: "Daily and weekly checklists.", icon: "🎯" },
+            { title: "Productivity Analytics", desc: "Deep insights into study habits.", icon: "📈" },
+            { title: "Study Streak", desc: "Build consistent habits.", icon: "🔥" }
           ].map((f, i) => (
             <div className="feature-card" key={i}>
               <span className="feature-icon">{f.icon}</span>
@@ -121,30 +136,60 @@ function LandingPage() {
           </div>
           <div className="step-card">
             <div className="step-num">2</div>
-            <h3>Build Your Semester</h3>
-            <p>Add subjects & timetable.</p>
+            <h3>Build Your Timetable</h3>
+            <p>Add subjects & schedule.</p>
             <div className="step-arrow">→</div>
           </div>
           <div className="step-card">
             <div className="step-num">3</div>
-            <h3>Stay Organized</h3>
+            <h3>Plan Your Study Sessions</h3>
             <p>Track tasks & notes.</p>
             <div className="step-arrow">→</div>
           </div>
           <div className="step-card">
             <div className="step-num">4</div>
-            <h3>Track Progress</h3>
-            <p>Watch your GPA grow.</p>
+            <h3>Stay Productive</h3>
+            <p>Watch your stats grow.</p>
           </div>
+        </div>
+      </section>
+
+      {/* Why Choose ScheduleX */}
+      <section className="landing-section bg-stone">
+        <div className="section-header">
+          <span className="section-badge" style={{ color: "var(--primary)", background: "var(--primary-light)" }}>Benefits</span>
+          <h2>Why Choose ScheduleX</h2>
+        </div>
+        <div className="features-grid">
+          {[
+            { title: "Everything in One Place", desc: "No more switching between apps." },
+            { title: "Built for Students", desc: "Designed for academic needs." },
+            { title: "Simple & Modern Interface", desc: "Beautiful, distraction-free UI." },
+            { title: "Track Productivity", desc: "Visual charts for your progress." },
+            { title: "Stay Organized", desc: "Manage everything flawlessly." },
+            { title: "Improve Study Habits", desc: "Build streaks and reach goals." },
+          ].map((f, i) => (
+            <div className="feature-card" key={i} style={{ textAlign: "center" }}>
+              <h3>{f.title}</h3>
+              <p>{f.desc}</p>
+            </div>
+          ))}
         </div>
       </section>
 
       {/* CTA */}
       <section className="landing-cta">
-        <h2>Ready to take control of your academic life?</h2>
+        <h2>Start Organizing Smarter Today</h2>
         <p>Join thousands of students organizing their semesters with ScheduleX.</p>
         <div className="hero-btns">
-          <Link to="/register" className="btn btn-primary btn-lg">Create Free Account</Link>
+          {isAuthenticated ? (
+            <Link to="/dashboard" className="btn btn-primary btn-lg">Go to Dashboard</Link>
+          ) : (
+            <>
+              <Link to="/register" className="btn btn-primary btn-lg">Get Started</Link>
+              <Link to="/login" className="btn btn-secondary btn-lg" style={{ background: "transparent", color: "#FFF", border: "1px solid rgba(255,255,255,0.3)" }}>Login</Link>
+            </>
+          )}
         </div>
       </section>
 
@@ -158,9 +203,11 @@ function LandingPage() {
           </div>
           <div className="footer-links">
             <a href="#about">About</a>
-            <a href="#privacy">Privacy</a>
+            <a href="#features">Features</a>
             <a href="#contact">Contact</a>
             <a href="#github">GitHub</a>
+            <a href="#privacy">Privacy Policy</a>
+            <a href="#terms">Terms of Service</a>
           </div>
         </div>
         <div className="footer-bottom">
