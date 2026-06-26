@@ -122,7 +122,7 @@ function Dashboard() {
               <thead>
                 <tr style={{ borderBottom: "1px solid var(--border)", color: "var(--text-muted)", fontSize: "0.85rem" }}>
                   <th style={{ paddingBottom: 12, fontWeight: 500 }}>Assignment</th>
-                  <th style={{ paddingBottom: 12, fontWeight: 500 }}>Course</th>
+                  <th style={{ paddingBottom: 12, fontWeight: 500 }}>Subject</th>
                   <th style={{ paddingBottom: 12, fontWeight: 500 }}>Time Left</th>
                   <th style={{ paddingBottom: 12, fontWeight: 500 }}>Priority</th>
                   <th style={{ paddingBottom: 12, fontWeight: 500 }}>Status</th>
@@ -161,7 +161,7 @@ function Dashboard() {
               <thead>
                 <tr style={{ borderBottom: "1px solid var(--border)", color: "var(--text-muted)", fontSize: "0.85rem" }}>
                   <th style={{ paddingBottom: 12, fontWeight: 500 }}>Name</th>
-                  <th style={{ paddingBottom: 12, fontWeight: 500 }}>Course</th>
+                  <th style={{ paddingBottom: 12, fontWeight: 500 }}>Subject</th>
                   <th style={{ paddingBottom: 12, fontWeight: 500 }}>Type</th>
                   <th style={{ paddingBottom: 12, fontWeight: 500 }}>Opened</th>
                   <th style={{ paddingBottom: 12, fontWeight: 500 }}></th>

@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import { registerUser } from "../utils/api";
 
 function Register() {
   const { login } = useAuth();
@@ -8,9 +9,9 @@ function Register() {
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   
-  const [formData, setFormData] = useState({ name: "", email: "", password: "", terms: false });
+  const [formData, setFormData] = useState({ name: "", email: "", password: "", confirmPassword: "", terms: false });
 
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
     setError("");
 
@@ -26,18 +27,23 @@ function Register() {
       setError("Password must be at least 6 characters.");
       return;
     }
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
     if (!formData.terms) {
       setError("You must agree to the Terms of Service.");
       return;
     }
 
     setLoading(true);
-    // Mocking an API call
-    setTimeout(() => {
+    try {
+      const data = await registerUser({ fullName: formData.name, email: formData.email, password: formData.password });
+      login(data.token);
+    } catch (err) {
+      setError(err.message || "Failed to create account.");
       setLoading(false);
-      const mockToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9";
-      login(mockToken);
-    }, 1200);
+    }
   };
 
   return (
@@ -48,8 +54,11 @@ function Register() {
       justifyContent: "center",
       background: "radial-gradient(circle at 0% 100%, rgba(214,90,49,0.1) 0%, var(--bg) 50%)",
       padding: 24,
-      fontFamily: "var(--font)"
     }}>
+      <Link to="/" style={{ position: "absolute", top: 32, left: 32, color: "var(--text-muted)", textDecoration: "none", display: "flex", alignItems: "center", gap: 8, fontWeight: 600, fontSize: "0.95rem" }}>
+        <span>←</span> Back to Home
+      </Link>
+
       <div className="card" style={{ width: "100%", maxWidth: 460, padding: "48px 40px", position: "relative", zIndex: 10, boxShadow: "var(--shadow-lg)" }}>
         
         <div style={{ textAlign: "center", marginBottom: 32 }}>
@@ -110,6 +119,20 @@ function Register() {
               >
                 {showPassword ? "Hide" : "Show"}
               </button>
+            </div>
+          </div>
+
+          <div>
+            <label style={{ display: "block", marginBottom: 8, fontSize: "0.9rem", fontWeight: 600, margin: 0 }}>Confirm Password</label>
+            <div style={{ position: "relative" }}>
+              <input
+                className="form-input"
+                type={showPassword ? "text" : "password"}
+                placeholder="Confirm your password"
+                value={formData.confirmPassword}
+                onChange={e => setFormData({...formData, confirmPassword: e.target.value})}
+                required
+              />
             </div>
           </div>
 

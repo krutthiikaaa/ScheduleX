@@ -6,6 +6,24 @@ export const fetchDashboard = async () => {
   return json.data;
 };
 
+export const registerUser = async (data) => {
+  const res = await fetch(`${API_URL}/auth/register`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.error || 'Registration failed');
+  }
+  return res.json();
+};
+
+export const loginUser = async (data) => {
+  const res = await fetch(`${API_URL}/auth/login`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.error || 'Login failed');
+  }
+  return res.json();
+};
+
 export const fetchCourses = () => fetch(`${API_URL}/courses`).then(res => res.json());
 export const createCourse = (data) => fetch(`${API_URL}/courses`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(res => res.json());
 export const updateCourse = (id, data) => fetch(`${API_URL}/courses/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(res => res.json());
