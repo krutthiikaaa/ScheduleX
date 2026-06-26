@@ -1,10 +1,20 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 function LandingPage() {
   const { isAuthenticated } = useAuth();
+  const [showSplash, setShowSplash] = useState(true);
+
   useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowSplash(false);
+    }, 2800);
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    if (showSplash) return;
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -18,7 +28,24 @@ function LandingPage() {
     });
 
     return () => observer.disconnect();
-  }, []);
+  }, [showSplash]);
+
+  if (showSplash) {
+    return (
+      <div className={`splash-screen fade-out`}>
+        <div className="splash-content">
+          <div className="splash-logo-wrap">
+            <div className="splash-logo">S</div>
+          </div>
+          <h1 className="splash-title">ScheduleX</h1>
+          <p className="splash-tagline">Your Personal Student Productivity Workspace</p>
+          <div className="splash-loader">
+            <div className="splash-loader-bar"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="app-shell" style={{ overflowX: "hidden" }}>
@@ -31,8 +58,6 @@ function LandingPage() {
           </Link>
           <div className="landing-nav-links">
             <a href="#features">Features</a>
-            <a href="#about">About</a>
-            <a href="#contact">Contact</a>
             {isAuthenticated ? (
               <Link to="/dashboard" className="nav-cta-btn">Go to Dashboard</Link>
             ) : (
@@ -187,33 +212,12 @@ function LandingPage() {
           ) : (
             <>
               <Link to="/register" className="btn btn-primary btn-lg">Get Started</Link>
-              <Link to="/login" className="btn btn-secondary btn-lg" style={{ background: "transparent", color: "#FFF", border: "1px solid rgba(255,255,255,0.3)" }}>Login</Link>
+              <Link to="/login" className="btn btn-secondary btn-lg">Login</Link>
             </>
           )}
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="landing-footer">
-        <div className="footer-inner">
-          <div className="footer-brand">
-            <div className="landing-nav-logo">S</div>
-            <span className="footer-title">ScheduleX</span>
-            <p>The modern student productivity platform.</p>
-          </div>
-          <div className="footer-links">
-            <a href="#about">About</a>
-            <a href="#features">Features</a>
-            <a href="#contact">Contact</a>
-            <a href="#github">GitHub</a>
-            <a href="#privacy">Privacy Policy</a>
-            <a href="#terms">Terms of Service</a>
-          </div>
-        </div>
-        <div className="footer-bottom">
-          <p>© 2026 ScheduleX. All rights reserved.</p>
-        </div>
-      </footer>
     </div>
   );
 }
