@@ -40,7 +40,6 @@ function Courses() {
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 24 }}>
         {courses.map((course) => {
-          const percentage = course.attendance.conducted ? Math.round((course.attendance.attended / course.attendance.conducted) * 100) : 100;
           return (
             <div key={course._id} className="card hover-card" style={{ borderTop: `4px solid ${course.color}` }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
@@ -54,16 +53,6 @@ function Courses() {
               <div style={{ marginBottom: 16, display: "flex", alignItems: "center", gap: 8 }}>
                 <div style={{ width: 32, height: 32, borderRadius: "50%", background: "var(--bg-secondary)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.8rem" }}>👨‍🏫</div>
                 <span style={{ fontSize: "0.9rem" }}>{course.faculty || "TBA"}</span>
-              </div>
-
-              <div style={{ marginBottom: 20 }}>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.8rem", marginBottom: 4 }}>
-                  <span style={{ color: "var(--text-muted)" }}>Attendance</span>
-                  <span style={{ fontWeight: "bold" }}>{percentage}%</span>
-                </div>
-                <div style={{ width: "100%", height: "6px", background: "var(--bg-secondary)", borderRadius: "3px" }}>
-                  <div style={{ width: `${percentage}%`, height: "100%", background: percentage < 75 ? "var(--danger)" : "var(--success)", borderRadius: "3px" }}></div>
-                </div>
               </div>
 
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>

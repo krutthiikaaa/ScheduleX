@@ -42,7 +42,7 @@ function LandingPage() {
         <div className="hero-content">
           <div className="hero-text">
             <h1>Organize Your Entire Academic Life in One Place.</h1>
-            <p>Manage your timetable, assignments, notes, attendance, exams, goals and academic progress through one beautifully designed workspace.</p>
+            <p>Manage your timetable, assignments, notes, exams, goals and academic progress through one beautifully designed workspace.</p>
             <div className="hero-btns">
               <Link to="/register" className="btn btn-primary btn-lg">Get Started</Link>
               <Link to="/login" className="btn btn-secondary btn-lg">Login</Link>
@@ -91,7 +91,6 @@ function LandingPage() {
           {[
             { title: "Smart Timetable", desc: "Conflict-free weekly planner.", icon: "📅" },
             { title: "Assignment Management", desc: "Never miss a deadline.", icon: "📝" },
-            { title: "Attendance Tracking", desc: "Visual percentage tracker.", icon: "📊" },
             { title: "Subject Workspace", desc: "Dedicated spaces per course.", icon: "📚" },
             { title: "Exam Planner", desc: "Countdowns and syllabus.", icon: "📆" },
             { title: "Notes & Resources", desc: "Cloud storage for materials.", icon: "📂" },

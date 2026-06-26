@@ -1,23 +1,27 @@
 import { useState, useEffect } from "react";
 import AppLayout from "../components/AppLayout";
 import { Link } from "react-router-dom";
-import { fetchAssignments, fetchTasks, fetchCourses } from "../utils/api";
+import { fetchAssignments, fetchTasks, fetchCourses, fetchFocusSessions } from "../utils/api";
 
 function Dashboard() {
   const [assignments, setAssignments] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [courses, setCourses] = useState([]);
+  const [focusSessions, setFocusSessions] = useState([]);
 
   useEffect(() => {
-    Promise.all([fetchAssignments(), fetchTasks(), fetchCourses()]).then(([assignData, taskData, courseData]) => {
+    Promise.all([fetchAssignments(), fetchTasks(), fetchCourses(), fetchFocusSessions()]).then(([assignData, taskData, courseData, focusData]) => {
       setAssignments(assignData);
       setTasks(taskData);
       setCourses(courseData);
+      setFocusSessions(focusData);
     });
   }, []);
 
   const pendingAssignments = assignments.filter(a => a.status !== 'Completed').length;
-  const overallAttendance = courses.length ? Math.round(courses.reduce((acc, c) => acc + (c.attendance.conducted ? c.attendance.attended/c.attendance.conducted : 1), 0) / courses.length * 100) : 100;
+  
+  const today = new Date().toDateString();
+  const todaysFocusMins = focusSessions.filter(s => new Date(s.date).toDateString() === today).reduce((acc, curr) => acc + curr.durationMinutes, 0);
   
   const dailyTasks = tasks.filter(t => !t.isCompleted && t.priority === 'High');
 
@@ -44,12 +48,12 @@ function Dashboard() {
           <p style={{ fontSize: "1.5rem", fontWeight: "bold" }}>{pendingAssignments} Pending</p>
         </div>
         <div className="card hover-card" style={{ borderLeft: "4px solid var(--success)" }}>
-          <h3 style={{ fontSize: "0.9rem", color: "var(--text-muted)", marginBottom: 8 }}>Overall Attendance</h3>
-          <p style={{ fontSize: "1.5rem", fontWeight: "bold" }}>{overallAttendance}%</p>
-        </div>
-        <div className="card hover-card" style={{ borderLeft: "4px solid var(--info)" }}>
           <h3 style={{ fontSize: "0.9rem", color: "var(--text-muted)", marginBottom: 8 }}>Today's Priority Tasks</h3>
           <p style={{ fontSize: "1.5rem", fontWeight: "bold" }}>{dailyTasks.length} Remaining</p>
+        </div>
+        <div className="card hover-card" style={{ borderLeft: "4px solid var(--info)" }}>
+          <h3 style={{ fontSize: "0.9rem", color: "var(--text-muted)", marginBottom: 8 }}>Pomodoro Sessions</h3>
+          <p style={{ fontSize: "1.5rem", fontWeight: "bold" }}>{todaysFocusMins} Mins Today</p>
         </div>
       </div>
 
