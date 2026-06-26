@@ -1,16 +1,27 @@
-# React + Vite
+# ScheduleX
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**ScheduleX** is a modern student productivity platform designed to help students organize their academic life in one place. It combines timetable management, course organization, assignments, study planning, resources, productivity tracking, and a built-in Pomodoro focus timer to improve planning and consistency throughout the semester.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+* Smart Timetable Management
+* Course Management
+* Resource Organization
+* Assignment Tracker
+* Tasks & Goals
+* Pomodoro Focus Mode
+* Study Planner
+* Study Streak Tracking
+* Unified Calendar
+* Productivity Analytics
+* Student Profile with CGPA Tracking
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+**Frontend:** React.js, Vite, CSS3
+**Backend:** Node.js, MongoDB
+**Tools:** Git, GitHub, VS Code
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+ScheduleX provides students with a single workspace to manage schedules, study resources, assignments, study sessions, and productivity, helping them stay organized throughout their academic journey.
