@@ -1,5 +1,11 @@
 const API_URL = 'http://localhost:5000/api';
 
+export const fetchDashboard = async () => {
+  const res = await fetch(`${API_URL}/dashboard`);
+  const json = await res.json();
+  return json.data;
+};
+
 export const fetchCourses = () => fetch(`${API_URL}/courses`).then(res => res.json());
 export const createCourse = (data) => fetch(`${API_URL}/courses`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(res => res.json());
 export const updateCourse = (id, data) => fetch(`${API_URL}/courses/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(res => res.json());
