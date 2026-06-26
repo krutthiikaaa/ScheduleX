@@ -48,9 +48,6 @@ function Sidebar() {
             <span className="user-role">Student</span>
           </div>
         </div>
-        <Link to="/settings" className="sidebar-link">
-          <span>⚙️</span> Settings Shortcut
-        </Link>
         <button onClick={logout} className="sidebar-link" style={{ color: "var(--danger)", background: "transparent", border: "none", width: "100%", textAlign: "left", cursor: "pointer", fontFamily: "var(--font)", fontSize: "0.95rem", padding: "12px 16px" }}>
           <span>🚪</span> Logout
         </button>

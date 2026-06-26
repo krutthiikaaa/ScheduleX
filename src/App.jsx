@@ -12,7 +12,6 @@ import TasksGoals from "./pages/TasksGoals";
 import FocusMode from "./pages/FocusMode";
 import CalendarView from "./pages/CalendarView";
 import Analytics from "./pages/Analytics";
-import Settings from "./pages/Settings";
 import Profile from "./pages/Profile";
 
 function App() {
@@ -32,7 +31,6 @@ function App() {
           <Route path="/focus" element={<ProtectedRoute><FocusMode /></ProtectedRoute>} />
           <Route path="/calendar" element={<ProtectedRoute><CalendarView /></ProtectedRoute>} />
           <Route path="/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
-          <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
           <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
         </Routes>
       </AuthProvider>

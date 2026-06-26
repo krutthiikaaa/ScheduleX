@@ -1,5 +1,22 @@
 const API_URL = 'http://localhost:5000/api';
 
+export const registerUser = async (data) => {
+  const res = await fetch(`${API_URL}/auth/register`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.error || 'Registration failed');
+  }
+  return res.json();
+};
+
+export const loginUser = async (data) => {
+  const res = await fetch(`${API_URL}/auth/login`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.error || 'Login failed');
+  }
+  return res.json();
+};
 
 export const fetchAssignments = () => fetch(`${API_URL}/assignments`).then(res => res.json());
 export const createAssignment = (data) => fetch(`${API_URL}/assignments`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(res => res.json());

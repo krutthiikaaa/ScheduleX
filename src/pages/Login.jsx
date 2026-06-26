@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import { loginUser } from "../utils/api";
 
 function Login() {
   const { login } = useAuth();
@@ -10,7 +11,7 @@ function Login() {
   
   const [formData, setFormData] = useState({ email: "", password: "", remember: false });
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
 
@@ -24,13 +25,13 @@ function Login() {
     }
 
     setLoading(true);
-    // Mocking an API call for authentication
-    setTimeout(() => {
+    try {
+      const data = await loginUser({ email: formData.email, password: formData.password });
+      login(data.token);
+    } catch (err) {
+      setError(err.message || "Failed to login. Please check your credentials.");
       setLoading(false);
-      // Generate a mock token
-      const mockToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9";
-      login(mockToken);
-    }, 1200);
+    }
   };
 
   return (
@@ -41,8 +42,11 @@ function Login() {
       justifyContent: "center",
       background: "radial-gradient(circle at 100% 0%, rgba(214,90,49,0.1) 0%, var(--bg) 50%)",
       padding: 24,
-      fontFamily: "var(--font)"
     }}>
+      <Link to="/" style={{ position: "absolute", top: 32, left: 32, color: "var(--text-muted)", textDecoration: "none", display: "flex", alignItems: "center", gap: 8, fontWeight: 600, fontSize: "0.95rem" }}>
+        <span>←</span> Back to Home
+      </Link>
+
       <div className="card" style={{ width: "100%", maxWidth: 460, padding: "48px 40px", position: "relative", zIndex: 10, boxShadow: "var(--shadow-lg)" }}>
         
         <div style={{ textAlign: "center", marginBottom: 32 }}>

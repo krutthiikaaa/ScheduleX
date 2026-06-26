@@ -3,15 +3,21 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 function LandingPage() {
-  const { isAuthenticated } = useAuth();
-  const [showSplash, setShowSplash] = useState(true);
+  const [showSplash, setShowSplash] = useState(() => {
+    const navEntries = window.performance.getEntriesByType("navigation");
+    if (navEntries.length > 0 && navEntries[0].type === "back_forward") {
+      return false;
+    }
+    return true;
+  });
 
   useEffect(() => {
+    if (!showSplash) return;
     const timer = setTimeout(() => {
       setShowSplash(false);
     }, 2800);
     return () => clearTimeout(timer);
-  }, []);
+  }, [showSplash]);
 
   useEffect(() => {
     if (showSplash) return;
@@ -57,15 +63,15 @@ function LandingPage() {
             ScheduleX
           </Link>
           <div className="landing-nav-links">
-            <a href="#features">Features</a>
-            {isAuthenticated ? (
-              <Link to="/dashboard" className="nav-cta-btn">Go to Dashboard</Link>
-            ) : (
-              <>
-                <Link to="/login" className="nav-link-btn">Login</Link>
-                <Link to="/register" className="nav-cta-btn">Get Started</Link>
-              </>
-            )}
+            <div className="nav-center-links" style={{ display: "flex", gap: "24px", alignItems: "center" }}>
+              <a href="#features">Features</a>
+              <a href="#about">About</a>
+              <a href="#contact">Contact</a>
+            </div>
+            <div className="nav-right-actions" style={{ display: "flex", gap: "12px", alignItems: "center", marginLeft: "24px" }}>
+              <Link to="/login" className="btn btn-secondary" style={{ padding: "8px 16px" }}>Login</Link>
+              <Link to="/register" className="btn btn-primary" style={{ padding: "8px 16px" }}>Get Started</Link>
+            </div>
           </div>
         </div>
       </nav>
@@ -77,14 +83,8 @@ function LandingPage() {
             <h1>Organize Your Entire Academic Life in One Place.</h1>
             <p>ScheduleX helps students manage their timetable, assignments, study sessions, resources, goals, and productivity through one organized workspace.</p>
             <div className="hero-btns">
-              {isAuthenticated ? (
-                <Link to="/dashboard" className="btn btn-primary btn-lg">Go to Dashboard</Link>
-              ) : (
-                <>
-                  <Link to="/register" className="btn btn-primary btn-lg">Get Started</Link>
-                  <Link to="/login" className="btn btn-secondary btn-lg">Login</Link>
-                </>
-              )}
+              <Link to="/register" className="btn btn-primary btn-lg">Get Started</Link>
+              <Link to="/login" className="btn btn-secondary btn-lg">Login</Link>
             </div>
           </div>
           <div className="hero-visual">
@@ -207,14 +207,8 @@ function LandingPage() {
         <h2>Start Organizing Smarter Today</h2>
         <p>Join thousands of students organizing their semesters with ScheduleX.</p>
         <div className="hero-btns">
-          {isAuthenticated ? (
-            <Link to="/dashboard" className="btn btn-primary btn-lg">Go to Dashboard</Link>
-          ) : (
-            <>
-              <Link to="/register" className="btn btn-primary btn-lg">Get Started</Link>
-              <Link to="/login" className="btn btn-secondary btn-lg">Login</Link>
-            </>
-          )}
+          <Link to="/register" className="btn btn-primary btn-lg">Get Started</Link>
+          <Link to="/login" className="btn btn-secondary btn-lg">Login</Link>
         </div>
       </section>
 
