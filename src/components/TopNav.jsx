@@ -13,7 +13,7 @@ function TopNav() {
         </Link>
       </div>
 
-      <div className="topnav-center">
+      <div className="topnav-right">
         <div className={`topnav-search${searchOpen ? " open" : ""}`}>
           <span className="search-icon">🔍</span>
           <input
@@ -25,16 +25,6 @@ function TopNav() {
           />
           <kbd className="search-shortcut">⌘K</kbd>
         </div>
-      </div>
-
-      <div className="topnav-right">
-        <button className="topnav-icon-btn" title="Notifications" id="nav-notifications">
-          <span>🔔</span>
-          <span className="notif-dot"></span>
-        </button>
-        <button className="topnav-icon-btn" title="Settings" id="nav-settings">
-          <Link to="/settings" style={{ textDecoration: "none" }}>⚙️</Link>
-        </button>
         <Link to="/profile" className="topnav-avatar" id="nav-profile">
           <span>JD</span>
         </Link>
