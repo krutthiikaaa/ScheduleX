@@ -16,11 +16,6 @@
 * Productivity Analytics
 * Student Profile with CGPA Tracking
 
-## Tech Stack
-
-**Frontend:** React.js, Vite, CSS3
-**Backend:** Node.js, MongoDB
-**Tools:** Git, GitHub, VS Code
 
 ---
 
