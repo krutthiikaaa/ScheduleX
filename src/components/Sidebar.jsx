@@ -1,7 +1,9 @@
 import { Link, useLocation } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 function Sidebar() {
   const location = useLocation();
+  const { logout } = useAuth();
 
   const navItems = [
     { path: "/dashboard", label: "Dashboard", icon: "🏠" },
@@ -50,9 +52,9 @@ function Sidebar() {
         <Link to="/settings" className="sidebar-link">
           <span>⚙️</span> Settings Shortcut
         </Link>
-        <Link to="/login" className="sidebar-link" style={{ color: "var(--danger)" }}>
+        <button onClick={logout} className="sidebar-link" style={{ color: "var(--danger)", background: "transparent", border: "none", width: "100%", textAlign: "left", cursor: "pointer", fontFamily: "var(--font)", fontSize: "0.95rem", padding: "12px 16px" }}>
           <span>🚪</span> Logout
-        </Link>
+        </button>
       </div>
     </div>
   );

@@ -1,4 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
 import SplashScreen from "./pages/SplashScreen";
 import LandingPage from "./pages/LandingPage";
 import Login from "./pages/Login";
@@ -18,24 +20,27 @@ import Profile from "./pages/Profile";
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<SplashScreen />} />
-        <Route path="/landing" element={<LandingPage />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/timetable" element={<Timetable />} />
-        <Route path="/courses" element={<Courses />} />
-        <Route path="/courses/:courseId" element={<Courses />} />
-        <Route path="/assignments" element={<Assignments />} />
-        <Route path="/resources" element={<Resources />} />
-        <Route path="/tasks" element={<TasksGoals />} />
-        <Route path="/focus" element={<FocusMode />} />
-        <Route path="/calendar" element={<CalendarView />} />
-        <Route path="/analytics" element={<Analytics />} />
-        <Route path="/settings" element={<Settings />} />
-        <Route path="/profile" element={<Profile />} />
-      </Routes>
+      <AuthProvider>
+        <Routes>
+          <Route path="/" element={<SplashScreen />} />
+          <Route path="/landing" element={<LandingPage />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          
+          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="/timetable" element={<ProtectedRoute><Timetable /></ProtectedRoute>} />
+          <Route path="/courses" element={<ProtectedRoute><Courses /></ProtectedRoute>} />
+          <Route path="/courses/:courseId" element={<ProtectedRoute><Courses /></ProtectedRoute>} />
+          <Route path="/assignments" element={<ProtectedRoute><Assignments /></ProtectedRoute>} />
+          <Route path="/resources" element={<ProtectedRoute><Resources /></ProtectedRoute>} />
+          <Route path="/tasks" element={<ProtectedRoute><TasksGoals /></ProtectedRoute>} />
+          <Route path="/focus" element={<ProtectedRoute><FocusMode /></ProtectedRoute>} />
+          <Route path="/calendar" element={<ProtectedRoute><CalendarView /></ProtectedRoute>} />
+          <Route path="/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
+          <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+          <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+        </Routes>
+      </AuthProvider>
     </BrowserRouter>
   );
 }

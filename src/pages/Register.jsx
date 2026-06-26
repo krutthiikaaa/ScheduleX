@@ -1,8 +1,9 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useState } from "react";
+import { useAuth } from "../context/AuthContext";
 
 function Register() {
-  const navigate = useNavigate();
+  const { login } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -34,7 +35,8 @@ function Register() {
     // Mocking an API call
     setTimeout(() => {
       setLoading(false);
-      navigate("/dashboard");
+      const mockToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9";
+      login(mockToken);
     }, 1200);
   };
 
