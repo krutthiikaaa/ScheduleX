@@ -1,50 +1,31 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { useEffect, useRef } from "react";
 
 function LandingPage() {
-  const sectionsRef = useRef([]);
-
   useEffect(() => {
-    const obs = new IntersectionObserver(
-      (entries) => entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add("revealed"); }),
-      { threshold: 0.12 }
-    );
-    sectionsRef.current.forEach((el) => el && obs.observe(el));
-    return () => obs.disconnect();
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('revealed');
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.landing-section, .hero-content, .landing-cta').forEach(el => {
+      observer.observe(el);
+    });
+
+    return () => observer.disconnect();
   }, []);
 
-  const addRef = (el) => { if (el && !sectionsRef.current.includes(el)) sectionsRef.current.push(el); };
-
-  const features = [
-    { icon: "📋", title: "Smart Schedule Management", desc: "Create, edit, and organize timetables effortlessly with an intuitive drag-and-drop interface." },
-    { icon: "📊", title: "Productivity Analytics", desc: "Track study hours, completion rates, and productivity trends with beautiful visual insights." },
-    { icon: "🏷️", title: "Multiple Categories", desc: "Organize schedules by department, semester, or custom categories with color-coded tags." },
-    { icon: "📱", title: "Responsive Experience", desc: "Access your schedules from any device with a seamlessly adaptive, premium interface." },
-  ];
-
-  const steps = [
-    { num: "01", title: "Create Account", desc: "Sign up in seconds and set up your workspace." },
-    { num: "02", title: "Build Your Schedule", desc: "Add subjects, assign time slots, and organize your week." },
-    { num: "03", title: "Track Productivity", desc: "Monitor progress and optimize your routine with analytics." },
-  ];
-
-  const whyCards = [
-    { icon: "⚡", title: "Fast & Easy", desc: "Get started in under a minute." },
-    { icon: "✨", title: "Clean Interface", desc: "Minimal, distraction-free design." },
-    { icon: "🔒", title: "Secure", desc: "Your data stays private and protected." },
-    { icon: "📈", title: "Productivity Analytics", desc: "Visual insights to boost performance." },
-    { icon: "🎨", title: "Custom Timetables", desc: "Fully personalized schedule layouts." },
-    { icon: "🧠", title: "Smart Organization", desc: "AI-ready structure for the future." },
-  ];
-
   return (
-    <div className="landing-page">
+    <div className="app-shell" style={{ overflowX: "hidden" }}>
       {/* Navbar */}
       <nav className="landing-nav">
         <div className="landing-nav-inner">
           <Link to="/" className="landing-nav-brand">
-            <span className="landing-nav-logo">S</span>
-            <span>ScheduleX</span>
+            <div className="landing-nav-logo">S</div>
+            ScheduleX
           </Link>
           <div className="landing-nav-links">
             <a href="#features">Features</a>
@@ -57,58 +38,67 @@ function LandingPage() {
       </nav>
 
       {/* Hero */}
-      <section className="landing-hero">
-        <div className="hero-content" ref={addRef}>
+      <header className="landing-hero">
+        <div className="hero-content">
           <div className="hero-text">
-            <h1>Organize Every Hour.<br />Simplify Every Day.</h1>
-            <p>ScheduleX is the modern scheduling platform built for students, professionals, universities, and organizations. Create beautiful timetables, track productivity, and take control of your time.</p>
+            <h1>Organize Your Entire Academic Life in One Place.</h1>
+            <p>Manage your timetable, assignments, notes, attendance, exams, goals and academic progress through one beautifully designed workspace.</p>
             <div className="hero-btns">
               <Link to="/register" className="btn btn-primary btn-lg">Get Started</Link>
-              <Link to="/login" className="btn btn-secondary btn-lg">Sign In</Link>
+              <Link to="/login" className="btn btn-secondary btn-lg">Login</Link>
             </div>
           </div>
-          <div className="hero-mockup">
+          <div className="hero-visual">
             <div className="mockup-window">
               <div className="mockup-topbar">
-                <span className="mockup-dot red"></span>
-                <span className="mockup-dot yellow"></span>
-                <span className="mockup-dot green"></span>
+                <div className="mockup-dot red"></div>
+                <div className="mockup-dot yellow"></div>
+                <div className="mockup-dot green"></div>
               </div>
               <div className="mockup-body">
-                <div className="mockup-sidebar-mini">
-                  <div className="m-item active"></div>
-                  <div className="m-item"></div>
-                  <div className="m-item"></div>
+                <div className="mockup-sidebar-mini" style={{ width: "60px", background: "var(--sidebar-bg)" }}>
+                  <div className="m-item active" style={{ background: "var(--primary)" }}></div>
+                  <div className="m-item" style={{ background: "rgba(255,255,255,0.1)" }}></div>
+                  <div className="m-item" style={{ background: "rgba(255,255,255,0.1)" }}></div>
                 </div>
                 <div className="mockup-main">
-                  <div className="m-header"></div>
+                  <div className="m-header" style={{ width: "40%" }}></div>
                   <div className="m-cards">
-                    <div className="m-card terracotta"></div>
-                    <div className="m-card sage"></div>
-                    <div className="m-card clay"></div>
+                    <div className="m-card terracotta" style={{ background: "var(--primary-light)" }}></div>
+                    <div className="m-card sage" style={{ background: "var(--success-light)" }}></div>
+                    <div className="m-card clay" style={{ background: "var(--info-light)" }}></div>
                   </div>
                   <div className="m-table">
-                    <div className="m-row"></div>
-                    <div className="m-row"></div>
-                    <div className="m-row"></div>
+                    <div className="m-row" style={{ width: "100%" }}></div>
+                    <div className="m-row" style={{ width: "80%" }}></div>
+                    <div className="m-row" style={{ width: "90%" }}></div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </section>
+      </header>
 
-      {/* Features */}
-      <section className="landing-section" id="features" ref={addRef}>
+      {/* Features Grid */}
+      <section id="features" className="landing-section bg-stone">
         <div className="section-header">
-          <span className="section-badge">Features</span>
-          <h2>Everything You Need to Stay Organized</h2>
+          <span className="section-badge" style={{ color: "var(--primary)", background: "var(--primary-light)" }}>Workspace</span>
+          <h2>Everything You Need</h2>
           <p>Powerful tools designed with simplicity at their core.</p>
         </div>
         <div className="features-grid">
-          {features.map((f) => (
-            <div className="feature-card" key={f.title}>
+          {[
+            { title: "Smart Timetable", desc: "Conflict-free weekly planner.", icon: "📅" },
+            { title: "Assignment Management", desc: "Never miss a deadline.", icon: "📝" },
+            { title: "Attendance Tracking", desc: "Visual percentage tracker.", icon: "📊" },
+            { title: "Subject Workspace", desc: "Dedicated spaces per course.", icon: "📚" },
+            { title: "Exam Planner", desc: "Countdowns and syllabus.", icon: "📆" },
+            { title: "Notes & Resources", desc: "Cloud storage for materials.", icon: "📂" },
+            { title: "Goal Tracking", desc: "Daily and weekly checklists.", icon: "🎯" },
+            { title: "Analytics", desc: "Deep insights into study habits.", icon: "📈" }
+          ].map((f, i) => (
+            <div className="feature-card" key={i}>
               <span className="feature-icon">{f.icon}</span>
               <h3>{f.title}</h3>
               <p>{f.desc}</p>
@@ -117,86 +107,65 @@ function LandingPage() {
         </div>
       </section>
 
-      {/* Dashboard Preview */}
-      <section className="landing-section bg-stone" id="about" ref={addRef}>
+      {/* How it Works */}
+      <section className="landing-section">
         <div className="section-header">
-          <span className="section-badge">Preview</span>
-          <h2>A Dashboard You'll Love Using</h2>
-          <p>See your entire week at a glance with smart cards, analytics, and calendar views.</p>
-        </div>
-        <div className="preview-grid">
-          {["Schedule Cards", "Calendar View", "Analytics", "Smart Organization"].map((t, i) => (
-            <div className="preview-card" key={t}>
-              <div className={`preview-visual v${i}`}></div>
-              <h3>{t}</h3>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* How It Works */}
-      <section className="landing-section" ref={addRef}>
-        <div className="section-header">
-          <span className="section-badge">How It Works</span>
-          <h2>Three Simple Steps</h2>
+          <span className="section-badge" style={{ color: "var(--primary)", background: "var(--primary-light)" }}>Workflow</span>
+          <h2>How It Works</h2>
         </div>
         <div className="steps-row">
-          {steps.map((s, i) => (
-            <div className="step-card" key={s.num}>
-              <div className="step-num">{s.num}</div>
-              <h3>{s.title}</h3>
-              <p>{s.desc}</p>
-              {i < steps.length - 1 && <div className="step-arrow">↓</div>}
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Why ScheduleX */}
-      <section className="landing-section bg-stone" ref={addRef}>
-        <div className="section-header">
-          <span className="section-badge">Why ScheduleX</span>
-          <h2>Built for the Way You Work</h2>
-        </div>
-        <div className="why-grid">
-          {whyCards.map((c) => (
-            <div className="why-card" key={c.title}>
-              <span className="why-icon">{c.icon}</span>
-              <h3>{c.title}</h3>
-              <p>{c.desc}</p>
-            </div>
-          ))}
+          <div className="step-card">
+            <div className="step-num">1</div>
+            <h3>Create Account</h3>
+            <p>Sign up securely.</p>
+            <div className="step-arrow">→</div>
+          </div>
+          <div className="step-card">
+            <div className="step-num">2</div>
+            <h3>Build Your Semester</h3>
+            <p>Add subjects & timetable.</p>
+            <div className="step-arrow">→</div>
+          </div>
+          <div className="step-card">
+            <div className="step-num">3</div>
+            <h3>Stay Organized</h3>
+            <p>Track tasks & notes.</p>
+            <div className="step-arrow">→</div>
+          </div>
+          <div className="step-card">
+            <div className="step-num">4</div>
+            <h3>Track Progress</h3>
+            <p>Watch your GPA grow.</p>
+          </div>
         </div>
       </section>
 
       {/* CTA */}
-      <section className="landing-cta" ref={addRef}>
-        <h2>Ready to Organize Your Time Better?</h2>
-        <p>Join thousands of students and professionals who trust ScheduleX.</p>
+      <section className="landing-cta">
+        <h2>Ready to take control of your academic life?</h2>
+        <p>Join thousands of students organizing their semesters with ScheduleX.</p>
         <div className="hero-btns">
-          <Link to="/register" className="btn btn-primary btn-lg">Get Started</Link>
-          <Link to="/login" className="btn btn-secondary btn-lg">Login</Link>
+          <Link to="/register" className="btn btn-primary btn-lg">Create Free Account</Link>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="landing-footer" id="contact">
+      <footer className="landing-footer">
         <div className="footer-inner">
           <div className="footer-brand">
-            <span className="landing-nav-logo">S</span>
+            <div className="landing-nav-logo">S</div>
             <span className="footer-title">ScheduleX</span>
-            <p>Plan Smarter. Achieve More.</p>
+            <p>The modern student productivity platform.</p>
           </div>
           <div className="footer-links">
             <a href="#about">About</a>
+            <a href="#privacy">Privacy</a>
             <a href="#contact">Contact</a>
-            <a href="https://github.com/krutthiikaaa/ScheduleX" target="_blank" rel="noreferrer">GitHub</a>
-            <a href="#privacy">Privacy Policy</a>
-            <a href="#terms">Terms &amp; Conditions</a>
+            <a href="#github">GitHub</a>
           </div>
         </div>
         <div className="footer-bottom">
-          <p>&copy; {new Date().getFullYear()} ScheduleX. All rights reserved.</p>
+          <p>© 2026 ScheduleX. All rights reserved.</p>
         </div>
       </footer>
     </div>

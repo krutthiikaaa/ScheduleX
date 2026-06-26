@@ -2,139 +2,181 @@ import AppLayout from "../components/AppLayout";
 import { Link } from "react-router-dom";
 
 function Dashboard() {
-  const stats = [
-    { label: "Total Timetables", value: "5", icon: "📋", accent: "terracotta" },
-    { label: "Active Schedules", value: "3", icon: "✅", accent: "sage" },
-    { label: "Subjects", value: "12", icon: "📚", accent: "clay" },
-    { label: "Faculty", value: "8", icon: "👤", accent: "brown" },
-  ];
-
-  const todaySchedule = [
-    { time: "09:00", subject: "Data Structures", room: "A-201", color: "terracotta" },
-    { time: "10:00", subject: "Linear Algebra", room: "B-105", color: "sage" },
-    { time: "14:00", subject: "Computer Networks", room: "D-110", color: "clay" },
-  ];
-
-  const recentSchedules = [
-    { title: "CS Department — Fall 2026", tag: "Active", tagColor: "sage", desc: "Last updated 2 days ago" },
-    { title: "Math Department — Fall 2026", tag: "Draft", tagColor: "clay", desc: "Last updated 5 days ago" },
-    { title: "Physics Lab Schedule", tag: "Active", tagColor: "sage", desc: "Last updated 1 week ago" },
-  ];
-
-  const activities = [
-    { icon: "✏️", text: "Created Spring 2027 schedule", time: "2h ago" },
-    { icon: "📝", text: "Updated Math timetable", time: "1d ago" },
-    { icon: "✅", text: "Completed weekly study goal", time: "2d ago" },
-  ];
-
   return (
     <AppLayout>
-      {/* Welcome */}
-      <div className="welcome-section">
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 32 }}>
         <div>
-          <h1>Good morning, Jane 👋</h1>
-          <p>Here's what's happening with your schedules today.</p>
+          <h1 style={{ fontSize: "2rem", marginBottom: 4 }}>Good Morning, Jane 👋</h1>
+          <p style={{ color: "var(--text-muted)" }}>{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</p>
         </div>
-        <Link to="/create" className="btn btn-primary">+ New Schedule</Link>
+        <div style={{ display: "flex", gap: 12 }}>
+          <button className="btn btn-secondary">Add Task</button>
+          <Link to="/timetable" className="btn btn-primary">+ New Class</Link>
+        </div>
       </div>
 
-      {/* Stats */}
-      <div className="stats-grid">
-        {stats.map((s, i) => (
-          <div className="stat-card" key={s.label} style={{ animationDelay: `${i * 80}ms` }}>
-            <div className={`stat-icon ${s.accent}`}>{s.icon}</div>
-            <div className="stat-value">{s.value}</div>
-            <div className="stat-label">{s.label}</div>
-          </div>
-        ))}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 24, marginBottom: 32 }}>
+        <div className="card" style={{ borderLeft: "4px solid var(--primary)" }}>
+          <h3 style={{ fontSize: "0.9rem", color: "var(--text-muted)", marginBottom: 8 }}>Next Class</h3>
+          <p style={{ fontSize: "1.2rem", fontWeight: "bold" }}>Data Structures</p>
+          <p style={{ fontSize: "0.85rem", color: "var(--primary)", marginTop: 4 }}>In 45 minutes • Room A-201</p>
+        </div>
+        <div className="card" style={{ borderLeft: "4px solid var(--warning)" }}>
+          <h3 style={{ fontSize: "0.9rem", color: "var(--text-muted)", marginBottom: 8 }}>Assignments Due</h3>
+          <p style={{ fontSize: "1.5rem", fontWeight: "bold" }}>3 Pending</p>
+          <p style={{ fontSize: "0.85rem", color: "var(--warning)", marginTop: 4 }}>Next due in 2 days</p>
+        </div>
+        <div className="card" style={{ borderLeft: "4px solid var(--success)" }}>
+          <h3 style={{ fontSize: "0.9rem", color: "var(--text-muted)", marginBottom: 8 }}>Overall Attendance</h3>
+          <p style={{ fontSize: "1.5rem", fontWeight: "bold" }}>85%</p>
+          <p style={{ fontSize: "0.85rem", color: "var(--success)", marginTop: 4 }}>On track</p>
+        </div>
+        <div className="card" style={{ borderLeft: "4px solid var(--info)" }}>
+          <h3 style={{ fontSize: "0.9rem", color: "var(--text-muted)", marginBottom: 8 }}>Study Streak</h3>
+          <p style={{ fontSize: "1.5rem", fontWeight: "bold" }}>12 Days</p>
+          <p style={{ fontSize: "0.85rem", color: "var(--info)", marginTop: 4 }}>Keep it up!</p>
+        </div>
       </div>
 
-      <div className="dashboard-grid">
-        {/* Today's Schedule */}
-        <div className="card" style={{ animationDelay: "320ms" }}>
-          <h2 style={{ marginBottom: 4 }}>Today's Schedule</h2>
-          <p style={{ color: "var(--text-muted)", fontSize: "0.85rem", marginBottom: 20 }}>Thursday, June 26</p>
-          <div className="today-list">
-            {todaySchedule.map((t) => (
-              <div className="today-item" key={t.time}>
-                <div className="today-time">{t.time}</div>
-                <div className={`today-line ${t.color}`}></div>
-                <div className="today-info">
-                  <strong>{t.subject}</strong>
-                  <span>Room {t.room}</span>
+      <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 24 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+          <div className="card">
+            <h2 style={{ marginBottom: 16 }}>Today's Classes</h2>
+            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 16, padding: 12, background: "var(--bg)", borderRadius: "var(--radius-sm)" }}>
+                <div style={{ fontWeight: "bold", width: "60px" }}>09:00</div>
+                <div style={{ width: "4px", height: "40px", background: "var(--primary)", borderRadius: "2px" }}></div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontWeight: "bold" }}>Data Structures</div>
+                  <div style={{ fontSize: "0.85rem", color: "var(--text-muted)" }}>Room A-201 • Dr. Smith</div>
                 </div>
               </div>
-            ))}
+              <div style={{ display: "flex", alignItems: "center", gap: 16, padding: 12, background: "var(--bg)", borderRadius: "var(--radius-sm)" }}>
+                <div style={{ fontWeight: "bold", width: "60px" }}>11:00</div>
+                <div style={{ width: "4px", height: "40px", background: "var(--info)", borderRadius: "2px" }}></div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontWeight: "bold" }}>Operating Systems</div>
+                  <div style={{ fontSize: "0.85rem", color: "var(--text-muted)" }}>Room C-102 • Prof. Lee</div>
+                </div>
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: 16, padding: 12, background: "var(--bg)", borderRadius: "var(--radius-sm)" }}>
+                <div style={{ fontWeight: "bold", width: "60px" }}>14:00</div>
+                <div style={{ width: "4px", height: "40px", background: "var(--warning)", borderRadius: "2px" }}></div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontWeight: "bold" }}>Database Systems</div>
+                  <div style={{ fontSize: "0.85rem", color: "var(--text-muted)" }}>Lab 3 • Dr. Patel</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="card">
+            <h2 style={{ marginBottom: 16 }}>Upcoming Exams</h2>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+              <div style={{ padding: 16, background: "var(--danger-light)", borderRadius: "var(--radius-sm)" }}>
+                <h4 style={{ color: "var(--danger)", marginBottom: 4 }}>Midterm: Data Structures</h4>
+                <p style={{ fontSize: "0.85rem", fontWeight: "bold", marginBottom: 4 }}>Oct 15, 2026</p>
+                <p style={{ fontSize: "0.8rem", color: "var(--text-muted)" }}>Main Hall • 10:00 AM</p>
+              </div>
+              <div style={{ padding: 16, background: "var(--warning-light)", borderRadius: "var(--radius-sm)" }}>
+                <h4 style={{ color: "var(--warning)", marginBottom: 4 }}>Quiz: Operating Systems</h4>
+                <p style={{ fontSize: "0.85rem", fontWeight: "bold", marginBottom: 4 }}>Oct 18, 2026</p>
+                <p style={{ fontSize: "0.8rem", color: "var(--text-muted)" }}>Room C-102 • 11:00 AM</p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="card">
+            <h2 style={{ marginBottom: 16 }}>Recent Notes & Resources</h2>
+            <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 12 }}>
+              <li style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <span style={{ fontSize: "1.2rem" }}>📄</span>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontWeight: "bold", fontSize: "0.9rem" }}>Chapter 4: Trees & Graphs.pdf</div>
+                  <div style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>Data Structures • Added 2h ago</div>
+                </div>
+                <button className="btn btn-secondary" style={{ padding: "6px 12px", fontSize: "0.8rem" }}>View</button>
+              </li>
+              <li style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <span style={{ fontSize: "1.2rem" }}>📊</span>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontWeight: "bold", fontSize: "0.9rem" }}>Process Scheduling Slides</div>
+                  <div style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>Operating Systems • Added yesterday</div>
+                </div>
+                <button className="btn btn-secondary" style={{ padding: "6px 12px", fontSize: "0.8rem" }}>View</button>
+              </li>
+            </ul>
           </div>
         </div>
 
-        {/* Quick Create */}
-        <div className="card quick-create-card" style={{ animationDelay: "400ms" }}>
-          <span style={{ fontSize: "2.5rem" }}>📝</span>
-          <h3 style={{ marginTop: 12 }}>Quick Create</h3>
-          <p style={{ color: "var(--text-muted)", fontSize: "0.85rem", marginBottom: 16 }}>Start building a new timetable in seconds</p>
-          <Link to="/create" className="btn btn-primary" style={{ width: "100%" }}>Create Schedule</Link>
-        </div>
-
-        {/* Productivity Summary */}
-        <div className="card" style={{ animationDelay: "480ms" }}>
-          <h2 style={{ marginBottom: 4 }}>Productivity</h2>
-          <p style={{ color: "var(--text-muted)", fontSize: "0.85rem", marginBottom: 16 }}>This week's summary</p>
-          <div className="prod-row">
-            <div className="prod-item">
-              <div className="prod-circle" style={{ "--pct": "87%" }}>
-                <span>87%</span>
+        <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+          <div className="card">
+            <h2 style={{ marginBottom: 16 }}>Study Goals (Weekly)</h2>
+            <div style={{ marginBottom: 16 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.85rem", marginBottom: 8 }}>
+                <span>Complete Assignments</span>
+                <span className="text-primary">2/5 Done</span>
               </div>
-              <div className="prod-label">Score</div>
+              <div style={{ width: "100%", height: "8px", background: "var(--bg-secondary)", borderRadius: "4px" }}>
+                <div style={{ width: "40%", height: "100%", background: "var(--primary)", borderRadius: "4px" }}></div>
+              </div>
             </div>
-            <div className="prod-item">
-              <div className="prod-val">42h</div>
-              <div className="prod-label">Study Hours</div>
-            </div>
-            <div className="prod-item">
-              <div className="prod-val">28</div>
-              <div className="prod-label">Tasks Done</div>
+            <div>
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.85rem", marginBottom: 8 }}>
+                <span>Study Hours</span>
+                <span className="text-info">12/20 Hours</span>
+              </div>
+              <div style={{ width: "100%", height: "8px", background: "var(--bg-secondary)", borderRadius: "4px" }}>
+                <div style={{ width: "60%", height: "100%", background: "var(--info)", borderRadius: "4px" }}></div>
+              </div>
             </div>
           </div>
-          <Link to="/analytics" style={{ fontSize: "0.85rem", marginTop: 12, display: "inline-block" }}>View Analytics →</Link>
-        </div>
-      </div>
 
-      {/* Recent Schedules */}
-      <div className="card" style={{ marginTop: 24, animationDelay: "560ms" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
-          <div>
-            <h2 style={{ marginBottom: 2 }}>Recent Timetables</h2>
-            <p style={{ color: "var(--text-muted)", fontSize: "0.85rem" }}>Your most recently updated schedules</p>
+          <div className="card">
+            <h2 style={{ marginBottom: 16 }}>Upcoming Events</h2>
+            <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 12 }}>
+              <li style={{ display: "flex", gap: 12, paddingBottom: 12, borderBottom: "1px solid var(--border-light)" }}>
+                <div style={{ background: "var(--primary-light)", color: "var(--primary)", padding: "8px", borderRadius: "8px", textAlign: "center", minWidth: "45px" }}>
+                  <div style={{ fontSize: "0.75rem", fontWeight: "bold" }}>OCT</div>
+                  <div style={{ fontSize: "1.2rem", fontWeight: "bold" }}>12</div>
+                </div>
+                <div>
+                  <div style={{ fontWeight: "bold", fontSize: "0.95rem" }}>Tech Club Hackathon</div>
+                  <div style={{ fontSize: "0.8rem", color: "var(--text-muted)" }}>Student Center • 09:00 AM</div>
+                </div>
+              </li>
+              <li style={{ display: "flex", gap: 12 }}>
+                <div style={{ background: "var(--info-light)", color: "var(--info)", padding: "8px", borderRadius: "8px", textAlign: "center", minWidth: "45px" }}>
+                  <div style={{ fontSize: "0.75rem", fontWeight: "bold" }}>OCT</div>
+                  <div style={{ fontSize: "1.2rem", fontWeight: "bold" }}>14</div>
+                </div>
+                <div>
+                  <div style={{ fontWeight: "bold", fontSize: "0.95rem" }}>Career Fair 2026</div>
+                  <div style={{ fontSize: "0.8rem", color: "var(--text-muted)" }}>Main Auditorium • 10:00 AM</div>
+                </div>
+              </li>
+            </ul>
           </div>
-          <Link to="/view" className="btn btn-secondary">View All</Link>
-        </div>
-        <div className="schedule-grid">
-          {recentSchedules.map((s, i) => (
-            <div className="schedule-card" key={s.title} style={{ animationDelay: `${640 + i * 80}ms` }}>
-              <div className="schedule-card-header">
-                <h3>{s.title}</h3>
-                <span className={`schedule-tag ${s.tagColor}`}>{s.tag}</span>
-              </div>
-              <p>{s.desc}</p>
-            </div>
-          ))}
-        </div>
-      </div>
 
-      {/* Recent Activity */}
-      <div className="card" style={{ marginTop: 24, animationDelay: "720ms" }}>
-        <h2 style={{ marginBottom: 16 }}>Recent Activity</h2>
-        <div className="activity-list">
-          {activities.map((a, i) => (
-            <div className="activity-item" key={i}>
-              <span className="activity-icon">{a.icon}</span>
-              <div className="activity-info">
-                <span>{a.text}</span>
-                <span className="activity-time">{a.time}</span>
+          <div className="card">
+            <h2 style={{ marginBottom: 16 }}>Recent Activity</h2>
+            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              <div style={{ display: "flex", gap: 12 }}>
+                <span style={{ color: "var(--success)" }}>✓</span>
+                <div>
+                  <p style={{ fontSize: "0.85rem", margin: 0 }}>Submitted assignment <strong>DB Project 1</strong></p>
+                  <p style={{ fontSize: "0.75rem", color: "var(--text-muted)", margin: 0 }}>2 hours ago</p>
+                </div>
+              </div>
+              <div style={{ display: "flex", gap: 12 }}>
+                <span style={{ color: "var(--primary)" }}>+</span>
+                <div>
+                  <p style={{ fontSize: "0.85rem", margin: 0 }}>Added note <strong>Trees & Graphs</strong></p>
+                  <p style={{ fontSize: "0.75rem", color: "var(--text-muted)", margin: 0 }}>4 hours ago</p>
+                </div>
               </div>
             </div>
-          ))}
+          </div>
         </div>
       </div>
     </AppLayout>
