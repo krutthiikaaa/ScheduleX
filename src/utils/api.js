@@ -29,10 +29,10 @@ export const createCourse = (data) => fetch(`${API_URL}/courses`, { method: 'POS
 export const updateCourse = (id, data) => fetch(`${API_URL}/courses/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(res => res.json());
 export const deleteCourse = (id) => fetch(`${API_URL}/courses/${id}`, { method: 'DELETE' }).then(res => res.json());
 
-export const fetchAssignments = () => fetch(`${API_URL}/assignments`).then(res => res.json());
-export const createAssignment = (data) => fetch(`${API_URL}/assignments`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(res => res.json());
-export const updateAssignment = (id, data) => fetch(`${API_URL}/assignments/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(res => res.json());
-export const deleteAssignment = (id) => fetch(`${API_URL}/assignments/${id}`, { method: 'DELETE' }).then(res => res.json());
+export const fetchAssignments = () => fetch(`${API_URL}/assignments`).then(res => res.json()).then(res => res.data || res || []);
+export const createAssignment = (data) => fetch(`${API_URL}/assignments`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(res => res.json()).then(res => res.data || res);
+export const updateAssignment = (id, data) => fetch(`${API_URL}/assignments/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(res => res.json()).then(res => res.data || res);
+export const deleteAssignment = (id) => fetch(`${API_URL}/assignments/${id}`, { method: 'DELETE' }).then(res => res.json()).then(res => res.data || res);
 
 export const fetchResources = () => fetch(`${API_URL}/resources`).then(res => res.json());
 export const createResource = (data) => fetch(`${API_URL}/resources`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(res => res.json());
@@ -52,6 +52,7 @@ export const createStudySession = (data) => fetch(`${API_URL}/study-sessions`, {
 export const updateStudySession = (id, data) => fetch(`${API_URL}/study-sessions/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(res => res.json());
 export const deleteStudySession = (id) => fetch(`${API_URL}/study-sessions/${id}`, { method: 'DELETE' }).then(res => res.json());
 
-export const fetchTimetableEvents = () => fetch(`${API_URL}/timetable`).then(res => res.json());
+export const fetchTimetableEvents = () => fetch(`${API_URL}/timetable`).then(res => res.json()).then(res => res.data || res || []);
 export const createTimetableEvent = (data) => fetch(`${API_URL}/timetable`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(res => res.json());
+export const updateTimetableEvent = (id, data) => fetch(`${API_URL}/timetable/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(res => res.json());
 export const deleteTimetableEvent = (id) => fetch(`${API_URL}/timetable/${id}`, { method: 'DELETE' }).then(res => res.json());

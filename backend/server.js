@@ -19,7 +19,11 @@ app.get('/', (req, res) => {
 
 // API Routes
 const dashboardRoutes = require('./routes/dashboardRoutes');
+const timetableRoutes = require('./routes/timetableRoutes');
+const assignmentRoutes = require('./routes/assignmentRoutes');
 app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/timetable', timetableRoutes);
+app.use('/api/assignments', assignmentRoutes);
 
 const PORT = process.env.PORT || 5000;
 
