@@ -39,18 +39,18 @@ export const createResource = (data) => fetch(`${API_URL}/resources`, { method: 
 export const updateResource = (id, data) => fetch(`${API_URL}/resources/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(res => res.json());
 export const deleteResource = (id) => fetch(`${API_URL}/resources/${id}`, { method: 'DELETE' }).then(res => res.json());
 
-export const fetchTasks = () => fetch(`${API_URL}/tasks`).then(res => res.json());
-export const createTask = (data) => fetch(`${API_URL}/tasks`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(res => res.json());
-export const updateTask = (id, data) => fetch(`${API_URL}/tasks/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(res => res.json());
-export const deleteTask = (id) => fetch(`${API_URL}/tasks/${id}`, { method: 'DELETE' }).then(res => res.json());
+export const fetchTasks = () => fetch(`${API_URL}/tasks`).then(res => res.json()).then(res => res.data || res || []);
+export const createTask = (data) => fetch(`${API_URL}/tasks`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(res => res.json()).then(res => res.data || res);
+export const updateTask = (id, data) => fetch(`${API_URL}/tasks/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(res => res.json()).then(res => res.data || res);
+export const deleteTask = (id) => fetch(`${API_URL}/tasks/${id}`, { method: 'DELETE' }).then(res => res.json()).then(res => res.data || res);
 
-export const fetchFocusSessions = () => fetch(`${API_URL}/focus-sessions`).then(res => res.json());
-export const createFocusSession = (data) => fetch(`${API_URL}/focus-sessions`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(res => res.json());
+export const fetchFocusSessions = () => fetch(`${API_URL}/focus-sessions`).then(res => res.json()).then(res => res.data || res || []);
+export const createFocusSession = (data) => fetch(`${API_URL}/focus-sessions`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(res => res.json()).then(res => res.data || res);
 
-export const fetchStudySessions = () => fetch(`${API_URL}/study-sessions`).then(res => res.json());
-export const createStudySession = (data) => fetch(`${API_URL}/study-sessions`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(res => res.json());
-export const updateStudySession = (id, data) => fetch(`${API_URL}/study-sessions/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(res => res.json());
-export const deleteStudySession = (id) => fetch(`${API_URL}/study-sessions/${id}`, { method: 'DELETE' }).then(res => res.json());
+export const fetchStudySessions = () => fetch(`${API_URL}/study-sessions`).then(res => res.json()).then(res => res.data || res || []);
+export const createStudySession = (data) => fetch(`${API_URL}/study-sessions`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(res => res.json()).then(res => res.data || res);
+export const updateStudySession = (id, data) => fetch(`${API_URL}/study-sessions/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(res => res.json()).then(res => res.data || res);
+export const deleteStudySession = (id) => fetch(`${API_URL}/study-sessions/${id}`, { method: 'DELETE' }).then(res => res.json()).then(res => res.data || res);
 
 export const fetchTimetableEvents = () => fetch(`${API_URL}/timetable`).then(res => res.json()).then(res => res.data || res || []);
 export const createTimetableEvent = (data) => fetch(`${API_URL}/timetable`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(res => res.json());
