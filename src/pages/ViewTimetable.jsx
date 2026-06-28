@@ -40,9 +40,9 @@ function ViewTimetable() {
                 <td><span className="room-badge">{row.room}</span></td>
                 <td>
                   <div style={{ display: "flex", gap: 6 }}>
-                    <button className="table-action-btn" title="View">👁️</button>
-                    <button className="table-action-btn" title="Edit">✏️</button>
-                    <button className="table-action-btn delete" title="Delete">🗑️</button>
+                    <button className="table-action-btn" title="View">️</button>
+                    <button className="table-action-btn" title="Edit">️</button>
+                    <button className="table-action-btn delete" title="Delete">️</button>
                   </div>
                 </td>
               </tr>

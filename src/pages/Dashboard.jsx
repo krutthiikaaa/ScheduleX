@@ -43,18 +43,18 @@ function Dashboard() {
     <AppLayout>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 32 }}>
         <div>
-          <h1 style={{ fontSize: "2rem", marginBottom: 4 }}>Good Morning, {dashboard?.userName ?? "User"} 👋</h1>
+          <h1 style={{ fontSize: "2rem", marginBottom: 4 }}>Good Morning, {dashboard?.userName ?? "User"} </h1>
           <p style={{ color: "var(--text-muted)" }}>{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</p>
         </div>
         <div style={{ display: "flex", gap: 12 }}>
-          <Link to="/focus" className="btn btn-secondary">🍅 Focus Mode</Link>
+          <Link to="/focus" className="btn btn-secondary"> Focus Mode</Link>
           <Link to="/habits" className="btn btn-primary">+ Track Habits</Link>
         </div>
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 24, marginBottom: 32 }}>
         <div className="card hover-card" style={{ borderLeft: "4px solid var(--primary)" }}>
-          <h3 style={{ fontSize: "0.9rem", color: "var(--text-muted)", marginBottom: 8 }}>Habit Streak 🔥</h3>
+          <h3 style={{ fontSize: "0.9rem", color: "var(--text-muted)", marginBottom: 8 }}>Habit Streak </h3>
           <p style={{ fontSize: "1.5rem", fontWeight: "bold" }}>12 Days</p>
         </div>
         <div className="card hover-card" style={{ borderLeft: "4px solid var(--warning)" }}>
@@ -141,6 +141,40 @@ function Dashboard() {
               </div>
               <div style={{ width: "100%", height: "8px", background: "var(--bg-secondary)", borderRadius: "4px" }}>
                 <div style={{ width: `${Math.min(((dashboard?.weeklyFocus?.completedHours ?? 0) / (dashboard?.weeklyFocus?.goalHours || 10)) * 100, 100)}%`, height: "100%", background: "var(--primary)", borderRadius: "4px", transition: "width 0.5s ease" }}></div>
+              </div>
+            </div>
+          </div>
+
+          <div className="card">
+            <h2 style={{ margin: 0, marginBottom: 16, fontSize: "1.1rem" }}>Weekly Goals</h2>
+            
+            <div style={{ marginBottom: 16 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.85rem", marginBottom: 8 }}>
+                <span style={{ color: "var(--text-muted)" }}>Study ({dashboard?.weeklyGoals?.studyHoursGoal || 15} hrs)</span>
+                <span style={{ color: "var(--success)", fontWeight: 600 }}>{dashboard?.weeklyGoals?.studyHoursCompleted || 8}</span>
+              </div>
+              <div style={{ width: "100%", height: "6px", background: "var(--bg-secondary)", borderRadius: "4px" }}>
+                <div style={{ width: `${Math.min(((dashboard?.weeklyGoals?.studyHoursCompleted || 8) / (dashboard?.weeklyGoals?.studyHoursGoal || 15)) * 100, 100)}%`, height: "100%", background: "var(--success)", borderRadius: "4px", transition: "width 0.5s ease" }}></div>
+              </div>
+            </div>
+            
+            <div style={{ marginBottom: 16 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.85rem", marginBottom: 8 }}>
+                <span style={{ color: "var(--text-muted)" }}>Assignments ({dashboard?.weeklyGoals?.assignmentGoal || 5})</span>
+                <span style={{ color: "var(--warning)", fontWeight: 600 }}>{dashboard?.weeklyGoals?.assignmentCompleted || 2}</span>
+              </div>
+              <div style={{ width: "100%", height: "6px", background: "var(--bg-secondary)", borderRadius: "4px" }}>
+                <div style={{ width: `${Math.min(((dashboard?.weeklyGoals?.assignmentCompleted || 2) / (dashboard?.weeklyGoals?.assignmentGoal || 5)) * 100, 100)}%`, height: "100%", background: "var(--warning)", borderRadius: "4px", transition: "width 0.5s ease" }}></div>
+              </div>
+            </div>
+
+            <div>
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.85rem", marginBottom: 8 }}>
+                <span style={{ color: "var(--text-muted)" }}>Tasks ({dashboard?.weeklyGoals?.taskGoal || 10})</span>
+                <span style={{ color: "var(--primary)", fontWeight: 600 }}>{dashboard?.weeklyGoals?.taskCompleted || 6}</span>
+              </div>
+              <div style={{ width: "100%", height: "6px", background: "var(--bg-secondary)", borderRadius: "4px" }}>
+                <div style={{ width: `${Math.min(((dashboard?.weeklyGoals?.taskCompleted || 6) / (dashboard?.weeklyGoals?.taskGoal || 10)) * 100, 100)}%`, height: "100%", background: "var(--primary)", borderRadius: "4px", transition: "width 0.5s ease" }}></div>
               </div>
             </div>
           </div>

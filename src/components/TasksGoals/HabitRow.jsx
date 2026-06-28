@@ -25,7 +25,7 @@ const HabitRow = ({ habit }) => {
             style={{ background: 'none', border: 'none', cursor: 'pointer', opacity: 0.6, transition: 'opacity 0.2s', fontSize: '1rem' }}
             title="Notes"
           >
-            📝
+            
           </button>
         </div>
         {habit.days.map((checked, index) => (

@@ -186,9 +186,9 @@ function Timetable() {
 
         <div style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
           <div style={{ display: "flex", alignItems: "center", background: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius-btn)", padding: "2px", boxShadow: "var(--shadow-sm)" }}>
-            <button className="btn" style={{ padding: "6px 14px", background: "transparent", border: "none", cursor: "pointer", color: "var(--text-heading)", fontSize: "0.9rem" }} onClick={() => shiftWeek(-7)}>◀</button>
+            <button className="btn" style={{ padding: "6px 14px", background: "transparent", border: "none", cursor: "pointer", color: "var(--text-heading)", fontSize: "0.9rem" }} onClick={() => shiftWeek(-7)}></button>
             <div style={{ width: "1px", height: "18px", background: "var(--border)" }}></div>
-            <button className="btn" style={{ padding: "6px 14px", background: "transparent", border: "none", cursor: "pointer", color: "var(--text-heading)", fontSize: "0.9rem" }} onClick={() => shiftWeek(7)}>▶</button>
+            <button className="btn" style={{ padding: "6px 14px", background: "transparent", border: "none", cursor: "pointer", color: "var(--text-heading)", fontSize: "0.9rem" }} onClick={() => shiftWeek(7)}></button>
           </div>
 
           <span style={{ fontWeight: 700, fontSize: "1.05rem", minWidth: 160, textAlign: "center", color: "var(--text-heading)" }}>
@@ -305,7 +305,7 @@ function Timetable() {
               </div>
 
               <div style={{ display: "flex", alignItems: "flex-start", gap: 12, marginTop: 4 }}>
-                <div style={{ fontSize: "1.1rem", paddingTop: 4, color: "var(--text-muted)" }}>🕒</div>
+                <div style={{ fontSize: "1.1rem", paddingTop: 4, color: "var(--text-muted)" }}></div>
                 <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 8 }}>
                   <select
                     className="form-input form-select"

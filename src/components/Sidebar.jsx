@@ -6,14 +6,14 @@ function Sidebar() {
   const { logout } = useAuth();
 
   const navItems = [
-    { path: "/dashboard", label: "Dashboard", icon: "🏠" },
-    { path: "/timetable", label: "Timetable", icon: "📅" },
-    { path: "/resources", label: "Resources", icon: "📂" },
-    { path: "/assignments", label: "Assignments", icon: "📝" },
-    { path: "/habits", label: "Habit Tracker", icon: "✅" },
-    { path: "/focus", label: "Focus Mode", icon: "🍅" },
-    { path: "/analytics", label: "Analytics", icon: "📈" },
-    { path: "/profile", label: "Profile", icon: "👤" },
+    { path: "/dashboard", label: "Dashboard", icon: "" },
+    { path: "/timetable", label: "Timetable", icon: "" },
+    { path: "/resources", label: "Resources", icon: "" },
+    { path: "/assignments", label: "Assignments", icon: "" },
+    { path: "/habits", label: "Habit Tracker", icon: "" },
+    { path: "/focus", label: "Focus Mode", icon: "" },
+    { path: "/analytics", label: "Analytics", icon: "" },
+    { path: "/profile", label: "Profile", icon: "" },
   ];
 
   return (

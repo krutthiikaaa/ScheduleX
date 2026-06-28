@@ -102,23 +102,23 @@ function Profile() {
           <h3 style={{ marginBottom: 24, paddingBottom: 16, borderBottom: "1px solid var(--border-light)" }}>Statistics</h3>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 16 }}>
             <div style={{ padding: 16, background: "var(--bg-secondary)", borderRadius: "var(--radius-sm)" }}>
-              <div style={{ fontSize: "0.85rem", color: "var(--text-muted)", marginBottom: 8 }}>Study Streak 🔥</div>
+              <div style={{ fontSize: "0.85rem", color: "var(--text-muted)", marginBottom: 8 }}>Study Streak </div>
               <div style={{ fontSize: "1.5rem", fontWeight: "bold" }}>12 Days</div>
             </div>
             <div style={{ padding: 16, background: "var(--bg-secondary)", borderRadius: "var(--radius-sm)" }}>
-              <div style={{ fontSize: "0.85rem", color: "var(--text-muted)", marginBottom: 8 }}>Total Study Hours ⏱️</div>
+              <div style={{ fontSize: "0.85rem", color: "var(--text-muted)", marginBottom: 8 }}>Total Study Hours ️</div>
               <div style={{ fontSize: "1.5rem", fontWeight: "bold" }}>{Math.round(focusStats.minutes / 60)} Hours</div>
             </div>
             <div style={{ padding: 16, background: "var(--bg-secondary)", borderRadius: "var(--radius-sm)" }}>
-              <div style={{ fontSize: "0.85rem", color: "var(--text-muted)", marginBottom: 8 }}>Completed Assignments ✅</div>
+              <div style={{ fontSize: "0.85rem", color: "var(--text-muted)", marginBottom: 8 }}>Completed Assignments </div>
               <div style={{ fontSize: "1.5rem", fontWeight: "bold" }}>{assignmentStats}</div>
             </div>
             <div style={{ padding: 16, background: "var(--bg-secondary)", borderRadius: "var(--radius-sm)" }}>
-              <div style={{ fontSize: "0.85rem", color: "var(--text-muted)", marginBottom: 8 }}>Pomodoro Sessions 🍅</div>
+              <div style={{ fontSize: "0.85rem", color: "var(--text-muted)", marginBottom: 8 }}>Pomodoro Sessions </div>
               <div style={{ fontSize: "1.5rem", fontWeight: "bold" }}>{focusStats.count}</div>
             </div>
             <div style={{ padding: 16, background: "var(--bg-secondary)", borderRadius: "var(--radius-sm)" }}>
-              <div style={{ fontSize: "0.85rem", color: "var(--text-muted)", marginBottom: 8 }}>Weekly Productivity 📈</div>
+              <div style={{ fontSize: "0.85rem", color: "var(--text-muted)", marginBottom: 8 }}>Weekly Productivity </div>
               <div style={{ fontSize: "1.5rem", fontWeight: "bold" }}>85%</div>
             </div>
           </div>

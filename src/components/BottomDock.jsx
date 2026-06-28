@@ -24,11 +24,11 @@ function BottomDock() {
   }, []);
 
   const items = [
-    { path: "/dashboard", icon: "🏠", label: "Dashboard" },
-    { path: "/view", icon: "📅", label: "Schedules" },
-    { path: "/create", icon: "➕", label: "Create" },
-    { path: "/analytics", icon: "📊", label: "Analytics" },
-    { path: "/profile", icon: "👤", label: "Profile" },
+    { path: "/dashboard", icon: "", label: "Dashboard" },
+    { path: "/view", icon: "", label: "Schedules" },
+    { path: "/create", icon: "", label: "Create" },
+    { path: "/analytics", icon: "", label: "Analytics" },
+    { path: "/profile", icon: "", label: "Profile" },
   ];
 
   return (

@@ -23,7 +23,7 @@ const UserSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true }
 }, { timestamps: true });
-const User = mongoose.model('User', UserSchema);
+const User = mongoose.models.User || mongoose.model('User', UserSchema);
 
 const AssignmentSchema = new mongoose.Schema({
   title: String,
@@ -33,7 +33,7 @@ const AssignmentSchema = new mongoose.Schema({
   status: { type: String, enum: ['Pending', 'In Progress', 'Completed'], default: 'Pending' },
   description: String
 }, { timestamps: true });
-const Assignment = mongoose.model('Assignment', AssignmentSchema);
+const Assignment = mongoose.models.Assignment || mongoose.model('Assignment', AssignmentSchema);
 
 const ResourceSchema = new mongoose.Schema({
   title: String,
@@ -42,7 +42,7 @@ const ResourceSchema = new mongoose.Schema({
   url: String,
   isFavorite: { type: Boolean, default: false }
 }, { timestamps: true });
-const Resource = mongoose.model('Resource', ResourceSchema);
+const Resource = mongoose.models.Resource || mongoose.model('Resource', ResourceSchema);
 
 const TaskSchema = new mongoose.Schema({
   title: String,
@@ -52,7 +52,7 @@ const TaskSchema = new mongoose.Schema({
   isDailyGoal: { type: Boolean, default: false },
   isWeeklyGoal: { type: Boolean, default: false }
 }, { timestamps: true });
-const Task = mongoose.model('Task', TaskSchema);
+const Task = mongoose.models.Task || mongoose.model('Task', TaskSchema);
 
 const FocusSessionSchema = new mongoose.Schema({
   durationMinutes: Number,
@@ -60,7 +60,7 @@ const FocusSessionSchema = new mongoose.Schema({
   taskId: { type: mongoose.Schema.Types.ObjectId, ref: 'Task' },
   date: { type: Date, default: Date.now }
 }, { timestamps: true });
-const FocusSession = mongoose.model('FocusSession', FocusSessionSchema);
+const FocusSession = mongoose.models.FocusSession || mongoose.model('FocusSession', FocusSessionSchema);
 
 const StudySessionSchema = new mongoose.Schema({
   subject: String,
@@ -69,7 +69,7 @@ const StudySessionSchema = new mongoose.Schema({
   durationMinutes: Number,
   status: { type: String, enum: ['Scheduled', 'Completed', 'Missed'], default: 'Scheduled' }
 }, { timestamps: true });
-const StudySession = mongoose.model('StudySession', StudySessionSchema);
+const StudySession = mongoose.models.StudySession || mongoose.model('StudySession', StudySessionSchema);
 
 const TimetableEventSchema = new mongoose.Schema({
   subject: String,
@@ -78,7 +78,7 @@ const TimetableEventSchema = new mongoose.Schema({
   endTime: String,
   venue: String
 }, { timestamps: true });
-const TimetableEvent = mongoose.model('TimetableEvent', TimetableEventSchema);
+const TimetableEvent = mongoose.models.TimetableEvent || mongoose.model('TimetableEvent', TimetableEventSchema);
 
 // --- GENERIC CRUD UTILITY ---
 const createCrudRoutes = (model, path) => {

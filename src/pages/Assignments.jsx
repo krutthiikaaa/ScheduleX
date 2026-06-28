@@ -222,7 +222,7 @@ function Assignments() {
               </div>
 
               <div>
-                <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 600, color: "var(--text-heading)", marginBottom: 8 }}>📅 Due Date</label>
+                <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 600, color: "var(--text-heading)", marginBottom: 8 }}> Due Date</label>
                 
                 {/* Quick preset buttons */}
                 <div style={{ display: "flex", gap: 8, marginBottom: 12, flexWrap: "wrap" }}>
@@ -319,7 +319,7 @@ function Assignments() {
               </div>
 
               <div>
-                <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 600, color: "var(--text-heading)", marginBottom: 6 }}>⚡ Priority Level</label>
+                <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 600, color: "var(--text-heading)", marginBottom: 6 }}> Priority Level</label>
                 <select className="form-input form-select" style={{ fontWeight: 500 }} value={newAssignment.priority} onChange={e => setNewAssignment({...newAssignment, priority: e.target.value})}>
                   <option value="High">High Priority</option>
                   <option value="Medium">Medium Priority</option>

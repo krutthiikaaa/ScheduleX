@@ -63,29 +63,42 @@
   width: 100%;
   aspect-ratio: 1;
   border-radius: 4px;
-  background: var(--bg-secondary);
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
   cursor: pointer;
   transition: all 0.2s var(--ease-out);
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 1;
 }
 
 .habit-cell.checked {
   transform: scale(1.05);
+  border-color: transparent !important;
 }
 
 .habit-cell:hover {
-  filter: brightness(0.9);
+  border-color: rgba(214, 90, 49, 0.4);
+  background: rgba(214, 90, 49, 0.02);
   transform: scale(1.1);
   z-index: 2;
 }
 
-.week-1 { background-color: rgba(214, 90, 49, 0.05); }
-.week-2 { background-color: rgba(78, 143, 106, 0.05); }
-.week-3 { background-color: rgba(59, 130, 246, 0.05); }
-.week-4 { background-color: rgba(240, 165, 0, 0.05); }
+.week-1 { background-color: rgba(214, 90, 49, 0.05); } /* Light Terracotta */
+.week-2 { background-color: rgba(107, 98, 90, 0.05); } /* Light Stone */
+.week-3 { background-color: rgba(122, 139, 106, 0.06); } /* Light Sage */
+.week-4 { background-color: rgba(200, 180, 160, 0.07); } /* Light Warm Beige */
+
+.habit-tracker-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 16px;
+  position: relative;
+}
 
 .stat-card {
   padding: 24px;
