@@ -11,7 +11,6 @@ function Sidebar() {
     { path: "/assignments", label: "Assignments", icon: "" },
     { path: "/habits", label: "Habit Tracker", icon: "" },
     { path: "/focus", label: "Focus Mode", icon: "" },
-    { path: "/analytics", label: "Analytics", icon: "" },
     { path: "/resources", label: "Resources", icon: "" },
     { path: "/profile", label: "Profile", icon: "" },
   ];

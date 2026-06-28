@@ -12,7 +12,6 @@ import Assignments from "./pages/Assignments";
 import Resources from "./pages/Resources";
 import HabitTracker from "./pages/TasksGoals";
 import FocusMode from "./pages/FocusMode";
-import Analytics from "./pages/Analytics";
 import Profile from "./pages/Profile";
 
 function App() {
@@ -32,7 +31,6 @@ function App() {
               <Route path="/resources" element={<ProtectedRoute><Resources /></ProtectedRoute>} />
               <Route path="/habits" element={<ProtectedRoute><HabitTracker /></ProtectedRoute>} />
               <Route path="/focus" element={<ProtectedRoute><FocusMode /></ProtectedRoute>} />
-              <Route path="/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
               <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
             </Routes>
           </FocusProvider>

@@ -27,7 +27,7 @@ function BottomDock() {
     { path: "/dashboard", icon: "", label: "Dashboard" },
     { path: "/view", icon: "", label: "Schedules" },
     { path: "/create", icon: "", label: "Create" },
-    { path: "/analytics", icon: "", label: "Analytics" },
+    { path: "/resources", icon: "", label: "Resources" },
     { path: "/profile", icon: "", label: "Profile" },
   ];
 
