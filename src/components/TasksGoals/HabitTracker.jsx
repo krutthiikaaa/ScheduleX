@@ -129,13 +129,6 @@ const HabitTracker = () => {
           <HabitRow key={habit.id} habit={habit} />
         ))}
       </div>
-      
-      <div style={{ display: 'flex', gap: 16, marginTop: 16, fontSize: '0.8rem', color: 'var(--text-muted)', justifyContent: 'flex-end', flexWrap: 'wrap' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><div className="habit-cell week-1" style={{ width: 16, height: 16 }}></div> Week 1 (1-7)</div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><div className="habit-cell week-2" style={{ width: 16, height: 16 }}></div> Week 2 (8-14)</div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><div className="habit-cell week-3" style={{ width: 16, height: 16 }}></div> Week 3 (15-21)</div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><div className="habit-cell week-4" style={{ width: 16, height: 16 }}></div> Week 4 (22-{daysInMonth})</div>
-      </div>
 
       {showAddModal && (
         <div className="modern-modal-backdrop">
