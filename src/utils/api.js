@@ -56,3 +56,13 @@ export const fetchTimetableEvents = () => fetch(`${API_URL}/timetable`).then(res
 export const createTimetableEvent = (data) => fetch(`${API_URL}/timetable`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(res => res.json());
 export const updateTimetableEvent = (id, data) => fetch(`${API_URL}/timetable/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(res => res.json());
 export const deleteTimetableEvent = (id) => fetch(`${API_URL}/timetable/${id}`, { method: 'DELETE' }).then(res => res.json());
+
+export const fetchHabits = () => fetch(`${API_URL}/habits`).then(res => res.json()).then(res => res.data || res || []);
+export const createHabit = (data) => fetch(`${API_URL}/habits`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(res => res.json()).then(res => res.data || res);
+export const updateHabitApi = (id, data) => fetch(`${API_URL}/habits/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(res => res.json()).then(res => res.data || res);
+export const deleteHabitApi = (id) => fetch(`${API_URL}/habits/${id}`, { method: 'DELETE' }).then(res => res.json());
+
+export const fetchGoals = () => fetch(`${API_URL}/goals`).then(res => res.json()).then(res => res.data || res || []);
+export const createGoal = (data) => fetch(`${API_URL}/goals`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(res => res.json()).then(res => res.data || res);
+export const updateGoalApi = (id, data) => fetch(`${API_URL}/goals/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(res => res.json()).then(res => res.data || res);
+export const deleteGoalApi = (id) => fetch(`${API_URL}/goals/${id}`, { method: 'DELETE' }).then(res => res.json());

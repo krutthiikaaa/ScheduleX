@@ -8,23 +8,52 @@ const User = require('./models/User');
 const Resource = require('./models/Resource');
 const Assignment = require('./models/Assignment');
 const Task = require('./models/Task');
+const Habit = require('./models/Habit');
+const Goal = require('./models/Goal');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/schedulex';
-
-mongoose.connect(MONGODB_URI)
-  .then(() => console.log('Connected to MongoDB'))
-  .catch(err => console.error('MongoDB connection error:', err));
+const connectDB = require('./config/db');
+connectDB();
 
 
 // --- GENERIC CRUD UTILITY ---
 const createCrudRoutes = (model, path) => {
   app.get(path, async (req, res) => {
     try {
-      const data = await model.find().populate(model.schema.paths.taskId ? 'taskId' : '');
+      const count = await model.countDocuments();
+      if (count === 0) {
+        if (path === '/api/habits') {
+          const initialHabits = [
+            { title: "Wake Up Early", category: "Health", history: {}, notes: "Felt great this week." },
+            { title: "Read 20 Pages", category: "Reading", history: {}, notes: "" },
+            { title: "DSA Practice", category: "Coding", history: {}, notes: "Completed Binary Search problems." },
+            { title: "Exercise", category: "Fitness", history: {}, notes: "Running 5k" },
+            { title: "Drink Water", category: "Health", history: {}, notes: "" },
+            { title: "Journal", category: "Personal", history: {}, notes: "" },
+            { title: "Revise Notes", category: "Study", history: {}, notes: "" },
+            { title: "Sleep Before 11 PM", category: "Health", history: {}, notes: "" }
+          ];
+          await model.insertMany(initialHabits);
+        } else if (path === '/api/goals') {
+          const initialGoals = [
+            { title: "Complete OS Assignment", type: "Weekly", week: 1, completed: true, priority: "High" },
+            { title: "Read 2 Research Papers", type: "Weekly", week: 1, completed: false, priority: "Medium" },
+            { title: "Solve 15 LeetCode Problems", type: "Weekly", week: 2, completed: false, priority: "High" },
+            { title: "Gym 4 times a week", type: "Weekly", week: 2, completed: false, priority: "Medium" },
+            { title: "Finish DBMS Project Phase 1", type: "Monthly", deadline: "June 15", priority: "High", progress: 75 },
+            { title: "Read 1 Non-fiction Book", type: "Monthly", deadline: "June 30", priority: "Medium", progress: 40 }
+          ];
+          await model.insertMany(initialGoals);
+        }
+      }
+      let query = model.find();
+      if (model.schema.paths.taskId) {
+        query = query.populate('taskId');
+      }
+      const data = await query.sort({ _id: 1 });
       res.json(data);
     } catch (err) { res.status(500).json({ error: err.message }); }
   });
@@ -54,6 +83,8 @@ const createCrudRoutes = (model, path) => {
 
 // --- REGISTER ROUTES ---
 createCrudRoutes(Resource, '/api/resources');
+createCrudRoutes(Habit, '/api/habits');
+createCrudRoutes(Goal, '/api/goals');
 
 // --- AUTH ROUTES ---
 app.post('/api/auth/register', async (req, res) => {

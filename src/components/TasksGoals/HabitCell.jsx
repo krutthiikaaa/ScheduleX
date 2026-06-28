@@ -23,6 +23,11 @@ const HabitCell = ({ dayIndex, checked, habitId }) => {
       }}
       onClick={handleToggle}
     >
+      {checked && (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2F2A27" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" style={{ animation: 'fadeIn 0.2s ease' }}>
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      )}
     </div>
   );
 };

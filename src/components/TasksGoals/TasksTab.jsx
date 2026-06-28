@@ -3,18 +3,29 @@ import { useTasksGoals } from '../../context/TasksGoalsContext';
 import TaskCard from './TaskCard';
 
 const TasksTab = () => {
-  const { tasks } = useTasksGoals();
+  const { tasks = [], addTask } = useTasksGoals();
   const [filter, setFilter] = useState('All');
+  const [showModal, setShowModal] = useState(false);
+  const [newTitle, setNewTitle] = useState('');
+  const [newCategory, setNewCategory] = useState('Academic');
   
   const categories = ['All', 'Academic', 'Study', 'Coding', 'Personal'];
   const filteredTasks = tasks.filter(t => filter === 'All' || t.category === filter);
   
   const progress = tasks.length ? Math.round((tasks.filter(t => t.status === 'Completed').length / tasks.length) * 100) : 0;
 
+  const handleCreateTask = (e) => {
+    e.preventDefault();
+    if (!newTitle.trim()) return;
+    addTask({ title: newTitle.trim(), category: newCategory, priority: 'Medium' });
+    setNewTitle('');
+    setShowModal(false);
+  };
+
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 2.5fr', gap: 24, animation: 'fadeIn 0.3s ease' }}>
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 2.5fr', gap: 24, animation: 'fadeIn 0.3s ease', position: 'relative' }}>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-        <div className="card">
+        <div className="card" style={{ padding: 24 }}>
           <h2 style={{ marginBottom: 16 }}>Task Progress</h2>
           <div style={{ marginBottom: 16 }}>
             <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.85rem", marginBottom: 8 }}>
@@ -33,7 +44,7 @@ const TasksTab = () => {
         </div>
       </div>
       
-      <div className="card">
+      <div className="card" style={{ padding: 24 }}>
         <div style={{ display: "flex", justifyContent: 'space-between', alignItems: 'center', marginBottom: 24, borderBottom: "1px solid var(--border-light)", paddingBottom: 16 }}>
           <div style={{ display: 'flex', gap: 16 }}>
             {categories.map(f => (
@@ -51,7 +62,7 @@ const TasksTab = () => {
               </span>
             ))}
           </div>
-          <button className="btn btn-primary" style={{ padding: '6px 16px', fontSize: '0.9rem' }}>+ Add Task</button>
+          <button onClick={() => setShowModal(true)} className="btn btn-primary" style={{ padding: '6px 16px', fontSize: '0.9rem' }}>+ Add Task</button>
         </div>
         
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -64,6 +75,55 @@ const TasksTab = () => {
           )}
         </div>
       </div>
+
+      {showModal && (
+        <div className="modern-modal-backdrop">
+          <div className="modern-modal-card">
+            <div className="modern-modal-header">
+              <div>
+                <h2 className="modern-modal-title">Add New Task</h2>
+                <div className="modern-modal-subtitle">Create a task to track your work</div>
+              </div>
+              <button type="button" className="modern-close-btn" onClick={() => setShowModal(false)}>×</button>
+            </div>
+
+            <form onSubmit={handleCreateTask} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+              <div className="modern-form-group">
+                <label className="modern-label">Task Title</label>
+                <input 
+                  type="text" 
+                  className="modern-input" 
+                  placeholder="e.g. Finish OS Homework"
+                  value={newTitle}
+                  onChange={e => setNewTitle(e.target.value)}
+                  autoFocus
+                />
+              </div>
+
+              <div className="modern-form-group">
+                <label className="modern-label">Category</label>
+                <select 
+                  className="modern-input" 
+                  value={newCategory}
+                  onChange={e => setNewCategory(e.target.value)}
+                >
+                  <option value="Academic">Academic</option>
+                  <option value="Study">Study</option>
+                  <option value="Coding">Coding</option>
+                  <option value="Personal">Personal</option>
+                </select>
+              </div>
+
+              <div className="modern-modal-actions" style={{ justifyContent: 'flex-end' }}>
+                <div style={{ display: "flex", gap: 12 }}>
+                  <button type="button" className="modern-btn-cancel" onClick={() => setShowModal(false)}>Cancel</button>
+                  <button type="submit" className="modern-btn-save">Add Task</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -2,11 +2,11 @@ import React from 'react';
 import { useTasksGoals } from '../../context/TasksGoalsContext';
 
 const HabitStatistics = () => {
-  const { habits } = useTasksGoals();
+  const { habits, daysInMonth = 31 } = useTasksGoals();
   
   // Mock calculations
-  const totalChecks = habits.reduce((acc, habit) => acc + habit.days.filter(d => d).length, 0);
-  const totalPossible = habits.length * 31;
+  const totalChecks = habits.reduce((acc, habit) => acc + habit.days.slice(0, daysInMonth).filter(d => d).length, 0);
+  const totalPossible = habits.length * daysInMonth;
   const completionRate = Math.round((totalChecks / totalPossible) * 100) || 0;
   
   return (
