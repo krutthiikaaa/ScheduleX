@@ -33,23 +33,23 @@ function HabitTracker() {
 
         {/* Statistics Cards */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 16, marginBottom: 24 }}>
-          <div className="stat-card" style={{ borderTop: '4px solid #BFAF9E' }}>
+          <div className="stat-card" style={{ borderTop: '4px solid #E5D5BE' }}>
             <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Completion</div>
             <div style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>{completionRate}%</div>
           </div>
-          <div className="stat-card" style={{ borderTop: '4px solid #D65A31' }}>
+          <div className="stat-card" style={{ borderTop: '4px solid #E7A07E' }}>
             <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Completed Days</div>
             <div style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>{totalChecks}</div>
           </div>
-          <div className="stat-card" style={{ borderTop: '4px solid #70798A' }}>
+          <div className="stat-card" style={{ borderTop: '4px solid #D7B49E' }}>
             <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Missed Days</div>
             <div style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>{totalPossible - totalChecks}</div>
           </div>
-          <div className="stat-card" style={{ borderTop: '4px solid #D65A31' }}>
+          <div className="stat-card" style={{ borderTop: '4px solid #B7C5A3' }}>
             <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Current Streak</div>
             <div style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>12 Days</div>
           </div>
-          <div className="stat-card" style={{ borderTop: '4px solid #70798A' }}>
+          <div className="stat-card" style={{ borderTop: '4px solid #E5D5BE' }}>
             <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Longest Streak</div>
             <div style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>24 Days</div>
           </div>
@@ -59,7 +59,7 @@ function HabitTracker() {
         <div className="card" style={{ padding: 24, overflowX: 'auto' }}>
           <div className="habit-tracker-grid" style={{ minWidth: 900, position: 'relative' }}>
             {/* Week Column Backgrounds */}
-            <div style={{ position: 'absolute', top: 0, bottom: 0, left: 204, right: 0, display: 'grid', gridTemplateColumns: 'repeat(31, 1fr)', gap: 4, zIndex: 0, pointerEvents: 'none' }}>
+            <div style={{ position: 'absolute', top: 0, bottom: 0, left: 244, right: 0, display: 'grid', gridTemplateColumns: 'repeat(31, 1fr)', gap: 4, zIndex: 0, pointerEvents: 'none' }}>
               <div className="week-1" style={{ gridColumn: 'span 7', borderRadius: 4, margin: '-4px 0', borderRight: '2px solid rgba(156, 163, 175, 0.2)' }}></div>
               <div className="week-2" style={{ gridColumn: 'span 7', borderRadius: 4, margin: '-4px 0', borderRight: '2px solid rgba(156, 163, 175, 0.2)' }}></div>
               <div className="week-3" style={{ gridColumn: 'span 7', borderRadius: 4, margin: '-4px 0', borderRight: '2px solid rgba(156, 163, 175, 0.2)' }}></div>
@@ -67,11 +67,11 @@ function HabitTracker() {
             </div>
             
             <div className="habit-header-row" style={{ position: 'relative', zIndex: 1, marginBottom: 8, paddingBottom: 8, borderBottom: '1px solid var(--border-light)' }}>
-              <div style={{ textAlign: 'left', paddingLeft: 8 }}>Habit</div>
-              <div style={{ gridColumn: 'span 7', borderRadius: 4, padding: '4px 0' }}>Week 1</div>
-              <div style={{ gridColumn: 'span 7', borderRadius: 4, padding: '4px 0' }}>Week 2</div>
-              <div style={{ gridColumn: 'span 7', borderRadius: 4, padding: '4px 0' }}>Week 3</div>
-              <div style={{ gridColumn: 'span 10', borderRadius: 4, padding: '4px 0' }}>Week 4</div>
+              <div style={{ textAlign: 'left', paddingLeft: 16 }}>Habit</div>
+              <div style={{ gridColumn: 'span 7', borderRadius: 4, padding: '4px 0', background: '#E7A07E', color: 'white' }}>Week 1</div>
+              <div style={{ gridColumn: 'span 7', borderRadius: 4, padding: '4px 0', background: '#D7B49E', color: 'white' }}>Week 2</div>
+              <div style={{ gridColumn: 'span 7', borderRadius: 4, padding: '4px 0', background: '#B7C5A3', color: 'white' }}>Week 3</div>
+              <div style={{ gridColumn: 'span 10', borderRadius: 4, padding: '4px 0', background: '#E5D5BE', color: '#2F2A27' }}>Week 4</div>
             </div>
             
             <div className="habit-header-row">
@@ -91,7 +91,7 @@ function HabitTracker() {
               })}
             </div>
             
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 8 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', marginTop: 8 }}>
               {habits.map(habit => (
                 <HabitRow key={habit.id} habit={habit} />
               ))}
@@ -110,7 +110,7 @@ function HabitTracker() {
                   <span style={{ fontWeight: 'bold' }}>{dailyProgress}%</span>
                 </div>
                 <div className="progress-bar">
-                  <div className="progress-fill" style={{ width: `${dailyProgress}%`, background: '#D65A31' }}></div>
+                  <div className="progress-fill" style={{ width: `${dailyProgress}%`, background: '#E7A07E' }}></div>
                 </div>
               </div>
               
@@ -120,7 +120,7 @@ function HabitTracker() {
                   <span style={{ fontWeight: 'bold' }}>{weeklyProgress}%</span>
                 </div>
                 <div className="progress-bar">
-                  <div className="progress-fill" style={{ width: `${weeklyProgress}%`, background: '#BFAF9E' }}></div>
+                  <div className="progress-fill" style={{ width: `${weeklyProgress}%`, background: '#D7B49E' }}></div>
                 </div>
               </div>
               
@@ -130,7 +130,7 @@ function HabitTracker() {
                   <span style={{ fontWeight: 'bold' }}>{monthlyProgress}%</span>
                 </div>
                 <div className="progress-bar">
-                  <div className="progress-fill" style={{ width: `${monthlyProgress}%`, background: '#70798A' }}></div>
+                  <div className="progress-fill" style={{ width: `${monthlyProgress}%`, background: '#B7C5A3' }}></div>
                 </div>
               </div>
             </div>
@@ -142,7 +142,7 @@ function HabitTracker() {
                   <span style={{ fontWeight: 'bold' }}>{completionRate}%</span>
                 </div>
                 <div className="progress-bar">
-                  <div className="progress-fill" style={{ width: `${completionRate}%`, background: '#BFAF9E' }}></div>
+                  <div className="progress-fill" style={{ width: `${completionRate}%`, background: '#E5D5BE' }}></div>
                 </div>
               </div>
               
@@ -152,7 +152,7 @@ function HabitTracker() {
                   <span style={{ fontWeight: 'bold' }}>12 / 30 Days</span>
                 </div>
                 <div className="progress-bar">
-                  <div className="progress-fill" style={{ width: `40%`, background: '#D65A31' }}></div>
+                  <div className="progress-fill" style={{ width: `40%`, background: '#B7C5A3' }}></div>
                 </div>
               </div>
               
@@ -162,7 +162,7 @@ function HabitTracker() {
                   <span style={{ fontWeight: 'bold' }}>24 / 30 Days</span>
                 </div>
                 <div className="progress-bar">
-                  <div className="progress-fill" style={{ width: `80%`, background: '#70798A' }}></div>
+                  <div className="progress-fill" style={{ width: `80%`, background: '#E5D5BE' }}></div>
                 </div>
               </div>
             </div>
