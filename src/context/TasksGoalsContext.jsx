@@ -1,8 +1,6 @@
 import { createContext, useState, useContext, useEffect } from "react";
 import { 
-  fetchHabits, createHabit, updateHabitApi, deleteHabitApi,
-  fetchTasks, createTask, updateTask as updateTaskApi, deleteTask as deleteTaskApi,
-  fetchGoals, createGoal, updateGoalApi, deleteGoalApi
+  fetchHabits, createHabit, updateHabitApi, deleteHabitApi
 } from "../utils/api";
 
 const TasksGoalsContext = createContext();
@@ -16,17 +14,11 @@ export const TasksGoalsProvider = ({ children }) => {
   });
 
   const [rawHabits, setRawHabits] = useState([]);
-  const [tasks, setTasks] = useState([]);
-  const [goals, setGoals] = useState([]);
 
   useEffect(() => {
     const loadData = async () => {
       try {
-        const [habitsData, tasksData, goalsData] = await Promise.all([
-          fetchHabits(),
-          fetchTasks(),
-          fetchGoals()
-        ]);
+        const habitsData = await fetchHabits();
 
         const now = new Date();
         const currentMonthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
@@ -37,21 +29,8 @@ export const TasksGoalsProvider = ({ children }) => {
           history: h.history && Object.keys(h.history).length > 0 ? h.history : { [currentMonthKey]: Array(31).fill(false) }
         }));
         setRawHabits(formattedHabits);
-
-        const formattedTasks = (tasksData || []).map(t => ({
-          ...t,
-          id: t._id || t.id,
-          status: t.isCompleted ? 'Completed' : 'Pending'
-        }));
-        setTasks(formattedTasks);
-
-        const formattedGoals = (goalsData || []).map(g => ({
-          ...g,
-          id: g._id || g.id
-        }));
-        setGoals(formattedGoals);
       } catch (err) {
-        console.error("Error loading tasks and goals data:", err);
+        console.error("Error loading habits data:", err);
       }
     };
     loadData();
@@ -151,77 +130,10 @@ export const TasksGoalsProvider = ({ children }) => {
 
   const reorderHabits = (newHabitsList) => setRawHabits(newHabitsList);
 
-  // --- TASKS METHODS ---
-  const addTask = async (taskData) => {
-    try {
-      const saved = await createTask({ ...taskData, isCompleted: false });
-      setTasks(prev => [...prev, { ...saved, id: saved._id || saved.id, status: 'Pending' }]);
-    } catch (err) {
-      console.error("Error adding task:", err);
-    }
-  };
-
-  const toggleTask = async (id) => {
-    const task = tasks.find(t => t.id === id || t._id === id);
-    if (!task) return;
-    const newStatus = task.status === 'Completed' ? 'Pending' : 'Completed';
-    setTasks(prev => prev.map(t => (t.id === id || t._id === id) ? { ...t, status: newStatus } : t));
-    try {
-      await updateTaskApi(id, { isCompleted: newStatus === 'Completed' });
-    } catch (err) {
-      console.error("Error toggling task:", err);
-    }
-  };
-
-  const removeTask = async (id) => {
-    setTasks(prev => prev.filter(t => t.id !== id && t._id !== id));
-    try {
-      await deleteTaskApi(id);
-    } catch (err) {
-      console.error("Error removing task:", err);
-    }
-  };
-
-  // --- GOALS METHODS ---
-  const weeklyGoals = goals.filter(g => g.type === 'Weekly');
-  const monthlyGoals = goals.filter(g => g.type === 'Monthly');
-
-  const addWeeklyGoal = async (goalData) => {
-    try {
-      const saved = await createGoal({ ...goalData, type: 'Weekly', completed: false });
-      setGoals(prev => [...prev, { ...saved, id: saved._id || saved.id }]);
-    } catch (err) {
-      console.error("Error adding weekly goal:", err);
-    }
-  };
-
-  const toggleWeeklyGoal = async (id) => {
-    const goal = goals.find(g => g.id === id || g._id === id);
-    if (!goal) return;
-    const newCompleted = !goal.completed;
-    setGoals(prev => prev.map(g => (g.id === id || g._id === id) ? { ...g, completed: newCompleted } : g));
-    try {
-      await updateGoalApi(id, { completed: newCompleted });
-    } catch (err) {
-      console.error("Error toggling goal:", err);
-    }
-  };
-
-  const addMonthlyGoal = async (goalData) => {
-    try {
-      const saved = await createGoal({ ...goalData, type: 'Monthly', progress: 0 });
-      setGoals(prev => [...prev, { ...saved, id: saved._id || saved.id }]);
-    } catch (err) {
-      console.error("Error adding monthly goal:", err);
-    }
-  };
-
   return (
     <TasksGoalsContext.Provider value={{
       habits, toggleHabitDay, addHabit, updateHabit, deleteHabit, reorderHabits,
-      selectedMonth, setSelectedMonth, monthName, year, daysInMonth, prevMonth, nextMonth, isCurrentOrFutureMonth,
-      tasks, addTask, toggleTask, removeTask,
-      weeklyGoals, monthlyGoals, addWeeklyGoal, toggleWeeklyGoal, addMonthlyGoal
+      selectedMonth, setSelectedMonth, monthName, year, daysInMonth, prevMonth, nextMonth, isCurrentOrFutureMonth
     }}>
       {children}
     </TasksGoalsContext.Provider>
