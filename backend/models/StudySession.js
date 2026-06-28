@@ -21,4 +21,4 @@ const studySessionSchema = new mongoose.Schema({
   timestamps: true
 });
 
-module.exports = mongoose.model('StudySession', studySessionSchema);
+module.exports = mongoose.models.StudySession || mongoose.model('StudySession', studySessionSchema);

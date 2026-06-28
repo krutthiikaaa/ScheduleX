@@ -63,4 +63,4 @@ const dashboardSchema = new mongoose.Schema({
   timestamps: true // Automatically manages createdAt and updatedAt timestamps
 });
 
-module.exports = mongoose.model('Dashboard', dashboardSchema);
+module.exports = mongoose.models.Dashboard || mongoose.model('Dashboard', dashboardSchema);

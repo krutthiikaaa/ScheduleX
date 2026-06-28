@@ -1,84 +1,23 @@
 require('dotenv').config();
 const express = require('express');
-const mongoose = require('mongoose');
 const cors = require('cors');
+const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const User = require('./models/User');
+const Resource = require('./models/Resource');
+const Assignment = require('./models/Assignment');
+const Task = require('./models/Task');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Replace with a real MongoDB URI if provided, or use local for dev
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/schedulex';
 
 mongoose.connect(MONGODB_URI)
   .then(() => console.log('Connected to MongoDB'))
   .catch(err => console.error('MongoDB connection error:', err));
-
-// --- MODELS ---
-
-const UserSchema = new mongoose.Schema({
-  fullName: { type: String, required: true },
-  email: { type: String, required: true, unique: true },
-  password: { type: String, required: true }
-}, { timestamps: true });
-const User = mongoose.model('User', UserSchema);
-
-const AssignmentSchema = new mongoose.Schema({
-  title: String,
-  subject: String,
-  dueDate: Date,
-  priority: { type: String, enum: ['High', 'Medium', 'Low'], default: 'Medium' },
-  status: { type: String, enum: ['Pending', 'In Progress', 'Completed'], default: 'Pending' },
-  description: String
-}, { timestamps: true });
-const Assignment = mongoose.model('Assignment', AssignmentSchema);
-
-const ResourceSchema = new mongoose.Schema({
-  title: String,
-  type: String, // PDF, Link, Document, etc.
-  subject: String,
-  url: String,
-  isFavorite: { type: Boolean, default: false }
-}, { timestamps: true });
-const Resource = mongoose.model('Resource', ResourceSchema);
-
-const TaskSchema = new mongoose.Schema({
-  title: String,
-  category: { type: String, enum: ['Academic', 'Personal', 'Projects', 'Placement'], default: 'Academic' },
-  priority: { type: String, enum: ['High', 'Medium', 'Low'], default: 'Medium' },
-  isCompleted: { type: Boolean, default: false },
-  isDailyGoal: { type: Boolean, default: false },
-  isWeeklyGoal: { type: Boolean, default: false }
-}, { timestamps: true });
-const Task = mongoose.model('Task', TaskSchema);
-
-const FocusSessionSchema = new mongoose.Schema({
-  durationMinutes: Number,
-  subject: String,
-  taskId: { type: mongoose.Schema.Types.ObjectId, ref: 'Task' },
-  date: { type: Date, default: Date.now }
-}, { timestamps: true });
-const FocusSession = mongoose.model('FocusSession', FocusSessionSchema);
-
-const StudySessionSchema = new mongoose.Schema({
-  subject: String,
-  topic: String,
-  date: Date,
-  durationMinutes: Number,
-  status: { type: String, enum: ['Scheduled', 'Completed', 'Missed'], default: 'Scheduled' }
-}, { timestamps: true });
-const StudySession = mongoose.model('StudySession', StudySessionSchema);
-
-const TimetableEventSchema = new mongoose.Schema({
-  subject: String,
-  day: { type: String, enum: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] },
-  startTime: String,
-  endTime: String,
-  venue: String
-}, { timestamps: true });
-const TimetableEvent = mongoose.model('TimetableEvent', TimetableEventSchema);
 
 // --- GENERIC CRUD UTILITY ---
 const createCrudRoutes = (model, path) => {
@@ -113,12 +52,7 @@ const createCrudRoutes = (model, path) => {
 };
 
 // --- REGISTER ROUTES ---
-createCrudRoutes(Assignment, '/api/assignments');
 createCrudRoutes(Resource, '/api/resources');
-createCrudRoutes(Task, '/api/tasks');
-createCrudRoutes(FocusSession, '/api/focus-sessions');
-createCrudRoutes(StudySession, '/api/study-sessions');
-createCrudRoutes(TimetableEvent, '/api/timetable');
 
 // --- AUTH ROUTES ---
 app.post('/api/auth/register', async (req, res) => {
