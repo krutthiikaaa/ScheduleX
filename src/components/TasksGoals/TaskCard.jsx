@@ -33,7 +33,7 @@ const TaskCard = ({ task }) => {
         {task.priority}
       </div>
       
-      <button className="icon-btn" style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.1rem', opacity: 0.6 }} onClick={() => deleteTask(task.id)}>🗑️</button>
+      <button className="icon-btn" style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.1rem', opacity: 0.6 }} onClick={() => deleteTask(task.id)}>️</button>
     </div>
   );
 };

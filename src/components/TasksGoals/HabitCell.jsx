@@ -1,14 +1,14 @@
 import React from 'react';
 import { useTasksGoals } from '../../context/TasksGoalsContext';
 
-const HabitCell = ({ dayIndex, checked, habitId, color }) => {
+const HabitCell = ({ dayIndex, checked, habitId }) => {
   const { toggleHabitDay } = useTasksGoals();
 
-  const getWeekClass = () => {
-    if (dayIndex < 7) return 'week-1';
-    if (dayIndex < 14) return 'week-2';
-    if (dayIndex < 21) return 'week-3';
-    return 'week-4';
+  const getWeekColor = () => {
+    if (dayIndex < 7) return '#E7A07E';
+    if (dayIndex < 14) return '#D7B49E';
+    if (dayIndex < 21) return '#B7C5A3';
+    return '#E5D5BE';
   };
 
   const handleToggle = () => {
@@ -17,14 +17,12 @@ const HabitCell = ({ dayIndex, checked, habitId, color }) => {
 
   return (
     <div 
-      className={`habit-cell ${getWeekClass()} ${checked ? 'checked' : ''}`}
+      className={`habit-cell ${checked ? 'checked' : ''}`}
       style={{
-        background: checked ? color : '',
-        border: checked ? `1px solid ${color}` : '1px solid var(--border-light)'
+        backgroundColor: checked ? getWeekColor() : '#FFFFFF'
       }}
       onClick={handleToggle}
     >
-      {checked && <span style={{ color: 'white', fontSize: '10px' }}>✓</span>}
     </div>
   );
 };

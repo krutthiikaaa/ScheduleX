@@ -35,7 +35,7 @@
 
 .habit-header-row {
   display: grid;
-  grid-template-columns: 200px repeat(31, 1fr);
+  grid-template-columns: 240px repeat(31, 1fr);
   gap: 4px;
   text-align: center;
   font-size: 0.75rem;
@@ -45,47 +45,73 @@
 
 .habit-row {
   display: grid;
-  grid-template-columns: 200px repeat(31, 1fr);
+  grid-template-columns: 240px repeat(31, 1fr);
   gap: 4px;
   align-items: center;
   animation: fadeIn 0.5s ease;
+  min-height: 48px;
+  border-bottom: 1px solid rgba(156, 163, 175, 0.15);
+  padding: 4px 0;
+}
+
+.habit-header-row > div:first-child,
+.habit-row > .habit-info {
+  position: sticky;
+  left: 0;
+  background: var(--card-bg);
+  z-index: 10;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .habit-info {
-  display: flex;
-  align-items: center;
-  gap: 12px;
   font-size: 0.9rem;
   font-weight: 600;
+  height: 100%;
 }
 
 .habit-cell {
   width: 100%;
   aspect-ratio: 1;
   border-radius: 4px;
-  background: var(--bg-secondary);
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
   cursor: pointer;
   transition: all 0.2s var(--ease-out);
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 1;
 }
 
 .habit-cell.checked {
   transform: scale(1.05);
+  border-color: transparent !important;
 }
 
 .habit-cell:hover {
-  filter: brightness(0.9);
+  border-color: rgba(214, 90, 49, 0.4);
+  background: rgba(214, 90, 49, 0.02);
   transform: scale(1.1);
   z-index: 2;
 }
 
-.week-1 { background-color: rgba(214, 90, 49, 0.05); }
-.week-2 { background-color: rgba(78, 143, 106, 0.05); }
-.week-3 { background-color: rgba(59, 130, 246, 0.05); }
-.week-4 { background-color: rgba(240, 165, 0, 0.05); }
+.week-1 { background-color: rgba(231, 160, 126, 0.06); } /* Soft Terracotta */
+.week-2 { background-color: rgba(215, 180, 158, 0.06); } /* Warm Clay */
+.week-3 { background-color: rgba(183, 197, 163, 0.06); } /* Soft Sage */
+.week-4 { background-color: rgba(229, 213, 190, 0.08); } /* Warm Sand */
+
+.habit-tracker-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 16px;
+  position: relative;
+}
 
 .stat-card {
   padding: 24px;

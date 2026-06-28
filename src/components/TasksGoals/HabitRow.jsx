@@ -18,14 +18,14 @@ const HabitRow = ({ habit }) => {
         <div className="habit-info" style={{ display: 'flex', justifyContent: 'space-between', paddingRight: 12 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <span style={{ fontSize: '1.2rem' }}>{habit.icon}</span>
-            <span style={{ color: habit.color, fontWeight: 'bold' }}>{habit.title}</span>
+            <span style={{ color: '#2F2A27', fontWeight: 'bold' }}>{habit.title}</span>
           </div>
           <button 
             onClick={() => setShowNotes(true)}
             style={{ background: 'none', border: 'none', cursor: 'pointer', opacity: 0.6, transition: 'opacity 0.2s', fontSize: '1rem' }}
             title="Notes"
           >
-            📝
+            
           </button>
         </div>
         {habit.days.map((checked, index) => (
@@ -34,7 +34,6 @@ const HabitRow = ({ habit }) => {
             dayIndex={index} 
             checked={checked} 
             habitId={habit.id} 
-            color={habit.color || 'var(--primary)'} 
           />
         ))}
       </div>

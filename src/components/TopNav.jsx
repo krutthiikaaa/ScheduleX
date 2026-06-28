@@ -15,7 +15,7 @@ function TopNav() {
 
       <div className="topnav-right">
         <div className={`topnav-search${searchOpen ? " open" : ""}`}>
-          <span className="search-icon">🔍</span>
+          <span className="search-icon"></span>
           <input
             type="text"
             placeholder="Search schedules, subjects…"

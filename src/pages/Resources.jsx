@@ -57,7 +57,7 @@ function Resources() {
             <li key={res._id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: 16, border: "1px solid var(--border)", borderRadius: "var(--radius-sm)", transition: "all 0.2s" }} className="hover-card">
               <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
                 <div style={{ width: 48, height: 48, background: "var(--bg-secondary)", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.5rem" }}>
-                  {res.type === "PDF" ? "📚" : res.type === "Video" ? "🎥" : "🔗"}
+                  {res.type === "PDF" ? "" : res.type === "Video" ? "" : ""}
                 </div>
                 <div>
                   <h3 style={{ fontSize: "1.1rem", marginBottom: 4 }}>{res.title}</h3>
@@ -66,7 +66,7 @@ function Resources() {
               </div>
               <div style={{ display: "flex", gap: 12 }}>
                 <a href={res.url} target="_blank" rel="noreferrer" className="btn btn-secondary" style={{ padding: "8px 16px" }}>Open</a>
-                <button className="icon-btn" style={{ width: 36, height: 36 }} onClick={() => handleDelete(res._id)}>🗑️</button>
+                <button className="icon-btn" style={{ width: 36, height: 36 }} onClick={() => handleDelete(res._id)}>️</button>
               </div>
             </li>
           ))}

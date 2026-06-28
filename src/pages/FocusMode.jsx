@@ -96,7 +96,7 @@ function FocusMode() {
         <div style={{ display: "flex", gap: 48, justifyContent: "center", marginBottom: 32 }}>
           <div onClick={toggleTimer} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 10, cursor: "pointer", userSelect: "none" }}>
             <div style={{ width: 72, height: 72, borderRadius: "50%", border: "1px solid", borderColor: isActive ? "var(--primary)" : "var(--border)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.6rem", color: isActive ? "var(--primary)" : "var(--text-heading)", background: isActive ? "var(--primary-light)" : "transparent", transition: "all 0.2s ease", boxShadow: isActive ? "0 0 25px rgba(245, 101, 34, 0.25)" : "none" }}>
-              {isActive ? "⏸" : "▷"}
+              {isActive ? "" : "▷"}
             </div>
             <span style={{ fontSize: "0.8rem", fontWeight: 700, letterSpacing: "2px", color: "var(--text-heading)" }}>{isActive ? "PAUSE" : "START"}</span>
           </div>
@@ -111,14 +111,14 @@ function FocusMode() {
 
         {/* Subtle Bottom Watermark */}
         <div style={{ textAlign: "center", fontSize: "0.75rem", fontWeight: 600, letterSpacing: "2px", color: "var(--text-muted)", opacity: 0.5 }}>
-          ⏱ SCHEDULEX FOCUS
+           SCHEDULEX FOCUS
         </div>
       </div>
 
       {showCompletion && (
         <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.8)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 100 }}>
           <div className="card animate-scale-in" style={{ width: 400, textAlign: "center", padding: 32 }}>
-            <div style={{ fontSize: "4rem", marginBottom: 16 }}>🎉</div>
+            <div style={{ fontSize: "4rem", marginBottom: 16 }}></div>
             <h2 style={{ marginBottom: 8 }}>Session Completed!</h2>
             <p style={{ color: "var(--text-muted)", marginBottom: 24 }}>Great job focusing for {duration} minutes. Your session has been saved to your MongoDB study log!</p>
             
