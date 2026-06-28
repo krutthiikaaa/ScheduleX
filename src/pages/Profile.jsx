@@ -23,12 +23,6 @@ function Profile() {
 
   return (
     <AppLayout>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 32 }}>
-        <div>
-          <h1 style={{ fontSize: "2rem", marginBottom: 4 }}>Student Profile</h1>
-          <p style={{ color: "var(--text-muted)" }}>Manage your academic information and settings.</p>
-        </div>
-      </div>
 
       <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
         

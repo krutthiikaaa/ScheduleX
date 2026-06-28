@@ -13,7 +13,8 @@ const Goal = require('./models/Goal');
 
 const app = express();
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 const connectDB = require('./config/db');
 connectDB();
@@ -126,7 +127,6 @@ app.post('/api/seed', async (req, res) => {
   if (count === 0) {
     await Assignment.create({ title: 'Project Phase 1', subject: 'Data Structures', dueDate: new Date(Date.now() + 86400000), priority: 'High', status: 'Pending' });
     await Task.create({ title: 'Finish OS Assignment', category: 'Academic', priority: 'High', isCompleted: false });
-    await Resource.create({ title: 'Intro to Algorithms', type: 'PDF', subject: 'Data Structures', url: '#' });
     
     res.json({ message: 'Seeded successfully' });
   } else {

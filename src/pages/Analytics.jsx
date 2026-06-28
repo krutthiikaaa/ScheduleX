@@ -15,12 +15,6 @@ function Analytics() {
 
   return (
     <AppLayout>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 32 }}>
-        <div>
-          <h1 style={{ fontSize: "2rem", marginBottom: 4 }}>Analytics & Insights</h1>
-          <p style={{ color: "var(--text-muted)" }}>Track your habit consistency and productivity over time.</p>
-        </div>
-      </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 24, marginBottom: 32 }}>
         <div className="card">

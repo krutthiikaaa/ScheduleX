@@ -15,14 +15,8 @@ function ViewTimetable() {
 
   return (
     <AppLayout>
-      <div className="page-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-        <div>
-          <h1>Schedules</h1>
-          <p>CS Department — Fall 2026</p>
-        </div>
-        <div style={{ display: "flex", gap: 10 }}>
-          <Link to="/create" className="btn btn-primary">+ New Schedule</Link>
-        </div>
+      <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 24 }}>
+        <Link to="/create" className="btn btn-primary">+ New Schedule</Link>
       </div>
 
       <div className="table-wrapper">

@@ -2,9 +2,11 @@ const mongoose = require('mongoose');
 
 const resourceSchema = new mongoose.Schema({
   title: String,
-  type: String, // PDF, Link, Document, etc.
+  type: String, // PDF, Video, Link, Document, etc.
   subject: String,
-  url: String,
+  url: String, // Web URL or Base64 Data URI
+  fileName: String,
+  fileSize: String,
   isFavorite: { type: Boolean, default: false }
 }, { timestamps: true });
 

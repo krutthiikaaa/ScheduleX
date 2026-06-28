@@ -6,7 +6,12 @@ const HabitRow = ({ habit }) => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [editedTitle, setEditedTitle] = useState(habit.title || "");
   const [editedCategory, setEditedCategory] = useState(habit.category || "Personal");
-  const { updateHabit, deleteHabit, daysInMonth = 30 } = useTasksGoals();
+  const { updateHabit, deleteHabit, daysInMonth = 30, selectedMonth } = useTasksGoals();
+
+  const now = new Date();
+  const currentMonthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+  const isCurrentMonth = selectedMonth === currentMonthKey;
+  const todayIndex = now.getDate() - 1;
 
   const handleSaveEdit = (e) => {
     e.preventDefault();
@@ -59,6 +64,7 @@ const HabitRow = ({ habit }) => {
             dayIndex={index} 
             checked={checked} 
             habitId={habit.id} 
+            isToday={isCurrentMonth && index === todayIndex}
           />
         ))}
       </div>

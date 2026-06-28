@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTasksGoals } from '../../context/TasksGoalsContext';
 
-const HabitCell = ({ dayIndex, checked, habitId }) => {
+const HabitCell = ({ dayIndex, checked, habitId, isToday }) => {
   const { toggleHabitDay } = useTasksGoals();
 
   const getWeekColor = () => {
@@ -19,9 +19,11 @@ const HabitCell = ({ dayIndex, checked, habitId }) => {
     <div 
       className={`habit-cell ${checked ? 'checked' : ''}`}
       style={{
-        backgroundColor: checked ? getWeekColor() : '#FFFFFF'
+        backgroundColor: checked ? getWeekColor() : '#FFFFFF',
+        transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
       }}
       onClick={handleToggle}
+      title={isToday ? "Today — Click to check/uncheck" : `Day ${dayIndex + 1}`}
     >
       {checked && (
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2F2A27" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" style={{ animation: 'fadeIn 0.2s ease' }}>

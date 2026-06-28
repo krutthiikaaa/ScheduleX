@@ -14,10 +14,6 @@ function CreateTimetable() {
 
   return (
     <AppLayout>
-      <div className="page-header">
-        <h1>Create Schedule</h1>
-        <p>Set up a new timetable in a few simple steps</p>
-      </div>
 
       <div className="card create-form">
         <h2 style={{ marginBottom: 24 }}>Schedule Details</h2>

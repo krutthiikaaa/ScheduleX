@@ -178,17 +178,12 @@ function Timetable() {
 
   return (
     <AppLayout>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 32, flexWrap: "wrap", gap: 16 }}>
-        <div>
-          <h1 style={{ fontSize: "2rem", marginBottom: 4 }}>Timetable</h1>
-          <p style={{ color: "var(--text-muted)" }}>Manage your weekly class schedule.</p>
-        </div>
-
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24, flexWrap: "wrap", gap: 16 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
           <div style={{ display: "flex", alignItems: "center", background: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius-btn)", padding: "2px", boxShadow: "var(--shadow-sm)" }}>
-            <button className="btn" style={{ padding: "6px 14px", background: "transparent", border: "none", cursor: "pointer", color: "var(--text-heading)", fontSize: "0.9rem" }} onClick={() => shiftWeek(-7)}></button>
+            <button className="btn" style={{ padding: "8px 16px", background: "transparent", border: "none", cursor: "pointer", color: "var(--text-heading)", fontSize: "0.95rem", fontWeight: 700 }} onClick={() => shiftWeek(-7)}>← Prev</button>
             <div style={{ width: "1px", height: "18px", background: "var(--border)" }}></div>
-            <button className="btn" style={{ padding: "6px 14px", background: "transparent", border: "none", cursor: "pointer", color: "var(--text-heading)", fontSize: "0.9rem" }} onClick={() => shiftWeek(7)}></button>
+            <button className="btn" style={{ padding: "8px 16px", background: "transparent", border: "none", cursor: "pointer", color: "var(--text-heading)", fontSize: "0.95rem", fontWeight: 700 }} onClick={() => shiftWeek(7)}>Next →</button>
           </div>
 
           <span style={{ fontWeight: 700, fontSize: "1.05rem", minWidth: 160, textAlign: "center", color: "var(--text-heading)" }}>

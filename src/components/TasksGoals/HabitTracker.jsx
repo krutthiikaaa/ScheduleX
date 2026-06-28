@@ -5,7 +5,7 @@ import HabitRow from './HabitRow';
 const HabitTracker = () => {
   const { 
     habits, addHabit, 
-    monthName = "June", year = 2026, daysInMonth = 30, 
+    monthName = "June", year = 2026, daysInMonth = 30, selectedMonth,
     prevMonth, nextMonth, isCurrentOrFutureMonth 
   } = useTasksGoals();
 
@@ -14,6 +14,11 @@ const HabitTracker = () => {
   const [newCategory, setNewCategory] = useState('Personal');
 
   const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
+
+  const now = new Date();
+  const currentMonthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+  const isCurrentMonth = selectedMonth === currentMonthKey;
+  const todayDay = now.getDate();
 
   const handleCreateHabit = (e) => {
     e.preventDefault();
@@ -36,7 +41,7 @@ const HabitTracker = () => {
             </span>
           </h2>
           <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: 4 }}>
-            Showing weeks for {monthName} ({daysInMonth} days)
+            Showing weeks for {monthName} ({daysInMonth} days) {isCurrentMonth && <span style={{ color: '#D65A31', fontWeight: 700, marginLeft: 6 }}>• Today is Day {todayDay}</span>}
           </div>
         </div>
 
@@ -98,8 +103,25 @@ const HabitTracker = () => {
              else if (index < 21) weekClass = 'week-3';
              else weekClass = 'week-4';
              
+             const isTodayDay = isCurrentMonth && day === todayDay;
+
              return (
-               <div key={day} className={weekClass} style={{ padding: '4px 0', borderRadius: '4px' }}>
+               <div 
+                 key={day} 
+                 className={isTodayDay ? '' : weekClass} 
+                 style={{ 
+                   padding: isTodayDay ? '6px 0' : '4px 0', 
+                   borderRadius: '6px',
+                   backgroundColor: isTodayDay ? '#D65A31' : undefined,
+                   color: isTodayDay ? '#FFFFFF' : undefined,
+                   fontWeight: isTodayDay ? '800' : undefined,
+                   boxShadow: isTodayDay ? '0 4px 14px rgba(214, 90, 49, 0.45)' : undefined,
+                   transform: isTodayDay ? 'scale(1.15) translateY(-2px)' : undefined,
+                   position: 'relative',
+                   zIndex: isTodayDay ? 3 : 1
+                 }}
+                 title={isTodayDay ? "TODAY" : `Day ${day}`}
+               >
                  {day}
                </div>
              );
@@ -135,7 +157,7 @@ const HabitTracker = () => {
                 <input 
                   type="text" 
                   className="modern-input" 
-                  placeholder="e.g. Meditate 15 mins"
+                  placeholder="e.g. Drink 2L Water"
                   value={newTitle}
                   onChange={e => setNewTitle(e.target.value)}
                   autoFocus
@@ -159,9 +181,9 @@ const HabitTracker = () => {
               </div>
 
               <div className="modern-modal-actions" style={{ justifyContent: 'flex-end' }}>
-                <div style={{ display: "flex", gap: 12 }}>
+                <div style={{ display: 'flex', gap: 12 }}>
                   <button type="button" className="modern-btn-cancel" onClick={() => setShowAddModal(false)}>Cancel</button>
-                  <button type="submit" className="modern-btn-save">Add Habit</button>
+                  <button type="submit" className="modern-btn-save">Create Habit</button>
                 </div>
               </div>
             </form>

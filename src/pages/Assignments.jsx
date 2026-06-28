@@ -70,11 +70,7 @@ function Assignments() {
 
   return (
     <AppLayout>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 32 }}>
-        <div>
-          <h1 style={{ fontSize: "2rem", marginBottom: 4 }}>Assignments</h1>
-          <p style={{ color: "var(--text-muted)" }}>Manage your coursework deadlines.</p>
-        </div>
+      <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 24 }}>
         <button className="btn btn-primary" onClick={openNewModal}>+ New Assignment</button>
       </div>
 
