@@ -33,16 +33,13 @@ const HabitTracker = () => {
   return (
     <div className="card" style={{ padding: 24, position: 'relative' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, flexWrap: 'wrap', gap: 16 }}>
-        <div>
-          <h2 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 12 }}>
-            Habit Tracker
-            <span style={{ fontSize: '1rem', fontWeight: 600, color: '#D65A31', backgroundColor: 'rgba(214, 90, 49, 0.1)', padding: '4px 12px', borderRadius: '16px' }}>
-              {monthName} {year}
-            </span>
-          </h2>
-          <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: 4 }}>
-            Showing weeks for {monthName} ({daysInMonth} days) {isCurrentMonth && <span style={{ color: '#D65A31', fontWeight: 700, marginLeft: 6 }}>• Today is Day {todayDay}</span>}
-          </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <span style={{ fontSize: '1.1rem', fontWeight: 700, color: '#D65A31', backgroundColor: 'rgba(214, 90, 49, 0.12)', padding: '6px 16px', borderRadius: '20px' }}>
+            {monthName} {year}
+          </span>
+          <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)', fontWeight: 500 }}>
+            {daysInMonth} Days {isCurrentMonth && <span style={{ color: '#D65A31', fontWeight: 700, marginLeft: 6 }}>• Today is Day {todayDay}</span>}
+          </span>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
