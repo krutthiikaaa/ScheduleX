@@ -6,14 +6,14 @@ function Sidebar() {
   const { logout } = useAuth();
 
   const navItems = [
-    { path: "/dashboard", label: "Home" },
-    { path: "/timetable", label: "Timetable" },
-    { path: "/assignments", label: "Assignments" },
-    { path: "/tasks", label: "To-Do List" },
-    { path: "/focus", label: "Focus Mode" },
-    { path: "/resources", label: "Resources" },
-    { path: "/analytics", label: "Analytics" },
-    { path: "/profile", label: "Profile" },
+    { path: "/dashboard", label: "Dashboard", icon: "🏠" },
+    { path: "/timetable", label: "Timetable", icon: "📅" },
+    { path: "/resources", label: "Resources", icon: "📂" },
+    { path: "/assignments", label: "Assignments", icon: "📝" },
+    { path: "/habits", label: "Habit Tracker", icon: "✅" },
+    { path: "/focus", label: "Focus Mode", icon: "🍅" },
+    { path: "/analytics", label: "Analytics", icon: "📈" },
+    { path: "/profile", label: "Profile", icon: "👤" },
   ];
 
   return (
@@ -33,6 +33,7 @@ function Sidebar() {
             to={item.path}
             className={`sidebar-link ${location.pathname === item.path ? "active" : ""}`}
           >
+            <span>{item.icon}</span>
             {item.label}
           </Link>
         ))}

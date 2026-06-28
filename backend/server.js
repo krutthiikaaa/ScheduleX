@@ -1,23 +1,173 @@
 require('dotenv').config();
 const express = require('express');
+const mongoose = require('mongoose');
 const cors = require('cors');
-const connectDB = require('./config/db');
-
-// Connect to MongoDB
-connectDB();
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 const app = express();
-
-// Middleware
 app.use(cors());
 app.use(express.json());
 
-// Simple root endpoint
-app.get('/', (req, res) => {
-  res.json({ status: 'success', message: 'ScheduleX backend is running' });
+// Replace with a real MongoDB URI if provided, or use local for dev
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/schedulex';
+
+mongoose.connect(MONGODB_URI)
+  .then(() => console.log('Connected to MongoDB'))
+  .catch(err => console.error('MongoDB connection error:', err));
+
+// --- MODELS ---
+
+const UserSchema = new mongoose.Schema({
+  fullName: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true }
+}, { timestamps: true });
+const User = mongoose.model('User', UserSchema);
+
+const AssignmentSchema = new mongoose.Schema({
+  title: String,
+  subject: String,
+  dueDate: Date,
+  priority: { type: String, enum: ['High', 'Medium', 'Low'], default: 'Medium' },
+  status: { type: String, enum: ['Pending', 'In Progress', 'Completed'], default: 'Pending' },
+  description: String
+}, { timestamps: true });
+const Assignment = mongoose.model('Assignment', AssignmentSchema);
+
+const ResourceSchema = new mongoose.Schema({
+  title: String,
+  type: String, // PDF, Link, Document, etc.
+  subject: String,
+  url: String,
+  isFavorite: { type: Boolean, default: false }
+}, { timestamps: true });
+const Resource = mongoose.model('Resource', ResourceSchema);
+
+const TaskSchema = new mongoose.Schema({
+  title: String,
+  category: { type: String, enum: ['Academic', 'Personal', 'Projects', 'Placement'], default: 'Academic' },
+  priority: { type: String, enum: ['High', 'Medium', 'Low'], default: 'Medium' },
+  isCompleted: { type: Boolean, default: false },
+  isDailyGoal: { type: Boolean, default: false },
+  isWeeklyGoal: { type: Boolean, default: false }
+}, { timestamps: true });
+const Task = mongoose.model('Task', TaskSchema);
+
+const FocusSessionSchema = new mongoose.Schema({
+  durationMinutes: Number,
+  subject: String,
+  taskId: { type: mongoose.Schema.Types.ObjectId, ref: 'Task' },
+  date: { type: Date, default: Date.now }
+}, { timestamps: true });
+const FocusSession = mongoose.model('FocusSession', FocusSessionSchema);
+
+const StudySessionSchema = new mongoose.Schema({
+  subject: String,
+  topic: String,
+  date: Date,
+  durationMinutes: Number,
+  status: { type: String, enum: ['Scheduled', 'Completed', 'Missed'], default: 'Scheduled' }
+}, { timestamps: true });
+const StudySession = mongoose.model('StudySession', StudySessionSchema);
+
+const TimetableEventSchema = new mongoose.Schema({
+  subject: String,
+  day: { type: String, enum: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] },
+  startTime: String,
+  endTime: String,
+  venue: String
+}, { timestamps: true });
+const TimetableEvent = mongoose.model('TimetableEvent', TimetableEventSchema);
+
+// --- GENERIC CRUD UTILITY ---
+const createCrudRoutes = (model, path) => {
+  app.get(path, async (req, res) => {
+    try {
+      const data = await model.find().populate(model.schema.paths.taskId ? 'taskId' : '');
+      res.json(data);
+    } catch (err) { res.status(500).json({ error: err.message }); }
+  });
+  
+  app.post(path, async (req, res) => {
+    try {
+      const newItem = new model(req.body);
+      await newItem.save();
+      res.status(201).json(newItem);
+    } catch (err) { res.status(400).json({ error: err.message }); }
+  });
+
+  app.put(`${path}/:id`, async (req, res) => {
+    try {
+      const updated = await model.findByIdAndUpdate(req.params.id, req.body, { new: true });
+      res.json(updated);
+    } catch (err) { res.status(400).json({ error: err.message }); }
+  });
+
+  app.delete(`${path}/:id`, async (req, res) => {
+    try {
+      await model.findByIdAndDelete(req.params.id);
+      res.json({ success: true });
+    } catch (err) { res.status(500).json({ error: err.message }); }
+  });
+};
+
+// --- REGISTER ROUTES ---
+createCrudRoutes(Assignment, '/api/assignments');
+createCrudRoutes(Resource, '/api/resources');
+createCrudRoutes(Task, '/api/tasks');
+createCrudRoutes(FocusSession, '/api/focus-sessions');
+createCrudRoutes(StudySession, '/api/study-sessions');
+createCrudRoutes(TimetableEvent, '/api/timetable');
+
+// --- AUTH ROUTES ---
+app.post('/api/auth/register', async (req, res) => {
+  try {
+    const { fullName, email, password } = req.body;
+    const existingUser = await User.findOne({ email });
+    if (existingUser) return res.status(400).json({ error: 'Email already exists' });
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = new User({ fullName, email, password: hashedPassword });
+    await user.save();
+
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET || 'secret123', { expiresIn: '1d' });
+    res.status(201).json({ token, user: { id: user._id, fullName: user.fullName, email: user.email } });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-// API Routes
+app.post('/api/auth/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) return res.status(400).json({ error: 'Invalid credentials' });
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) return res.status(400).json({ error: 'Invalid credentials' });
+
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET || 'secret123', { expiresIn: '1d' });
+    res.json({ token, user: { id: user._id, fullName: user.fullName, email: user.email } });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Seed some initial data if empty
+app.post('/api/seed', async (req, res) => {
+  const count = await Assignment.countDocuments();
+  if (count === 0) {
+    await Assignment.create({ title: 'Project Phase 1', subject: 'Data Structures', dueDate: new Date(Date.now() + 86400000), priority: 'High', status: 'Pending' });
+    await Task.create({ title: 'Finish OS Assignment', category: 'Academic', priority: 'High', isCompleted: false });
+    await Resource.create({ title: 'Intro to Algorithms', type: 'PDF', subject: 'Data Structures', url: '#' });
+    
+    res.json({ message: 'Seeded successfully' });
+  } else {
+    res.json({ message: 'Already seeded' });
+  }
+});
+
 const dashboardRoutes = require('./routes/dashboardRoutes');
 const timetableRoutes = require('./routes/timetableRoutes');
 const assignmentRoutes = require('./routes/assignmentRoutes');
@@ -32,7 +182,4 @@ app.use('/api/focus-sessions', focusSessionRoutes);
 app.use('/api/study-sessions', studySessionRoutes);
 
 const PORT = process.env.PORT || 5000;
-
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
