@@ -5,8 +5,8 @@ const Task = require('../models/Task');
 // @access  Public
 const getTasks = async (req, res) => {
   try {
-    const count = await Task.countDocuments();
-    if (count === 0) {
+    const count = await Task.countDocuments(req.userQuery);
+    if (count === 0 && req.isDemoUser) {
       await Task.insertMany([
         { title: 'Review Operating Systems notes', category: 'Academic', priority: 'High', isCompleted: true },
         { title: 'Submit DBMS assignment', category: 'Academic', priority: 'High', isCompleted: false },
@@ -14,7 +14,7 @@ const getTasks = async (req, res) => {
         { title: 'Read Chapter 4 of Clean Code', category: 'Reading', priority: 'Low', isCompleted: false }
       ]);
     }
-    const tasks = await Task.find().sort({ createdAt: -1 });
+    const tasks = await Task.find(req.userQuery).sort({ createdAt: -1 });
     res.status(200).json({
       success: true,
       data: tasks
@@ -37,6 +37,7 @@ const createTask = async (req, res) => {
     }
 
     const task = await Task.create({
+      userId: req.userId,
       title,
       category: category || 'Academic',
       priority: priority || 'Medium',
@@ -58,7 +59,7 @@ const createTask = async (req, res) => {
 // @access  Public
 const updateTask = async (req, res) => {
   try {
-    const task = await Task.findByIdAndUpdate(req.params.id, req.body, {
+    const task = await Task.findOneAndUpdate({ _id: req.params.id, ...req.userQuery }, req.body, {
       new: true,
       runValidators: true
     });
@@ -82,7 +83,7 @@ const updateTask = async (req, res) => {
 // @access  Public
 const deleteTask = async (req, res) => {
   try {
-    const task = await Task.findByIdAndDelete(req.params.id);
+    const task = await Task.findOneAndDelete({ _id: req.params.id, ...req.userQuery });
 
     if (!task) {
       return res.status(404).json({ success: false, message: 'Task not found' });

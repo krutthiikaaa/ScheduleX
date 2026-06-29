@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import AppLayout from "../components/AppLayout";
 import { fetchResources, createResource, deleteResource } from "../utils/api";
 import "./Resources.css";
@@ -194,7 +195,7 @@ function Resources() {
       </div>
 
       {/* Modern Add Resource Modal */}
-      {showModal && (
+      {showModal && createPortal(
         <div className="modern-modal-backdrop">
           <div className="modern-modal-card" style={{ maxWidth: 480 }}>
             <div className="modern-modal-header">
@@ -295,7 +296,8 @@ function Resources() {
               </div>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </AppLayout>
   );

@@ -2,6 +2,12 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
+mongoose.plugin((schema) => {
+  if (!schema.paths.userId && schema.options.collection !== 'users') {
+    schema.add({ userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' } });
+  }
+});
+const auth = require('./middleware/auth');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('./models/User');
@@ -23,10 +29,10 @@ connectDB();
 
 // --- GENERIC CRUD UTILITY ---
 const createCrudRoutes = (model, path) => {
-  app.get(path, async (req, res) => {
+  app.get(path, auth, async (req, res) => {
     try {
-      const count = await model.countDocuments();
-      if (count === 0) {
+      const count = await model.countDocuments(req.userQuery);
+      if (count === 0 && req.isDemoUser) {
         if (path === '/api/habits') {
           const initialHabits = [
             { title: "Wake Up Early", category: "Health", history: {}, notes: "Felt great this week." },
@@ -62,8 +68,19 @@ const createCrudRoutes = (model, path) => {
             { name: "Algorithms", code: "CS202", instructor: "Dr. Alan", credits: 3, color: "#ffc107" }
           ]);
         }
+      } else if (count === 0 && !req.isDemoUser && path === '/api/habits') {
+        await model.create({
+          userId: req.userId,
+          title: "example",
+          category: "Personal",
+          history: {},
+          notes: "Example habit — will disappear when you add your own!",
+          isExample: true
+        });
+      } else if (count > 0 && !req.isDemoUser && path === '/api/habits') {
+        await model.updateMany({ ...req.userQuery, isExample: true }, { title: "example", category: "Personal" });
       }
-      let query = model.find();
+      let query = model.find(req.userQuery);
       if (model.schema.paths.taskId) {
         query = query.populate('taskId');
       }
@@ -72,24 +89,29 @@ const createCrudRoutes = (model, path) => {
     } catch (err) { res.status(500).json({ error: err.message }); }
   });
   
-  app.post(path, async (req, res) => {
+  app.post(path, auth, async (req, res) => {
     try {
-      const newItem = new model(req.body);
+      if (path === '/api/habits' && !req.isDemoUser) {
+        await model.deleteMany({ ...req.userQuery, isExample: true });
+      }
+      const bodyData = { ...req.body };
+      if (req.userId) bodyData.userId = req.userId;
+      const newItem = new model(bodyData);
       await newItem.save();
       res.status(201).json(newItem);
     } catch (err) { res.status(400).json({ error: err.message }); }
   });
 
-  app.put(`${path}/:id`, async (req, res) => {
+  app.put(`${path}/:id`, auth, async (req, res) => {
     try {
-      const updated = await model.findByIdAndUpdate(req.params.id, req.body, { new: true });
+      const updated = await model.findOneAndUpdate({ _id: req.params.id, ...req.userQuery }, req.body, { new: true });
       res.json(updated);
     } catch (err) { res.status(400).json({ error: err.message }); }
   });
 
-  app.delete(`${path}/:id`, async (req, res) => {
+  app.delete(`${path}/:id`, auth, async (req, res) => {
     try {
-      await model.findByIdAndDelete(req.params.id);
+      await model.findOneAndDelete({ _id: req.params.id, ...req.userQuery });
       res.json({ success: true });
     } catch (err) { res.status(500).json({ error: err.message }); }
   });
@@ -155,13 +177,13 @@ const taskRoutes = require('./routes/taskRoutes');
 const focusSessionRoutes = require('./routes/focusSessionRoutes');
 const studySessionRoutes = require('./routes/studySessionRoutes');
 const profileRoutes = require('./routes/profileRoutes');
-app.use('/api/dashboard', dashboardRoutes);
-app.use('/api/timetable', timetableRoutes);
-app.use('/api/assignments', assignmentRoutes);
-app.use('/api/tasks', taskRoutes);
-app.use('/api/focus-sessions', focusSessionRoutes);
-app.use('/api/study-sessions', studySessionRoutes);
-app.use('/api/profile', profileRoutes);
+app.use('/api/dashboard', auth, dashboardRoutes);
+app.use('/api/timetable', auth, timetableRoutes);
+app.use('/api/assignments', auth, assignmentRoutes);
+app.use('/api/tasks', auth, taskRoutes);
+app.use('/api/focus-sessions', auth, focusSessionRoutes);
+app.use('/api/study-sessions', auth, studySessionRoutes);
+app.use('/api/profile', auth, profileRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

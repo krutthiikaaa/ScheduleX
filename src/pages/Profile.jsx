@@ -42,10 +42,6 @@ function Profile() {
   const [user, setUser] = useState({
     fullName: authUser?.fullName || "Jane Doe",
     email: authUser?.email || "jane.doe@university.edu",
-    university: "State Technical University",
-    degree: "B.Sc. Computer Science",
-    semester: "Semester 5",
-    cgpa: 3.85,
     preferences: { 
       theme: "light", 
       notifications: true,

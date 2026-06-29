@@ -5,15 +5,15 @@ const StudySession = require('../models/StudySession');
 // @access  Public
 const getStudySessions = async (req, res) => {
   try {
-    const count = await StudySession.countDocuments();
-    if (count === 0) {
+    const count = await StudySession.countDocuments(req.userQuery);
+    if (count === 0 && req.isDemoUser) {
       await StudySession.insertMany([
         { title: 'OS Midterm Prep', duration: 45, category: 'Exam' },
         { title: 'LeetCode Graph Practice', duration: 60, category: 'Coding' },
         { title: 'Read Research Paper', duration: 30, category: 'Reading' }
       ]);
     }
-    const sessions = await StudySession.find().sort({ createdAt: -1 });
+    const sessions = await StudySession.find(req.userQuery).sort({ createdAt: -1 });
     res.status(200).json({
       success: true,
       data: sessions
@@ -36,6 +36,7 @@ const createStudySession = async (req, res) => {
     }
 
     const session = await StudySession.create({
+      userId: req.userId,
       title,
       duration: duration || 25,
       category: category || 'General'
@@ -56,7 +57,7 @@ const createStudySession = async (req, res) => {
 // @access  Public
 const updateStudySession = async (req, res) => {
   try {
-    const session = await StudySession.findByIdAndUpdate(req.params.id, req.body, {
+    const session = await StudySession.findOneAndUpdate({ _id: req.params.id, ...req.userQuery }, req.body, {
       new: true,
       runValidators: true
     });
@@ -80,7 +81,7 @@ const updateStudySession = async (req, res) => {
 // @access  Public
 const deleteStudySession = async (req, res) => {
   try {
-    const session = await StudySession.findByIdAndDelete(req.params.id);
+    const session = await StudySession.findOneAndDelete({ _id: req.params.id, ...req.userQuery });
 
     if (!session) {
       return res.status(404).json({ success: false, message: 'Session not found' });

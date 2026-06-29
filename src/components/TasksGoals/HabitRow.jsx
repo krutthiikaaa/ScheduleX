@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import HabitCell from './HabitCell';
 import { useTasksGoals } from '../../context/TasksGoalsContext';
 
-const HabitRow = ({ habit }) => {
+const HabitRow = ({ habit, gridCols }) => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [editedTitle, setEditedTitle] = useState(habit.title || "");
   const [editedCategory, setEditedCategory] = useState(habit.category || "Personal");
@@ -29,7 +30,7 @@ const HabitRow = ({ habit }) => {
 
   return (
     <>
-      <div className="habit-row" style={{ gridTemplateColumns: `minmax(160px, 200px) repeat(${daysInMonth}, minmax(0, 1fr))` }}>
+      <div className="habit-row" style={{ display: 'grid', gridTemplateColumns: gridCols || `minmax(130px, 160px) repeat(${daysInMonth}, minmax(0, 1fr))`, gap: 3, width: '100%' }}>
         <div className="habit-info" style={{ display: 'flex', alignItems: 'center', paddingRight: 12 }}>
           <span 
             onClick={() => {
@@ -69,7 +70,7 @@ const HabitRow = ({ habit }) => {
         ))}
       </div>
 
-      {showEditModal && (
+      {showEditModal && createPortal(
         <div className="modern-modal-backdrop">
           <div className="modern-modal-card">
             <div className="modern-modal-header">
@@ -125,7 +126,8 @@ const HabitRow = ({ habit }) => {
               </div>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );

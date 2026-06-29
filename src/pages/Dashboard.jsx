@@ -392,31 +392,31 @@ function Dashboard() {
               
               <div style={{ marginBottom: 16 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.85rem", marginBottom: 8 }}>
-                  <span style={{ color: "var(--text-muted)", fontWeight: 500 }}>Study ({dashboard?.weeklyGoals?.studyHoursGoal || 15} hrs)</span>
-                  <span style={{ color: "var(--success)", fontWeight: 700 }}>{dashboard?.weeklyGoals?.studyHoursCompleted || 8}</span>
+                  <span style={{ color: "var(--text-muted)", fontWeight: 500 }}>Study ({dashboard?.weeklyGoals?.studyHoursGoal ?? 15} hrs)</span>
+                  <span style={{ color: "var(--success)", fontWeight: 700 }}>{dashboard?.weeklyGoals?.studyHoursCompleted ?? 8}</span>
                 </div>
                 <div style={{ width: "100%", height: "6px", background: "var(--bg-secondary)", borderRadius: "4px" }}>
-                  <div style={{ width: `${Math.min(((dashboard?.weeklyGoals?.studyHoursCompleted || 8) / (dashboard?.weeklyGoals?.studyHoursGoal || 15)) * 100, 100)}%`, height: "100%", background: "var(--success)", borderRadius: "4px", transition: "width 0.5s ease" }}></div>
+                  <div style={{ width: `${Math.min(((dashboard?.weeklyGoals?.studyHoursCompleted ?? 8) / (dashboard?.weeklyGoals?.studyHoursGoal ?? 15)) * 100, 100)}%`, height: "100%", background: "var(--success)", borderRadius: "4px", transition: "width 0.5s ease" }}></div>
                 </div>
               </div>
               
               <div style={{ marginBottom: 16 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.85rem", marginBottom: 8 }}>
-                  <span style={{ color: "var(--text-muted)", fontWeight: 500 }}>Assignments ({dashboard?.weeklyGoals?.assignmentGoal || 5})</span>
-                  <span style={{ color: "var(--warning)", fontWeight: 700 }}>{dashboard?.weeklyGoals?.assignmentCompleted || 2}</span>
+                  <span style={{ color: "var(--text-muted)", fontWeight: 500 }}>Assignments ({dashboard?.weeklyGoals?.assignmentGoal ?? 5})</span>
+                  <span style={{ color: "var(--warning)", fontWeight: 700 }}>{dashboard?.weeklyGoals?.assignmentCompleted ?? 2}</span>
                 </div>
                 <div style={{ width: "100%", height: "6px", background: "var(--bg-secondary)", borderRadius: "4px" }}>
-                  <div style={{ width: `${Math.min(((dashboard?.weeklyGoals?.assignmentCompleted || 2) / (dashboard?.weeklyGoals?.assignmentGoal || 5)) * 100, 100)}%`, height: "100%", background: "var(--warning)", borderRadius: "4px", transition: "width 0.5s ease" }}></div>
+                  <div style={{ width: `${Math.min(((dashboard?.weeklyGoals?.assignmentCompleted ?? 2) / (dashboard?.weeklyGoals?.assignmentGoal ?? 5)) * 100, 100)}%`, height: "100%", background: "var(--warning)", borderRadius: "4px", transition: "width 0.5s ease" }}></div>
                 </div>
               </div>
 
               <div>
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.85rem", marginBottom: 8 }}>
-                  <span style={{ color: "var(--text-muted)", fontWeight: 500 }}>Tasks ({dashboard?.weeklyGoals?.taskGoal || 10})</span>
-                  <span style={{ color: "var(--primary)", fontWeight: 700 }}>{dashboard?.weeklyGoals?.taskCompleted || 6}</span>
+                  <span style={{ color: "var(--text-muted)", fontWeight: 500 }}>Tasks ({dashboard?.weeklyGoals?.taskGoal ?? 10})</span>
+                  <span style={{ color: "var(--primary)", fontWeight: 700 }}>{dashboard?.weeklyGoals?.taskCompleted ?? 6}</span>
                 </div>
                 <div style={{ width: "100%", height: "6px", background: "var(--bg-secondary)", borderRadius: "4px" }}>
-                  <div style={{ width: `${Math.min(((dashboard?.weeklyGoals?.taskCompleted || 6) / (dashboard?.weeklyGoals?.taskGoal || 10)) * 100, 100)}%`, height: "100%", background: "var(--primary)", borderRadius: "4px", transition: "width 0.5s ease" }}></div>
+                  <div style={{ width: `${Math.min(((dashboard?.weeklyGoals?.taskCompleted ?? 6) / (dashboard?.weeklyGoals?.taskGoal ?? 10)) * 100, 100)}%`, height: "100%", background: "var(--primary)", borderRadius: "4px", transition: "width 0.5s ease" }}></div>
                 </div>
               </div>
             </div>
