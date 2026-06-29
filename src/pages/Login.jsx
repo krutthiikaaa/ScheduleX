@@ -27,7 +27,7 @@ function Login() {
     setLoading(true);
     try {
       const data = await loginUser({ email: formData.email, password: formData.password });
-      login(data.token);
+      login(data.token, data.user);
     } catch (err) {
       setError(err.message || "Failed to login. Please check your credentials.");
       setLoading(false);

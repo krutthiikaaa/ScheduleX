@@ -1,25 +1,43 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { fetchProfile } from "../utils/api";
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState({ fullName: "Jane Doe", email: "jane.doe@example.com" });
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
-    // Check if user is logged in
-    const token = localStorage.getItem("schedulex_token");
-    if (token) {
-      setIsAuthenticated(true);
-    }
-    setLoading(false);
+    const initAuth = async () => {
+      const token = localStorage.getItem("schedulex_token");
+      const storedUser = localStorage.getItem("schedulex_user");
+      if (token) {
+        setIsAuthenticated(true);
+        if (storedUser) {
+          try { setUser(JSON.parse(storedUser)); } catch (e) {}
+        }
+        try {
+          const profileData = await fetchProfile();
+          if (profileData && profileData.user) {
+            setUser(profileData.user);
+            localStorage.setItem("schedulex_user", JSON.stringify(profileData.user));
+          }
+        } catch (err) {
+          console.error("Auth profile fetch error:", err);
+        }
+      } else if (storedUser) {
+        try { setUser(JSON.parse(storedUser)); } catch (e) {}
+      }
+      setLoading(false);
+    };
+    initAuth();
   }, []);
 
   useEffect(() => {
-    // Redirect if logged in and trying to access auth pages (login/register)
     if (isAuthenticated) {
       const authRoutes = ["/login", "/register"];
       if (authRoutes.includes(location.pathname)) {
@@ -28,20 +46,32 @@ export function AuthProvider({ children }) {
     }
   }, [isAuthenticated, location.pathname, navigate]);
 
-  const login = (token) => {
+  const login = (token, userData) => {
     localStorage.setItem("schedulex_token", token);
+    if (userData) {
+      localStorage.setItem("schedulex_user", JSON.stringify(userData));
+      setUser(userData);
+    }
     setIsAuthenticated(true);
     navigate("/dashboard", { replace: true });
   };
 
+  const updateUser = (newUserData) => {
+    const merged = { ...user, ...newUserData };
+    localStorage.setItem("schedulex_user", JSON.stringify(merged));
+    setUser(merged);
+  };
+
   const logout = () => {
     localStorage.removeItem("schedulex_token");
+    localStorage.removeItem("schedulex_user");
     setIsAuthenticated(false);
+    setUser({ fullName: "Jane Doe", email: "jane.doe@example.com" });
     navigate("/", { replace: true });
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout, loading }}>
+    <AuthContext.Provider value={{ isAuthenticated, user, login, logout, updateUser, loading }}>
       {!loading && children}
     </AuthContext.Provider>
   );

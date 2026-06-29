@@ -35,13 +35,13 @@ const ToggleSwitch = ({ checked, onChange }) => (
 );
 
 function Profile() {
-  const { logout } = useAuth();
+  const { user: authUser, updateUser, logout } = useAuth();
   
   const [loading, setLoading] = useState(true);
   
   const [user, setUser] = useState({
-    fullName: "Jane Doe",
-    email: "jane.doe@university.edu",
+    fullName: authUser?.fullName || "Jane Doe",
+    email: authUser?.email || "jane.doe@university.edu",
     university: "State Technical University",
     degree: "B.Sc. Computer Science",
     semester: "Semester 5",
@@ -119,6 +119,7 @@ function Profile() {
         };
         setUser(loadedUser);
         setEditForm(loadedUser);
+        if (updateUser) updateUser(loadedUser);
       }
     } catch (err) {
       console.error("Error fetching profile:", err);
@@ -141,6 +142,7 @@ function Profile() {
       const mergedUser = { ...editForm, ...updatedUser };
       setUser(mergedUser);
       setEditForm(mergedUser);
+      if (updateUser) updateUser(mergedUser);
       setIsEditing(false);
       showToast("Profile updated successfully", "success");
     } catch (err) {

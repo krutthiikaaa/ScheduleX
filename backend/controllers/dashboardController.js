@@ -38,9 +38,14 @@ const getDashboardData = async (req, res) => {
       });
     }
 
+    const dashData = dashboard.toObject ? dashboard.toObject() : { ...dashboard._doc };
+    if (req.user && req.user.fullName) {
+      dashData.userName = req.user.fullName;
+    }
+
     return res.status(200).json({
       success: true,
-      data: dashboard
+      data: dashData
     });
   } catch (error) {
     console.error(`Error retrieving dashboard data: ${error.message}`);

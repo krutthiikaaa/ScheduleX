@@ -1,7 +1,12 @@
 const API_URL = 'http://localhost:5000/api';
 
+const getAuthHeaders = () => ({
+  'Content-Type': 'application/json',
+  'Authorization': `Bearer ${localStorage.getItem('schedulex_token') || ''}`
+});
+
 export const fetchDashboard = async () => {
-  const res = await fetch(`${API_URL}/dashboard`);
+  const res = await fetch(`${API_URL}/dashboard`, { headers: getAuthHeaders() });
   const json = await res.json();
   return json.data;
 };
@@ -24,53 +29,48 @@ export const loginUser = async (data) => {
   return res.json();
 };
 
-export const fetchCourses = () => fetch(`${API_URL}/courses`).then(res => res.json());
-export const createCourse = (data) => fetch(`${API_URL}/courses`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(res => res.json());
-export const updateCourse = (id, data) => fetch(`${API_URL}/courses/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(res => res.json());
-export const deleteCourse = (id) => fetch(`${API_URL}/courses/${id}`, { method: 'DELETE' }).then(res => res.json());
+export const fetchCourses = () => fetch(`${API_URL}/courses`, { headers: getAuthHeaders() }).then(res => res.json());
+export const createCourse = (data) => fetch(`${API_URL}/courses`, { method: 'POST', headers: getAuthHeaders(), body: JSON.stringify(data) }).then(res => res.json());
+export const updateCourse = (id, data) => fetch(`${API_URL}/courses/${id}`, { method: 'PUT', headers: getAuthHeaders(), body: JSON.stringify(data) }).then(res => res.json());
+export const deleteCourse = (id) => fetch(`${API_URL}/courses/${id}`, { method: 'DELETE', headers: getAuthHeaders() }).then(res => res.json());
 
-export const fetchAssignments = () => fetch(`${API_URL}/assignments`).then(res => res.json()).then(res => res.data || res || []);
-export const createAssignment = (data) => fetch(`${API_URL}/assignments`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(res => res.json()).then(res => res.data || res);
-export const updateAssignment = (id, data) => fetch(`${API_URL}/assignments/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(res => res.json()).then(res => res.data || res);
-export const deleteAssignment = (id) => fetch(`${API_URL}/assignments/${id}`, { method: 'DELETE' }).then(res => res.json()).then(res => res.data || res);
+export const fetchAssignments = () => fetch(`${API_URL}/assignments`, { headers: getAuthHeaders() }).then(res => res.json()).then(res => res.data || res || []);
+export const createAssignment = (data) => fetch(`${API_URL}/assignments`, { method: 'POST', headers: getAuthHeaders(), body: JSON.stringify(data) }).then(res => res.json()).then(res => res.data || res);
+export const updateAssignment = (id, data) => fetch(`${API_URL}/assignments/${id}`, { method: 'PUT', headers: getAuthHeaders(), body: JSON.stringify(data) }).then(res => res.json()).then(res => res.data || res);
+export const deleteAssignment = (id) => fetch(`${API_URL}/assignments/${id}`, { method: 'DELETE', headers: getAuthHeaders() }).then(res => res.json()).then(res => res.data || res);
 
-export const fetchResources = () => fetch(`${API_URL}/resources`).then(res => res.json());
-export const createResource = (data) => fetch(`${API_URL}/resources`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(res => res.json());
-export const updateResource = (id, data) => fetch(`${API_URL}/resources/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(res => res.json());
-export const deleteResource = (id) => fetch(`${API_URL}/resources/${id}`, { method: 'DELETE' }).then(res => res.json());
+export const fetchResources = () => fetch(`${API_URL}/resources`, { headers: getAuthHeaders() }).then(res => res.json());
+export const createResource = (data) => fetch(`${API_URL}/resources`, { method: 'POST', headers: getAuthHeaders(), body: JSON.stringify(data) }).then(res => res.json());
+export const updateResource = (id, data) => fetch(`${API_URL}/resources/${id}`, { method: 'PUT', headers: getAuthHeaders(), body: JSON.stringify(data) }).then(res => res.json());
+export const deleteResource = (id) => fetch(`${API_URL}/resources/${id}`, { method: 'DELETE', headers: getAuthHeaders() }).then(res => res.json());
 
-export const fetchTasks = () => fetch(`${API_URL}/tasks`).then(res => res.json()).then(res => res.data || res || []);
-export const createTask = (data) => fetch(`${API_URL}/tasks`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(res => res.json()).then(res => res.data || res);
-export const updateTask = (id, data) => fetch(`${API_URL}/tasks/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(res => res.json()).then(res => res.data || res);
-export const deleteTask = (id) => fetch(`${API_URL}/tasks/${id}`, { method: 'DELETE' }).then(res => res.json()).then(res => res.data || res);
+export const fetchTasks = () => fetch(`${API_URL}/tasks`, { headers: getAuthHeaders() }).then(res => res.json()).then(res => res.data || res || []);
+export const createTask = (data) => fetch(`${API_URL}/tasks`, { method: 'POST', headers: getAuthHeaders(), body: JSON.stringify(data) }).then(res => res.json()).then(res => res.data || res);
+export const updateTask = (id, data) => fetch(`${API_URL}/tasks/${id}`, { method: 'PUT', headers: getAuthHeaders(), body: JSON.stringify(data) }).then(res => res.json()).then(res => res.data || res);
+export const deleteTask = (id) => fetch(`${API_URL}/tasks/${id}`, { method: 'DELETE', headers: getAuthHeaders() }).then(res => res.json()).then(res => res.data || res);
 
-export const fetchFocusSessions = () => fetch(`${API_URL}/focus-sessions`).then(res => res.json()).then(res => res.data || res || []);
-export const createFocusSession = (data) => fetch(`${API_URL}/focus-sessions`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(res => res.json()).then(res => res.data || res);
+export const fetchFocusSessions = () => fetch(`${API_URL}/focus-sessions`, { headers: getAuthHeaders() }).then(res => res.json()).then(res => res.data || res || []);
+export const createFocusSession = (data) => fetch(`${API_URL}/focus-sessions`, { method: 'POST', headers: getAuthHeaders(), body: JSON.stringify(data) }).then(res => res.json()).then(res => res.data || res);
 
-export const fetchStudySessions = () => fetch(`${API_URL}/study-sessions`).then(res => res.json()).then(res => res.data || res || []);
-export const createStudySession = (data) => fetch(`${API_URL}/study-sessions`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(res => res.json()).then(res => res.data || res);
-export const updateStudySession = (id, data) => fetch(`${API_URL}/study-sessions/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(res => res.json()).then(res => res.data || res);
-export const deleteStudySession = (id) => fetch(`${API_URL}/study-sessions/${id}`, { method: 'DELETE' }).then(res => res.json()).then(res => res.data || res);
+export const fetchStudySessions = () => fetch(`${API_URL}/study-sessions`, { headers: getAuthHeaders() }).then(res => res.json()).then(res => res.data || res || []);
+export const createStudySession = (data) => fetch(`${API_URL}/study-sessions`, { method: 'POST', headers: getAuthHeaders(), body: JSON.stringify(data) }).then(res => res.json()).then(res => res.data || res);
+export const updateStudySession = (id, data) => fetch(`${API_URL}/study-sessions/${id}`, { method: 'PUT', headers: getAuthHeaders(), body: JSON.stringify(data) }).then(res => res.json()).then(res => res.data || res);
+export const deleteStudySession = (id) => fetch(`${API_URL}/study-sessions/${id}`, { method: 'DELETE', headers: getAuthHeaders() }).then(res => res.json()).then(res => res.data || res);
 
-export const fetchTimetableEvents = () => fetch(`${API_URL}/timetable`).then(res => res.json()).then(res => res.data || res || []);
-export const createTimetableEvent = (data) => fetch(`${API_URL}/timetable`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(res => res.json());
-export const updateTimetableEvent = (id, data) => fetch(`${API_URL}/timetable/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(res => res.json());
-export const deleteTimetableEvent = (id) => fetch(`${API_URL}/timetable/${id}`, { method: 'DELETE' }).then(res => res.json());
+export const fetchTimetableEvents = () => fetch(`${API_URL}/timetable`, { headers: getAuthHeaders() }).then(res => res.json()).then(res => res.data || res || []);
+export const createTimetableEvent = (data) => fetch(`${API_URL}/timetable`, { method: 'POST', headers: getAuthHeaders(), body: JSON.stringify(data) }).then(res => res.json());
+export const updateTimetableEvent = (id, data) => fetch(`${API_URL}/timetable/${id}`, { method: 'PUT', headers: getAuthHeaders(), body: JSON.stringify(data) }).then(res => res.json());
+export const deleteTimetableEvent = (id) => fetch(`${API_URL}/timetable/${id}`, { method: 'DELETE', headers: getAuthHeaders() }).then(res => res.json());
 
-export const fetchHabits = () => fetch(`${API_URL}/habits`).then(res => res.json()).then(res => res.data || res || []);
-export const createHabit = (data) => fetch(`${API_URL}/habits`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(res => res.json()).then(res => res.data || res);
-export const updateHabitApi = (id, data) => fetch(`${API_URL}/habits/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(res => res.json()).then(res => res.data || res);
-export const deleteHabitApi = (id) => fetch(`${API_URL}/habits/${id}`, { method: 'DELETE' }).then(res => res.json());
+export const fetchHabits = () => fetch(`${API_URL}/habits`, { headers: getAuthHeaders() }).then(res => res.json()).then(res => res.data || res || []);
+export const createHabit = (data) => fetch(`${API_URL}/habits`, { method: 'POST', headers: getAuthHeaders(), body: JSON.stringify(data) }).then(res => res.json()).then(res => res.data || res);
+export const updateHabitApi = (id, data) => fetch(`${API_URL}/habits/${id}`, { method: 'PUT', headers: getAuthHeaders(), body: JSON.stringify(data) }).then(res => res.json()).then(res => res.data || res);
+export const deleteHabitApi = (id) => fetch(`${API_URL}/habits/${id}`, { method: 'DELETE', headers: getAuthHeaders() }).then(res => res.json());
 
-export const fetchGoals = () => fetch(`${API_URL}/goals`).then(res => res.json()).then(res => res.data || res || []);
-export const createGoal = (data) => fetch(`${API_URL}/goals`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(res => res.json()).then(res => res.data || res);
-export const updateGoalApi = (id, data) => fetch(`${API_URL}/goals/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(res => res.json()).then(res => res.data || res);
-export const deleteGoalApi = (id) => fetch(`${API_URL}/goals/${id}`, { method: 'DELETE' }).then(res => res.json());
-
-const getAuthHeaders = () => ({
-  'Content-Type': 'application/json',
-  'Authorization': `Bearer ${localStorage.getItem('schedulex_token') || ''}`
-});
+export const fetchGoals = () => fetch(`${API_URL}/goals`, { headers: getAuthHeaders() }).then(res => res.json()).then(res => res.data || res || []);
+export const createGoal = (data) => fetch(`${API_URL}/goals`, { method: 'POST', headers: getAuthHeaders(), body: JSON.stringify(data) }).then(res => res.json()).then(res => res.data || res);
+export const updateGoalApi = (id, data) => fetch(`${API_URL}/goals/${id}`, { method: 'PUT', headers: getAuthHeaders(), body: JSON.stringify(data) }).then(res => res.json()).then(res => res.data || res);
+export const deleteGoalApi = (id) => fetch(`${API_URL}/goals/${id}`, { method: 'DELETE', headers: getAuthHeaders() }).then(res => res.json());
 
 export const fetchProfile = async () => {
   const res = await fetch(`${API_URL}/profile`, { headers: getAuthHeaders() });

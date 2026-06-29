@@ -3,8 +3,10 @@ import AppLayout from "../components/AppLayout";
 import { Link } from "react-router-dom";
 import { fetchDashboard, fetchAssignments, fetchFocusSessions, fetchResources, fetchProfile } from "../utils/api";
 import { useTasksGoals } from "../context/TasksGoalsContext";
+import { useAuth } from "../context/AuthContext";
 
 function Dashboard() {
+  const { user } = useAuth();
   const [assignments, setAssignments] = useState([]);
   const [focusSessions, setFocusSessions] = useState([]);
   const [resources, setResources] = useState([]);
@@ -152,7 +154,7 @@ function Dashboard() {
         }}>
           <div>
             <h1 style={{ color: "#FFF", fontSize: "2.2rem", fontWeight: 800, marginBottom: 8, letterSpacing: "-0.5px" }}>
-              {getGreeting()}, {dashboard?.userName ?? "User"}
+              {getGreeting()}, {user?.fullName || dashboard?.userName || "User"}
             </h1>
             <p style={{ color: "rgba(255, 255, 255, 0.9)", margin: 0, fontSize: "1rem", fontWeight: 500 }}>
               You have <strong style={{ color: "#FFE8E1" }}>{overdueCount} pending assignment{overdueCount !== 1 ? 's' : ''}</strong> and <strong style={{ color: "#FFE8E1" }}>{reminders.length} active reminder{reminders.length !== 1 ? 's' : ''}</strong>.

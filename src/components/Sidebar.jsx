@@ -3,7 +3,7 @@ import { useAuth } from "../context/AuthContext";
 
 function Sidebar() {
   const location = useLocation();
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
 
   const navItems = [
     { path: "/dashboard", label: "Home", icon: "" },
@@ -13,6 +13,9 @@ function Sidebar() {
     { path: "/focus", label: "Pomodoro", icon: "" },
     { path: "/resources", label: "Library", icon: "" },
   ];
+
+  const displayName = user?.fullName || "Jane Doe";
+  const initials = displayName.split(" ").filter(Boolean).map(n => n[0]).join("").slice(0, 2).toUpperCase() || "JD";
 
   return (
     <div className="sidebar">
@@ -39,9 +42,9 @@ function Sidebar() {
 
       <div className="sidebar-footer">
         <Link to="/profile" className="user-profile-card" style={{ textDecoration: "none", color: "inherit", display: "flex", alignItems: "center", gap: "12px", cursor: "pointer" }}>
-          <div className="user-avatar">JD</div>
+          <div className="user-avatar">{initials}</div>
           <div className="user-info">
-            <span className="user-name">Jane Doe</span>
+            <span className="user-name">{displayName}</span>
             <span className="user-role">Student</span>
           </div>
         </Link>
