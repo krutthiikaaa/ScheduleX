@@ -62,17 +62,7 @@ function LandingPage() {
             <div className="landing-nav-logo">S</div>
             ScheduleX
           </Link>
-          <div className="landing-nav-links">
-            <div className="nav-center-links" style={{ display: "flex", gap: "24px", alignItems: "center" }}>
-              <a href="#features">Features</a>
-              <a href="#about">About</a>
-              <a href="#contact">Contact</a>
-            </div>
-            <div className="nav-right-actions" style={{ display: "flex", gap: "12px", alignItems: "center", marginLeft: "24px" }}>
-              <Link to="/login" className="btn btn-secondary" style={{ padding: "8px 16px" }}>Login</Link>
-              <Link to="/register" className="btn btn-primary" style={{ padding: "8px 16px" }}>Get Started</Link>
-            </div>
-          </div>
+
         </div>
       </nav>
 
