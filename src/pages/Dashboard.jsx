@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import AppLayout from "../components/AppLayout";
 import { Link } from "react-router-dom";
-import { fetchDashboard, fetchAssignments, fetchFocusSessions, fetchResources } from "../utils/api";
+import { fetchDashboard, fetchAssignments, fetchFocusSessions, fetchResources, fetchProfile } from "../utils/api";
 import { useTasksGoals } from "../context/TasksGoalsContext";
 
 function Dashboard() {
@@ -10,6 +10,13 @@ function Dashboard() {
   const [resources, setResources] = useState([]);
   const [dashboard, setDashboard] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState({
+    studyStreak: 12,
+    totalStudyHours: 42,
+    completedAssignments: 8,
+    pomodoroSessions: 18,
+    weeklyProductivity: 88
+  });
 
   const { habits } = useTasksGoals();
 
@@ -23,6 +30,9 @@ function Dashboard() {
       setDashboard(data);
       setLoading(false);
     });
+    fetchProfile().then(data => {
+      if (data && data.stats) setStats(data.stats);
+    }).catch(() => {});
   }, []);
 
   const today = new Date().toDateString();
@@ -43,31 +53,42 @@ function Dashboard() {
     <AppLayout>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 32 }}>
         <div>
-          <h1 style={{ fontSize: "2rem", marginBottom: 4 }}>Good Morning, {dashboard?.userName ?? "User"} </h1>
-          <p style={{ color: "var(--text-muted)" }}>{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</p>
+          <h1 style={{ fontSize: "2rem", fontWeight: 800, marginBottom: 4, color: "var(--text-heading)" }}>Good Morning, {dashboard?.userName ?? "User"}</h1>
+          <p style={{ color: "var(--text-muted)", margin: 0 }}>{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</p>
         </div>
         <div style={{ display: "flex", gap: 12 }}>
-          <Link to="/focus" className="btn btn-secondary"> Focus Mode</Link>
-          <Link to="/habits" className="btn btn-primary">+ Track Habits</Link>
+          <Link to="/focus" className="btn btn-secondary">Focus Mode</Link>
+          <Link to="/habits" className="btn btn-primary">Track Habits</Link>
         </div>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 24, marginBottom: 32 }}>
-        <div className="card hover-card" style={{ borderLeft: "4px solid var(--primary)" }}>
-          <h3 style={{ fontSize: "0.9rem", color: "var(--text-muted)", marginBottom: 8 }}>Habit Streak </h3>
-          <p style={{ fontSize: "1.5rem", fontWeight: "bold" }}>12 Days</p>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 20, marginBottom: 32 }}>
+        <div className="card hover-card" style={{ padding: 24, borderLeft: "4px solid var(--primary)" }}>
+          <div style={{ fontSize: "0.85rem", color: "var(--text-muted)", fontWeight: 600, marginBottom: 8 }}>Study Streak</div>
+          <div style={{ fontSize: "1.75rem", fontWeight: 800, color: "var(--text-heading)" }}>{stats.studyStreak} Days</div>
         </div>
-        <div className="card hover-card" style={{ borderLeft: "4px solid var(--warning)" }}>
-          <h3 style={{ fontSize: "0.9rem", color: "var(--text-muted)", marginBottom: 8 }}>Today's Habits</h3>
-          <p style={{ fontSize: "1.5rem", fontWeight: "bold" }}>{todayHabitsCompleted} / {habits.length}</p>
+
+        <div className="card hover-card" style={{ padding: 24, borderLeft: "4px solid var(--info)" }}>
+          <div style={{ fontSize: "0.85rem", color: "var(--text-muted)", fontWeight: 600, marginBottom: 8 }}>Total Study Hours</div>
+          <div style={{ fontSize: "1.75rem", fontWeight: 800, color: "var(--text-heading)" }}>{stats.totalStudyHours} hrs</div>
         </div>
-        <div className="card hover-card" style={{ borderLeft: "4px solid var(--success)" }}>
-          <h3 style={{ fontSize: "0.9rem", color: "var(--text-muted)", marginBottom: 8 }}>Completion Rate</h3>
-          <p style={{ fontSize: "1.5rem", fontWeight: "bold" }}>{completionRate}%</p>
+
+        <div className="card hover-card" style={{ padding: 24, borderLeft: "4px solid var(--success)" }}>
+          <div style={{ fontSize: "0.85rem", color: "var(--text-muted)", fontWeight: 600, marginBottom: 8 }}>Completed Assignments</div>
+          <div style={{ fontSize: "1.75rem", fontWeight: 800, color: "var(--text-heading)" }}>{stats.completedAssignments}</div>
         </div>
-        <div className="card hover-card" style={{ borderLeft: "4px solid var(--info)" }}>
-          <h3 style={{ fontSize: "0.9rem", color: "var(--text-muted)", marginBottom: 8 }}>Weekly Progress</h3>
-          <p style={{ fontSize: "1.5rem", fontWeight: "bold" }}>{Math.round(completionRate * 0.9)}%</p>
+
+        <div className="card hover-card" style={{ padding: 24, borderLeft: "4px solid var(--warning)" }}>
+          <div style={{ fontSize: "0.85rem", color: "var(--text-muted)", fontWeight: 600, marginBottom: 8 }}>Pomodoro Sessions</div>
+          <div style={{ fontSize: "1.75rem", fontWeight: 800, color: "var(--text-heading)" }}>{stats.pomodoroSessions}</div>
+        </div>
+
+        <div className="card hover-card" style={{ padding: 24, borderLeft: "4px solid var(--text-heading)" }}>
+          <div style={{ fontSize: "0.85rem", color: "var(--text-muted)", fontWeight: 600, marginBottom: 8 }}>Weekly Productivity</div>
+          <div style={{ fontSize: "1.75rem", fontWeight: 800, color: "var(--text-heading)" }}>{stats.weeklyProductivity}%</div>
+          <div style={{ width: "100%", height: 4, background: "var(--bg-secondary)", borderRadius: 2, marginTop: 12, overflow: "hidden" }}>
+            <div style={{ width: `${stats.weeklyProductivity}%`, height: "100%", background: "var(--text-heading)" }} />
+          </div>
         </div>
       </div>
 

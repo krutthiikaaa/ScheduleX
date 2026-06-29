@@ -66,3 +66,43 @@ export const fetchGoals = () => fetch(`${API_URL}/goals`).then(res => res.json()
 export const createGoal = (data) => fetch(`${API_URL}/goals`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(res => res.json()).then(res => res.data || res);
 export const updateGoalApi = (id, data) => fetch(`${API_URL}/goals/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(res => res.json()).then(res => res.data || res);
 export const deleteGoalApi = (id) => fetch(`${API_URL}/goals/${id}`, { method: 'DELETE' }).then(res => res.json());
+
+const getAuthHeaders = () => ({
+  'Content-Type': 'application/json',
+  'Authorization': `Bearer ${localStorage.getItem('schedulex_token') || ''}`
+});
+
+export const fetchProfile = async () => {
+  const res = await fetch(`${API_URL}/profile`, { headers: getAuthHeaders() });
+  const json = await res.json();
+  if (!res.ok) throw new Error(json.error || 'Failed to fetch profile');
+  return json.data;
+};
+
+export const updateProfileApi = async (data) => {
+  const res = await fetch(`${API_URL}/profile`, { method: 'PUT', headers: getAuthHeaders(), body: JSON.stringify(data) });
+  const json = await res.json();
+  if (!res.ok) throw new Error(json.error || 'Failed to update profile');
+  return json.data;
+};
+
+export const changePasswordApi = async (data) => {
+  const res = await fetch(`${API_URL}/profile/password`, { method: 'PUT', headers: getAuthHeaders(), body: JSON.stringify(data) });
+  const json = await res.json();
+  if (!res.ok) throw new Error(json.error || 'Failed to change password');
+  return json;
+};
+
+export const resetPasswordApi = async () => {
+  const res = await fetch(`${API_URL}/profile/reset-password`, { method: 'POST', headers: getAuthHeaders() });
+  const json = await res.json();
+  if (!res.ok) throw new Error(json.error || 'Failed to reset password');
+  return json;
+};
+
+export const exportUserDataApi = async () => {
+  const res = await fetch(`${API_URL}/profile/export`, { headers: getAuthHeaders() });
+  const json = await res.json();
+  if (!res.ok) throw new Error(json.error || 'Failed to export data');
+  return json.data;
+};

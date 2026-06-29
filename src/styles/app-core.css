@@ -44,6 +44,20 @@
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+.dark-theme {
+  --bg: #1A1817;
+  --bg-secondary: #242120;
+  --card-bg: #2B2624;
+  --text-heading: #F8F8F7;
+  --text-body: #D1CDC9;
+  --text-muted: #9E958D;
+  --border: #3A3431;
+  --border-light: #332D2A;
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.25);
+  --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.3);
+  --shadow-card-hover: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
 body {
   margin: 0;
   font-family: var(--font);

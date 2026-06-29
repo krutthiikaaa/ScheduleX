@@ -140,12 +140,14 @@ const assignmentRoutes = require('./routes/assignmentRoutes');
 const taskRoutes = require('./routes/taskRoutes');
 const focusSessionRoutes = require('./routes/focusSessionRoutes');
 const studySessionRoutes = require('./routes/studySessionRoutes');
+const profileRoutes = require('./routes/profileRoutes');
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/timetable', timetableRoutes);
 app.use('/api/assignments', assignmentRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use('/api/focus-sessions', focusSessionRoutes);
 app.use('/api/study-sessions', studySessionRoutes);
+app.use('/api/profile', profileRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
