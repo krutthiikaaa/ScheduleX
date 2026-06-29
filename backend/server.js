@@ -157,6 +157,27 @@ app.post('/api/auth/login', async (req, res) => {
   }
 });
 
+app.post('/api/auth/google', async (req, res) => {
+  try {
+    const { email, fullName } = req.body;
+    let user = await User.findOne({ email });
+    
+    if (!user) {
+      // Create a new user with a random secure password for users logging in via Google
+      const randomPassword = require('crypto').randomBytes(16).toString('hex');
+      const hashedPassword = await bcrypt.hash(randomPassword, 10);
+      
+      user = new User({ fullName, email, password: hashedPassword });
+      await user.save();
+    }
+    
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET || 'secret123', { expiresIn: '1d' });
+    res.json({ token, user: { id: user._id, fullName: user.fullName, email: user.email } });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Seed some initial data if empty
 app.post('/api/seed', async (req, res) => {
   const count = await Assignment.countDocuments();

@@ -29,6 +29,15 @@ export const loginUser = async (data) => {
   return res.json();
 };
 
+export const googleAuth = async (data) => {
+  const res = await fetch(`${API_URL}/auth/google`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.error || 'Google login failed');
+  }
+  return res.json();
+};
+
 export const fetchCourses = () => fetch(`${API_URL}/courses`, { headers: getAuthHeaders() }).then(res => res.json());
 export const createCourse = (data) => fetch(`${API_URL}/courses`, { method: 'POST', headers: getAuthHeaders(), body: JSON.stringify(data) }).then(res => res.json());
 export const updateCourse = (id, data) => fetch(`${API_URL}/courses/${id}`, { method: 'PUT', headers: getAuthHeaders(), body: JSON.stringify(data) }).then(res => res.json());
