@@ -43,14 +43,14 @@ function LandingPage() {
         position: "sticky",
         top: 0,
         zIndex: 1000,
-        background: "rgba(26, 23, 21, 0.85)",
+        background: "rgba(255, 255, 255, 0.85)",
         backdropFilter: "blur(12px)",
-        borderBottom: "1px solid rgba(255,255,255,0.08)",
+        borderBottom: "1px solid var(--border-light)",
         width: "100%"
       }}>
         <div style={{ maxWidth: 1360, margin: "0 auto", padding: "16px 40px", boxSizing: "border-box", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <Link to="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none", color: "#F5F5F5", fontWeight: 800, fontSize: "1.2rem" }}>
-            <div style={{ width: 34, height: 34, borderRadius: 8, background: "#D65A31", color: "#FFF", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: "1rem" }}>
+          <Link to="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none", color: "var(--text-heading)", fontWeight: 800, fontSize: "1.2rem" }}>
+            <div style={{ width: 34, height: 34, borderRadius: 8, background: "var(--primary)", color: "#FFF", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: "1rem" }}>
               S
             </div>
             ScheduleX

@@ -44,7 +44,19 @@ export function AuthProvider({ children }) {
         navigate("/dashboard", { replace: true });
       }
     }
-  }, [isAuthenticated, location.pathname, navigate]);
+
+    // Force Light Theme on Landing and Auth Pages, otherwise respect user preferences
+    const lightOnlyRoutes = ["/", "/login", "/register"];
+    if (lightOnlyRoutes.includes(location.pathname)) {
+      document.body.classList.remove("dark-theme");
+    } else {
+      if (user?.preferences?.theme === "dark") {
+        document.body.classList.add("dark-theme");
+      } else {
+        document.body.classList.remove("dark-theme");
+      }
+    }
+  }, [isAuthenticated, location.pathname, navigate, user?.preferences?.theme]);
 
   const login = (token, userData) => {
     localStorage.setItem("schedulex_token", token);
