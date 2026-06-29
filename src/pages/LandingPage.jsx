@@ -43,29 +43,29 @@ function LandingPage() {
         position: "sticky",
         top: 0,
         zIndex: 1000,
-        background: "rgba(255, 255, 255, 0.85)",
+        background: "rgba(26, 23, 21, 0.85)",
         backdropFilter: "blur(12px)",
-        borderBottom: "1px solid var(--border-light)",
+        borderBottom: "1px solid rgba(255,255,255,0.08)",
         width: "100%"
       }}>
         <div style={{ maxWidth: 1360, margin: "0 auto", padding: "16px 40px", boxSizing: "border-box", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <Link to="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none", color: "var(--text-heading)", fontWeight: 800, fontSize: "1.2rem" }}>
-            <div style={{ width: 34, height: 34, borderRadius: 8, background: "var(--primary)", color: "#FFF", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: "1rem" }}>
+          <Link to="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none", color: "#F5F5F5", fontWeight: 800, fontSize: "1.2rem" }}>
+            <div style={{ width: 34, height: 34, borderRadius: 8, background: "#D65A31", color: "#FFF", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: "1rem" }}>
               S
             </div>
             ScheduleX
           </Link>
 
           <div style={{ display: "flex", gap: 32, alignItems: "center" }}>
-            <div style={{ display: "flex", gap: 24, fontWeight: 600, fontSize: "0.9rem", color: "var(--text-muted)" }}>
-              <a href="#features" style={{ color: "inherit", textDecoration: "none", transition: "color 0.2s" }}>Features</a>
-              <a href="#workflow" style={{ color: "inherit", textDecoration: "none", transition: "color 0.2s" }}>Workflow</a>
-              <a href="#advantages" style={{ color: "inherit", textDecoration: "none", transition: "color 0.2s" }}>Why ScheduleX</a>
+            <div className="landing-nav-links" style={{ display: "flex", gap: 24, fontWeight: 600, fontSize: "0.9rem" }}>
+              <a href="#features">Features</a>
+              <a href="#workflow">Workflow</a>
+              <a href="#advantages">Why ScheduleX</a>
             </div>
 
             <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-              <Link to="/login" className="btn btn-secondary" style={{ padding: "8px 18px", fontSize: "0.85rem" }}>Sign In</Link>
-              <Link to="/register" className="btn btn-primary" style={{ padding: "8px 18px", fontSize: "0.85rem" }}>Get Started</Link>
+              <Link to="/login" className="landing-btn-signin" style={{ padding: "8px 18px", fontSize: "0.85rem" }}>Sign In</Link>
+              <Link to="/register" className="landing-btn-primary" style={{ padding: "8px 18px", fontSize: "0.85rem" }}>Get Started</Link>
             </div>
           </div>
         </div>
