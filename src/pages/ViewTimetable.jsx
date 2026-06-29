@@ -1,5 +1,6 @@
 import AppLayout from "../components/AppLayout";
 import { Link } from "react-router-dom";
+import { Eye, Edit2, Trash2 } from "lucide-react";
 
 function ViewTimetable() {
   const timetableData = [
@@ -34,9 +35,9 @@ function ViewTimetable() {
                 <td><span className="room-badge">{row.room}</span></td>
                 <td>
                   <div style={{ display: "flex", gap: 6 }}>
-                    <button className="table-action-btn" title="View">️</button>
-                    <button className="table-action-btn" title="Edit">️</button>
-                    <button className="table-action-btn delete" title="Delete">️</button>
+                    <button className="table-action-btn" title="View"><Eye size={16} /></button>
+                    <button className="table-action-btn" title="Edit"><Edit2 size={16} /></button>
+                    <button className="table-action-btn delete" title="Delete"><Trash2 size={16} /></button>
                   </div>
                 </td>
               </tr>

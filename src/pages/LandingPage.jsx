@@ -114,21 +114,17 @@ function LandingPage() {
         <div className="section-header">
           <span className="section-badge" style={{ color: "var(--primary)", background: "var(--primary-light)" }}>Workspace</span>
           <h2>Everything You Need</h2>
-          <p>Powerful tools designed with simplicity at their core.</p>
+          <p>Everything a student needs to organize studies, build habits, and stay productive.</p>
         </div>
         <div className="features-grid">
           {[
-            { title: "Smart Timetable Management", desc: "Conflict-free weekly planner.", icon: "" },
-            { title: "Assignment Tracker", desc: "Never miss a deadline.", icon: "" },
-            { title: "Resource Library", desc: "Cloud storage for materials.", icon: "" },
-            { title: "Study Planner", desc: "Dedicated spaces per subject.", icon: "" },
-            { title: "Pomodoro Focus Mode", desc: "Track deep work sessions.", icon: "" },
-            { title: "Tasks & Goals", desc: "Daily and weekly checklists.", icon: "" },
-            { title: "Productivity Analytics", desc: "Deep insights into study habits.", icon: "" },
-            { title: "Study Streak", desc: "Build consistent habits.", icon: "" }
+            { title: "Timetable", desc: "Organize weekly class schedules with an intuitive timetable interface." },
+            { title: "Assignments", desc: "Track assignment deadlines, priorities, and completion status in one place." },
+            { title: "Habit Tracker", desc: "Build consistent daily study habits with a monthly habit tracking system and progress visualization." },
+            { title: "Focus Mode", desc: "Stay productive using a built-in Pomodoro timer with customizable study and break sessions." },
+            { title: "Resources", desc: "Store and organize notes, PDFs, links, and study materials by subject for quick access." }
           ].map((f, i) => (
             <div className="feature-card" key={i}>
-              <span className="feature-icon">{f.icon}</span>
               <h3>{f.title}</h3>
               <p>{f.desc}</p>
             </div>

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import AppLayout from "../components/AppLayout";
 import { fetchProfile, updateProfileApi, changePasswordApi, resetPasswordApi, exportUserDataApi } from "../utils/api";
 import { useAuth } from "../context/AuthContext";
+import { CalendarDays, BarChart3 } from "lucide-react";
 
 function Profile() {
   const { logout } = useAuth();
@@ -675,12 +676,12 @@ function Profile() {
             <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
               <button onClick={() => showToast("Downloading timetable...", "success")} className="btn" style={{ background: "var(--bg-secondary)", color: "var(--text-heading)", border: "1px solid var(--border-light)", padding: "12px", textAlign: "left", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <span style={{ fontWeight: 600, fontSize: "0.9rem" }}>Download Timetable</span>
-                <span style={{ color: "var(--text-muted)" }}>📅</span>
+                <CalendarDays size={18} color="var(--text-muted)" />
               </button>
 
               <button onClick={() => showToast("Downloading habits...", "success")} className="btn" style={{ background: "var(--bg-secondary)", color: "var(--text-heading)", border: "1px solid var(--border-light)", padding: "12px", textAlign: "left", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <span style={{ fontWeight: 600, fontSize: "0.9rem" }}>Download Habit History</span>
-                <span style={{ color: "var(--text-muted)" }}>📊</span>
+                <BarChart3 size={18} color="var(--text-muted)" />
               </button>
             </div>
           </div>
