@@ -58,13 +58,17 @@
   --duration: 250ms;
 }
 
+html {
+  zoom: 0.8;
+}
+
 body {
   margin: 0;
   font-family: var(--font);
   background: var(--bg);
   color: var(--text-body);
   -webkit-font-smoothing: antialiased;
-  min-height: 100vh;
+  min-height: 125vh;
 }
 
 h1, h2, h3, h4, h5, h6 {

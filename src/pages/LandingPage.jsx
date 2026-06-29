@@ -153,7 +153,7 @@ function LandingPage() {
               { title: "Assignment & Deadline Tracker", desc: "Prioritize coursework with automated urgency alerts and structured submission tracking across all enrolled subjects." },
               { title: "Pomodoro Focus Mode", desc: "Execute deep study sprints using customizable focus intervals seamlessly integrated with your academic task list." },
               { title: "Habit & Goal Engine", desc: "Establish consistent daily routines and track weekly academic targets with visual progression bars." },
-              { title: "Resource Vault", desc: "Centralize course syllabi, lecture notes, video recordings, and study guides tagged by subject for instant retrieval." },
+              { title: "Academic Library", desc: "Centralize course syllabi, lecture notes, video recordings, and study guides tagged by subject for instant retrieval." },
               { title: "Productivity Pulse", desc: "Gain actionable feedback on your study habits through detailed metrics on focus duration and streak consistency." }
             ].map((feature, idx) => (
               <div key={idx} className="card hover-card" style={{ padding: 28, display: "flex", flexDirection: "column", justify: "space-between", borderTop: "3px solid var(--primary)", boxSizing: "border-box" }}>

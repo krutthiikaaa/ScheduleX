@@ -132,7 +132,7 @@ function Resources() {
       <div className="resources-container">
         {/* Segmented Filter Bar */}
         <div className="resources-filter-bar">
-          <button className={`filter-pill ${filter === "All" ? "active" : ""}`} onClick={() => setFilter("All")}>All Resources ({resources.length})</button>
+          <button className={`filter-pill ${filter === "All" ? "active" : ""}`} onClick={() => setFilter("All")}>All Library Items ({resources.length})</button>
           <button className={`filter-pill ${filter === "PDF" ? "active" : ""}`} onClick={() => setFilter("PDF")}>PDFs & Docs</button>
           <button className={`filter-pill ${filter === "Video" ? "active" : ""}`} onClick={() => setFilter("Video")}>Videos</button>
           <button className={`filter-pill ${filter === "Link" ? "active" : ""}`} onClick={() => setFilter("Link")}>Web Links</button>
@@ -199,7 +199,7 @@ function Resources() {
           <div className="modern-modal-card" style={{ maxWidth: 480 }}>
             <div className="modern-modal-header">
               <div>
-                <h2 className="modern-modal-title">Add Resource</h2>
+                <h2 className="modern-modal-title">Add to Library</h2>
                 <div className="modern-modal-subtitle">Attach a file from your laptop or paste a web link</div>
               </div>
               <button type="button" className="modern-close-btn" onClick={() => setShowModal(false)}>×</button>
