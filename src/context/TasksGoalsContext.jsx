@@ -104,7 +104,7 @@ export const TasksGoalsProvider = ({ children }) => {
     try {
       const saved = await createHabit(newHabitObj);
       const formatted = { ...saved, id: saved._id || saved.id || Date.now().toString() };
-      setRawHabits(prev => [...prev, formatted]);
+      setRawHabits(prev => [...prev.filter(h => !h.isExample), formatted]);
     } catch (err) {
       console.error("Error creating habit:", err);
     }

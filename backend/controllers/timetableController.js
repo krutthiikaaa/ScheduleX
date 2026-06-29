@@ -15,8 +15,8 @@ const dayOrder = {
 // @access  Public
 const getTimetableEvents = async (req, res) => {
   try {
-    const count = await Timetable.countDocuments();
-    if (count === 0) {
+    const count = await Timetable.countDocuments(req.userQuery);
+    if (count === 0 && req.isDemoUser) {
       await Timetable.insertMany([
         { subject: 'Operating Systems', day: 'Monday', startTime: '09:00', endTime: '10:30', notes: 'Room 304' },
         { subject: 'Data Structures', day: 'Monday', startTime: '11:00', endTime: '12:30', notes: 'Lab 2' },
@@ -25,7 +25,7 @@ const getTimetableEvents = async (req, res) => {
         { subject: 'Computer Networks', day: 'Thursday', startTime: '09:00', endTime: '10:30', notes: 'Room 304' }
       ]);
     }
-    const events = await Timetable.find();
+    const events = await Timetable.find(req.userQuery);
     
     // Sort by Day of Week, then Start Time
     events.sort((a, b) => {
@@ -59,6 +59,7 @@ const createTimetableEvent = async (req, res) => {
     }
 
     const newEvent = await Timetable.create({
+      userId: req.userId,
       subject,
       day,
       startTime,
@@ -87,7 +88,7 @@ const createTimetableEvent = async (req, res) => {
 const updateTimetableEvent = async (req, res) => {
   try {
     const { subject, day, startTime, endTime, notes } = req.body;
-    let event = await Timetable.findById(req.params.id);
+    let event = await Timetable.findOne({ _id: req.params.id, ...req.userQuery });
 
     if (!event) {
       return res.status(404).json({ success: false, message: 'Class not found' });
@@ -124,7 +125,7 @@ const updateTimetableEvent = async (req, res) => {
 // @access  Public
 const deleteTimetableEvent = async (req, res) => {
   try {
-    const event = await Timetable.findById(req.params.id);
+    const event = await Timetable.findOne({ _id: req.params.id, ...req.userQuery });
 
     if (!event) {
       return res.status(404).json({ success: false, message: 'Class not found' });

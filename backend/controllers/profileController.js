@@ -10,18 +10,21 @@ const Habit = require('../models/Habit');
 exports.getProfile = async (req, res) => {
   try {
     const user = req.user;
+    const isDemo = req.isDemoUser;
     
     // Aggregate statistics
-    const focusSessions = await FocusSession.find();
-    const studySessions = await StudySession.find();
-    const assignments = await Assignment.find();
+    const focusSessions = await FocusSession.find(req.userQuery || {});
+    const studySessions = await StudySession.find(req.userQuery || {});
+    const assignments = await Assignment.find(req.userQuery || {});
 
     const totalFocusMinutes = focusSessions.reduce((acc, curr) => acc + (curr.durationMinutes || 0), 0);
     const totalStudyMinutes = studySessions.reduce((acc, curr) => acc + (curr.duration || 0), 0);
-    const totalHours = Math.max(Math.round((totalFocusMinutes + totalStudyMinutes) / 60), 14); // Fallback to 14 hours if empty for better UI demo
+    const calculatedHours = Math.round((totalFocusMinutes + totalStudyMinutes) / 60);
+    const totalHours = isDemo ? Math.max(calculatedHours, 14) : calculatedHours;
 
-    const completedAssignments = assignments.filter(a => a.status === 'Completed' || a.completed === true).length || 8;
-    const pomodoroCount = focusSessions.length || 18;
+    const actualCompletedAsg = assignments.filter(a => a.status === 'Completed' || a.completed === true).length;
+    const completedAssignments = isDemo ? (actualCompletedAsg || 8) : actualCompletedAsg;
+    const pomodoroCount = isDemo ? (focusSessions.length || 18) : focusSessions.length;
 
     res.json({
       success: true,
@@ -30,17 +33,14 @@ exports.getProfile = async (req, res) => {
           id: user._id,
           fullName: user.fullName,
           email: user.email,
-          university: user.university || 'State Technical University',
-          semester: user.semester || 'Semester 5',
-          cgpa: user.cgpa || 3.85,
           preferences: user.preferences || { theme: 'light', notifications: true }
         },
         stats: {
-          studyStreak: 12,
+          studyStreak: isDemo ? 12 : 0,
           totalStudyHours: totalHours,
           completedAssignments: completedAssignments,
           pomodoroSessions: pomodoroCount,
-          weeklyProductivity: 88
+          weeklyProductivity: isDemo ? 88 : 0
         }
       }
     });
@@ -51,7 +51,7 @@ exports.getProfile = async (req, res) => {
 
 exports.updateProfile = async (req, res) => {
   try {
-    const { fullName, email, university, semester, cgpa, preferences } = req.body;
+    const { fullName, email, preferences } = req.body;
     const user = req.user;
 
     if (fullName) user.fullName = fullName;
@@ -62,9 +62,6 @@ exports.updateProfile = async (req, res) => {
       }
       user.email = email;
     }
-    if (university !== undefined) user.university = university;
-    if (semester !== undefined) user.semester = semester;
-    if (cgpa !== undefined) user.cgpa = Number(cgpa);
     if (preferences) {
       user.preferences = {
         theme: preferences.theme || user.preferences?.theme || 'light',
@@ -81,9 +78,6 @@ exports.updateProfile = async (req, res) => {
         id: user._id,
         fullName: user.fullName,
         email: user.email,
-        university: user.university,
-        semester: user.semester,
-        cgpa: user.cgpa,
         preferences: user.preferences
       }
     });

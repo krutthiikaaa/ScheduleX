@@ -5,15 +5,15 @@ const Assignment = require('../models/Assignment');
 // @access  Public
 const getAssignments = async (req, res) => {
   try {
-    const count = await Assignment.countDocuments();
-    if (count === 0) {
+    const count = await Assignment.countDocuments(req.userQuery);
+    if (count === 0 && req.isDemoUser) {
       await Assignment.insertMany([
         { title: 'Project Phase 1', subject: 'Data Structures', dueDate: 'Tomorrow', priority: 'High', status: 'Pending', description: 'Complete the graph implementation' },
         { title: 'Lab Report 4', subject: 'Operating Systems', dueDate: 'In 3 Days', priority: 'Medium', status: 'In Progress', description: 'Memory management simulation' },
         { title: 'Problem Set 2', subject: 'Algorithms', dueDate: 'Next Week', priority: 'High', status: 'Pending', description: 'Dynamic programming problems' }
       ]);
     }
-    const assignments = await Assignment.find().sort({ createdAt: -1 });
+    const assignments = await Assignment.find(req.userQuery).sort({ createdAt: -1 });
     res.status(200).json({
       success: true,
       data: assignments
@@ -36,6 +36,7 @@ const createAssignment = async (req, res) => {
     }
 
     const assignment = await Assignment.create({
+      userId: req.userId,
       title,
       subject,
       dueDate: dueDate || '',
@@ -59,7 +60,7 @@ const createAssignment = async (req, res) => {
 // @access  Public
 const updateAssignment = async (req, res) => {
   try {
-    const assignment = await Assignment.findByIdAndUpdate(req.params.id, req.body, {
+    const assignment = await Assignment.findOneAndUpdate({ _id: req.params.id, ...req.userQuery }, req.body, {
       new: true,
       runValidators: true
     });
@@ -83,7 +84,7 @@ const updateAssignment = async (req, res) => {
 // @access  Public
 const deleteAssignment = async (req, res) => {
   try {
-    const assignment = await Assignment.findByIdAndDelete(req.params.id);
+    const assignment = await Assignment.findOneAndDelete({ _id: req.params.id, ...req.userQuery });
 
     if (!assignment) {
       return res.status(404).json({ success: false, message: 'Assignment not found' });

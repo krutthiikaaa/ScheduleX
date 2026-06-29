@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useTasksGoals } from '../../context/TasksGoalsContext';
 import HabitRow from './HabitRow';
 
@@ -28,7 +29,7 @@ const HabitTracker = () => {
     setShowAddModal(false);
   };
 
-  const gridCols = `minmax(160px, 200px) repeat(${daysInMonth}, minmax(0, 1fr))`;
+  const gridCols = `minmax(130px, 160px) repeat(${daysInMonth}, minmax(0, 1fr))`;
 
   return (
     <div className="card" style={{ padding: 24, position: 'relative' }}>
@@ -48,52 +49,45 @@ const HabitTracker = () => {
             <button 
               onClick={prevMonth}
               className="btn" 
-              style={{ padding: '4px 10px', fontSize: '0.85rem', background: 'var(--card-bg)', color: 'var(--text-heading)', borderRadius: '6px', border: '1px solid var(--border-light)', cursor: 'pointer', fontWeight: 600 }}
+              style={{ padding: '4px 10px', fontSize: '0.8rem', background: 'transparent', border: 'none', color: 'var(--text-heading)', fontWeight: 700 }}
               title="Previous Month"
             >
-              ◀ Prev
+              ◀
             </button>
-            <span style={{ fontWeight: 700, padding: '0 8px', minWidth: '110px', textAlign: 'center', color: 'var(--text-heading)', fontSize: '0.9rem' }}>
-              {monthName} {year}
-            </span>
             <button 
               onClick={nextMonth}
               disabled={isCurrentOrFutureMonth}
               className="btn" 
-              style={{ 
-                padding: '4px 10px', 
-                fontSize: '0.85rem', 
-                background: isCurrentOrFutureMonth ? 'var(--bg-secondary)' : 'var(--card-bg)', 
-                color: 'var(--text-heading)',
-                borderRadius: '6px', 
-                border: '1px solid var(--border-light)',
-                cursor: isCurrentOrFutureMonth ? 'not-allowed' : 'pointer',
-                opacity: isCurrentOrFutureMonth ? 0.4 : 1,
-                fontWeight: 600
-              }}
-              title={isCurrentOrFutureMonth ? "Cannot access next month in this month itself" : "Next Month"}
+              style={{ padding: '4px 10px', fontSize: '0.8rem', background: 'transparent', border: 'none', color: isCurrentOrFutureMonth ? 'var(--text-muted)' : 'var(--text-heading)', opacity: isCurrentOrFutureMonth ? 0.4 : 1, fontWeight: 700, cursor: isCurrentOrFutureMonth ? 'not-allowed' : 'pointer' }}
+              title="Next Month"
             >
-              Next ▶
+              ▶
             </button>
           </div>
 
-          <button onClick={() => setShowAddModal(true)} className="btn btn-primary" style={{ fontSize: '0.85rem', padding: '8px 16px' }}>+ Add Habit</button>
+          <button 
+            onClick={() => setShowAddModal(true)}
+            className="btn btn-primary"
+            style={{ padding: '8px 16px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: 6, background: '#D65A31', color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 600 }}
+          >
+            + Add Habit
+          </button>
         </div>
       </div>
-      
-      <div className="habit-tracker-grid">
+
+      <div className="habit-tracker-grid" style={{ width: '100%', overflow: 'hidden', paddingBottom: 12 }}>
         {/* Weeks Banner Row */}
-        <div className="habit-header-row" style={{ gridTemplateColumns: gridCols, marginBottom: 4 }}>
-          <div style={{ textAlign: 'left', paddingLeft: 8, color: 'var(--text-heading)' }}>Weeks of Month</div>
-          <div className="week-1" style={{ gridColumn: 'span 7', padding: '6px 0', borderRadius: '4px', color: '#B85D34', fontSize: '0.8rem' }}>Week 1 (Days 1-7)</div>
-          <div className="week-2" style={{ gridColumn: 'span 7', padding: '6px 0', borderRadius: '4px', color: '#A06E50', fontSize: '0.8rem' }}>Week 2 (Days 8-14)</div>
-          <div className="week-3" style={{ gridColumn: 'span 7', padding: '6px 0', borderRadius: '4px', color: '#687B52', fontSize: '0.8rem' }}>Week 3 (Days 15-21)</div>
-          <div className="week-4" style={{ gridColumn: `span ${daysInMonth - 21}`, padding: '6px 0', borderRadius: '4px', color: '#8C775B', fontSize: '0.8rem' }}>Week 4 (Days 22-{daysInMonth})</div>
+        <div className="habit-header-row" style={{ display: 'grid', gridTemplateColumns: gridCols, gap: 3, marginBottom: 4, width: '100%' }}>
+          <div style={{ textAlign: 'left', paddingLeft: 8, color: 'var(--text-heading)', fontWeight: 700 }}>Weeks of Month</div>
+          <div className="week-1" style={{ gridColumn: 'span 7', padding: '6px 0', borderRadius: '4px', color: '#B85D34', fontSize: '0.8rem', textAlign: 'center', fontWeight: 700 }}>Week 1 (Days 1-7)</div>
+          <div className="week-2" style={{ gridColumn: 'span 7', padding: '6px 0', borderRadius: '4px', color: '#A06E50', fontSize: '0.8rem', textAlign: 'center', fontWeight: 700 }}>Week 2 (Days 8-14)</div>
+          <div className="week-3" style={{ gridColumn: 'span 7', padding: '6px 0', borderRadius: '4px', color: '#687B52', fontSize: '0.8rem', textAlign: 'center', fontWeight: 700 }}>Week 3 (Days 15-21)</div>
+          <div className="week-4" style={{ gridColumn: `span ${daysInMonth - 21}`, padding: '6px 0', borderRadius: '4px', color: '#8C775B', fontSize: '0.8rem', textAlign: 'center', fontWeight: 700 }}>Week 4 (Days 22-{daysInMonth})</div>
         </div>
 
         {/* Days Header Row */}
-        <div className="habit-header-row" style={{ gridTemplateColumns: gridCols }}>
-          <div style={{ textAlign: 'left', paddingLeft: 8 }}>Habit</div>
+        <div className="habit-header-row" style={{ display: 'grid', gridTemplateColumns: gridCols, gap: 3, width: '100%' }}>
+          <div style={{ textAlign: 'left', paddingLeft: 8, fontWeight: 700 }}>Habit</div>
           {days.map((day, index) => {
              let weekClass = '';
              if (index < 7) weekClass = 'week-1';
@@ -110,13 +104,11 @@ const HabitTracker = () => {
                  style={{ 
                    padding: isTodayDay ? '6px 0' : '4px 0', 
                    borderRadius: '6px',
-                   backgroundColor: isTodayDay ? '#D65A31' : undefined,
-                   color: isTodayDay ? 'var(--card-bg)' : undefined,
-                   fontWeight: isTodayDay ? '800' : undefined,
-                   boxShadow: isTodayDay ? '0 4px 14px rgba(214, 90, 49, 0.45)' : undefined,
-                   transform: isTodayDay ? 'scale(1.15) translateY(-2px)' : undefined,
-                   position: 'relative',
-                   zIndex: isTodayDay ? 3 : 1
+                   backgroundColor: isTodayDay ? '#D65A31' : 'transparent',
+                   color: isTodayDay ? '#fff' : 'var(--text-muted)',
+                   fontWeight: isTodayDay ? '800' : '600',
+                   textAlign: 'center',
+                   fontSize: '0.75rem'
                  }}
                  title={isTodayDay ? "TODAY" : `Day ${day}`}
                >
@@ -125,13 +117,20 @@ const HabitTracker = () => {
              );
           })}
         </div>
-        
+
+        {/* Habit Rows */}
+        {habits.length === 0 && (
+          <div style={{ textAlign: 'center', padding: '32px 0', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+            No habits added yet for this month. Click "+ Add Habit" to begin.
+          </div>
+        )}
+
         {habits.map(habit => (
-          <HabitRow key={habit.id} habit={habit} />
+          <HabitRow key={habit.id} habit={habit} gridCols={gridCols} />
         ))}
       </div>
 
-      {showAddModal && (
+      {showAddModal && createPortal(
         <div className="modern-modal-backdrop">
           <div className="modern-modal-card">
             <div className="modern-modal-header">
@@ -179,7 +178,8 @@ const HabitTracker = () => {
               </div>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

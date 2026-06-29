@@ -16,6 +16,10 @@ const habitSchema = new mongoose.Schema({
   notes: {
     type: String,
     default: ''
+  },
+  isExample: {
+    type: Boolean,
+    default: false
   }
 }, {
   timestamps: true,

@@ -30,15 +30,20 @@ const auth = async (req, res, next) => {
           fullName: 'Jane Doe',
           email: 'jane.doe@example.com',
           password: hashedPassword,
-          university: 'State Technical University',
-          semester: 'Semester 5',
-          cgpa: 3.85,
           preferences: { theme: 'light', notifications: true }
         });
       }
     }
 
     req.user = user;
+    req.userId = user._id;
+    if (user.email === 'jane.doe@example.com') {
+      req.isDemoUser = true;
+      req.userQuery = { $or: [{ userId: user._id }, { userId: { $exists: false } }, { userId: null }] };
+    } else {
+      req.isDemoUser = false;
+      req.userQuery = { userId: user._id };
+    }
     next();
   } catch (err) {
     res.status(500).json({ error: 'Server Auth Error' });
