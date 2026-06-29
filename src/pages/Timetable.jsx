@@ -137,26 +137,17 @@ function Timetable() {
   };
 
   const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-  const times = [
-    { label: '7 AM', value: '07:00' },
-    { label: '8 AM', value: '08:00' },
-    { label: '9 AM', value: '09:00' },
-    { label: '10 AM', value: '10:00' },
-    { label: '11 AM', value: '11:00' },
-    { label: '12 PM', value: '12:00' },
-    { label: '1 PM', value: '13:00' },
-    { label: '2 PM', value: '14:00' },
-    { label: '3 PM', value: '15:00' },
-    { label: '4 PM', value: '16:00' },
-    { label: '5 PM', value: '17:00' },
-    { label: '6 PM', value: '18:00' },
-    { label: '7 PM', value: '19:00' }
-  ];
+  const times = [];
+  for (let h = 0; h <= 23; h++) {
+    const val = `${String(h).padStart(2, '0')}:00`;
+    const h12 = h % 12 || 12;
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    times.push({ label: `${h12} ${ampm}`, value: val });
+  }
 
   const timeSelectOptions = [];
-  for (let h = 7; h <= 21; h++) {
+  for (let h = 0; h <= 23; h++) {
     for (let m of ['00', '30']) {
-      if (h === 21 && m === '30') continue;
       const val = `${String(h).padStart(2, '0')}:${m}`;
       const h12 = h % 12 || 12;
       const ampm = h >= 12 ? 'PM' : 'AM';
@@ -178,17 +169,21 @@ function Timetable() {
 
   return (
     <AppLayout>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24, flexWrap: "wrap", gap: 16 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 28, flexWrap: "wrap", gap: 20 }}>
+        <div>
+          <h1 style={{ fontSize: "2.2rem", fontWeight: 800, color: "var(--text-heading)", margin: 0 }}>Schedule</h1>
+          <p style={{ margin: "4px 0 0", fontSize: "0.95rem", color: "var(--text-muted)", fontWeight: 500 }}>Manage your academic timetable and weekly commitments</p>
+        </div>
         <div style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
+          <span style={{ fontWeight: 700, fontSize: "1.05rem", minWidth: 160, textAlign: "center", color: "var(--text-heading)", background: "var(--bg-secondary)", padding: "8px 16px", borderRadius: "var(--radius-btn)" }}>
+            {mondayDate.toLocaleDateString('en-US', { month: 'short' })} {mondayDate.getDate()} – {weekDates[6].toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+          </span>
+
           <div style={{ display: "flex", alignItems: "center", background: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius-btn)", padding: "2px", boxShadow: "var(--shadow-sm)" }}>
             <button className="btn" style={{ padding: "8px 16px", background: "transparent", border: "none", cursor: "pointer", color: "var(--text-heading)", fontSize: "0.95rem", fontWeight: 700 }} onClick={() => shiftWeek(-7)}>← Prev</button>
             <div style={{ width: "1px", height: "18px", background: "var(--border)" }}></div>
             <button className="btn" style={{ padding: "8px 16px", background: "transparent", border: "none", cursor: "pointer", color: "var(--text-heading)", fontSize: "0.95rem", fontWeight: 700 }} onClick={() => shiftWeek(7)}>Next →</button>
           </div>
-
-          <span style={{ fontWeight: 700, fontSize: "1.05rem", minWidth: 160, textAlign: "center", color: "var(--text-heading)" }}>
-            {mondayDate.toLocaleDateString('en-US', { month: 'short' })} {mondayDate.getDate()} – {weekDates[6].toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-          </span>
         </div>
       </div>
 
@@ -196,14 +191,14 @@ function Timetable() {
         <table style={{ width: "100%", borderCollapse: "collapse", tableLayout: "fixed" }}>
           <thead>
             <tr>
-              <th style={{ width: 80, borderBottom: "1px solid var(--border)", borderRight: "1px solid var(--border-light)", padding: "16px 8px 8px", background: "var(--bg-secondary)", textAlign: "center", fontSize: "0.75rem", color: "var(--text-muted)", verticalAlign: "bottom" }}>GMT</th>
+              <th style={{ width: 90, minWidth: 90, borderBottom: "2px solid var(--border)", borderRight: "1px solid var(--border-light)", padding: "16px 12px", background: "var(--bg-secondary)", textAlign: "center", fontSize: "0.75rem", fontWeight: 800, color: "var(--text-muted)", letterSpacing: "0.05em" }}>TIME</th>
               {days.map((d, idx) => {
                 const dt = weekDates[idx];
                 const isToday = dt.toDateString() === new Date().toDateString();
                 return (
-                  <th key={d} style={{ borderBottom: "1px solid var(--border)", borderRight: "1px solid var(--border-light)", padding: "12px 8px", background: isToday ? "var(--primary-light)" : "var(--bg-secondary)", color: isToday ? "var(--primary)" : "inherit" }}>
-                    <div style={{ fontSize: "0.75rem", fontWeight: 600, opacity: 0.8 }}>{d.slice(0, 3).toUpperCase()}</div>
-                    <div style={{ fontSize: "1.15rem", fontWeight: 800, marginTop: 2 }}>{dt.getDate()}</div>
+                  <th key={d} style={{ borderBottom: "2px solid var(--border)", borderRight: "1px solid var(--border-light)", padding: "14px 8px", background: isToday ? "var(--primary-light)" : "var(--bg-secondary)", color: isToday ? "var(--primary)" : "inherit" }}>
+                    <div style={{ fontSize: "0.75rem", fontWeight: 700, opacity: 0.8, letterSpacing: "0.04em" }}>{d.slice(0, 3).toUpperCase()}</div>
+                    <div style={{ fontSize: "1.25rem", fontWeight: 800, marginTop: 4 }}>{dt.getDate()}</div>
                   </th>
                 );
               })}
@@ -215,8 +210,8 @@ function Timetable() {
               const slotHour = getHour(t);
               return (
                 <tr key={t}>
-                  <td style={{ borderBottom: "none", borderRight: "1px solid var(--border-light)", padding: "0 8px 0 0", textAlign: "right", color: "var(--text-muted)", fontSize: "0.75rem", fontWeight: 500, verticalAlign: "top", height: 56 }}>
-                    <span style={{ position: "relative", top: "-7px" }}>{slot.label}</span>
+                  <td style={{ width: 90, minWidth: 90, borderBottom: "1px solid var(--border-light)", borderRight: "1px solid var(--border-light)", padding: "12px 14px 0 0", textAlign: "right", verticalAlign: "top", height: 64, boxSizing: "border-box", background: "var(--card-bg)" }}>
+                    <span style={{ fontWeight: 700, fontSize: "0.78rem", color: "var(--text-muted)", letterSpacing: "0.02em" }}>{slot.label}</span>
                   </td>
                   {days.map(d => {
                     const dayEvents = events.filter(e => e.day === d || e.day === d.slice(0, 3)).filter(e => getHour(e.startTime) === slotHour);
@@ -232,12 +227,13 @@ function Timetable() {
                           borderRight: "1px solid var(--border-light)",
                           padding: 0,
                           verticalAlign: 'top',
-                          height: 56,
+                          height: 64,
                           cursor: "pointer",
                           background: isHighlighted ? "var(--primary-light)" : "transparent",
                           boxShadow: isHighlighted ? "inset 0 0 0 2px var(--primary)" : "none",
                           transition: "background 0.2s ease, box-shadow 0.2s ease",
-                          position: "relative"
+                          position: "relative",
+                          boxSizing: "border-box"
                         }}
                         onClick={(e) => handleSlotClick(e, d, t)}
                       >
@@ -245,24 +241,24 @@ function Timetable() {
                           {dayEvents.map(evt => {
                             const dur = Math.max(0.5, parseHourDecimal(evt.endTime) - parseHourDecimal(evt.startTime));
                             const offsetMinutes = (parseHourDecimal(evt.startTime) - slotHour) * 60;
-                            const topOffset = (offsetMinutes / 60) * 56 + 2;
+                            const topOffset = (offsetMinutes / 60) * 64 + 4;
                             return (
-                              <div key={evt._id} style={{ background: "var(--primary)", color: "#FFF", padding: "6px 8px", borderRadius: "6px", fontSize: "0.8rem", position: "absolute", top: topOffset, left: 4, right: 4, height: Math.max(46, dur * 56 - 4), display: "flex", flexDirection: "column", justify: "flex-start", boxShadow: "0 1px 4px rgba(0,0,0,0.2)", cursor: "pointer", overflow: "hidden", zIndex: 5, boxSizing: "border-box" }} onClick={(e) => { e.stopPropagation(); openEditModal(evt, e); }}>
-                                <div style={{ fontWeight: 700, lineHeight: 1.2, paddingRight: 18, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{evt.subject || "(No title)"}</div>
-                                <div style={{ fontSize: "0.75rem", opacity: 0.95, lineHeight: 1.2, marginTop: 2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{formatCardTime(evt.startTime, evt.endTime)}</div>
+                              <div key={evt._id} style={{ background: "var(--primary)", color: "#FFF", padding: "8px 10px", borderRadius: "8px", fontSize: "0.85rem", position: "absolute", top: topOffset, left: 6, right: 6, height: Math.max(52, dur * 64 - 8), display: "flex", flexDirection: "column", justify: "flex-start", boxShadow: "0 4px 12px rgba(214, 90, 49, 0.25)", cursor: "pointer", overflow: "hidden", zIndex: 5, boxSizing: "border-box" }} onClick={(e) => { e.stopPropagation(); openEditModal(evt, e); }}>
+                                <div style={{ fontWeight: 800, lineHeight: 1.25, paddingRight: 18, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{evt.subject || "(No title)"}</div>
+                                <div style={{ fontSize: "0.75rem", opacity: 0.95, fontWeight: 600, lineHeight: 1.2, marginTop: 4, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{formatCardTime(evt.startTime, evt.endTime)}</div>
                                 {(evt.notes || evt.venue) && <div style={{ fontSize: "0.75rem", opacity: 0.85, marginTop: 4, overflow: "hidden", textOverflow: "ellipsis" }}>{evt.notes || evt.venue}</div>}
-                                <button type="button" title="Delete Class" style={{ position: "absolute", top: 4, right: 4, background: "rgba(255,255,255,0.2)", border: "none", borderRadius: 4, color: "#FFF", cursor: "pointer", padding: "1px 5px", fontSize: "0.7rem", lineHeight: 1 }} onClick={(e) => { e.stopPropagation(); handleDelete(evt._id); }}>✕</button>
+                                <button type="button" title="Delete Class" style={{ position: "absolute", top: 6, right: 6, background: "rgba(255,255,255,0.25)", border: "none", borderRadius: 4, color: "#FFF", cursor: "pointer", padding: "2px 6px", fontSize: "0.75rem", lineHeight: 1, fontWeight: 800 }} onClick={(e) => { e.stopPropagation(); handleDelete(evt._id); }}>✕</button>
                               </div>
                             );
                           })}
                           {isPreviewSlot && (() => {
                             const dur = Math.max(0.5, parseHourDecimal(newEvent.endTime) - parseHourDecimal(newEvent.startTime));
                             const offsetMinutes = (parseHourDecimal(newEvent.startTime) - slotHour) * 60;
-                            const topOffset = (offsetMinutes / 60) * 56 + 2;
+                            const topOffset = (offsetMinutes / 60) * 64 + 4;
                             return (
-                              <div style={{ background: "var(--primary)", color: "#FFF", padding: "6px 8px", borderRadius: "6px", fontSize: "0.8rem", position: "absolute", top: topOffset, left: 4, right: 4, height: Math.max(46, dur * 56 - 4), display: "flex", flexDirection: "column", justify: "flex-start", boxShadow: "0 4px 12px rgba(0,0,0,0.3)", overflow: "hidden", zIndex: 10, boxSizing: "border-box" }}>
-                                <div style={{ fontWeight: 700, lineHeight: 1.2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{newEvent.subject || "(No title)"}</div>
-                                <div style={{ fontSize: "0.75rem", opacity: 0.95, lineHeight: 1.2, marginTop: 2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{formatCardTime(newEvent.startTime, newEvent.endTime)}</div>
+                              <div style={{ background: "var(--primary)", color: "#FFF", padding: "8px 10px", borderRadius: "8px", fontSize: "0.85rem", position: "absolute", top: topOffset, left: 6, right: 6, height: Math.max(52, dur * 64 - 8), display: "flex", flexDirection: "column", justify: "flex-start", boxShadow: "0 6px 16px rgba(0,0,0,0.2)", overflow: "hidden", zIndex: 10, boxSizing: "border-box" }}>
+                                <div style={{ fontWeight: 800, lineHeight: 1.25, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{newEvent.subject || "(No title)"}</div>
+                                <div style={{ fontSize: "0.75rem", opacity: 0.95, fontWeight: 600, lineHeight: 1.2, marginTop: 4, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{formatCardTime(newEvent.startTime, newEvent.endTime)}</div>
                               </div>
                             );
                           })()}

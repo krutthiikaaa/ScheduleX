@@ -46,7 +46,7 @@
 }
 
 .filter-pill.active {
-  background: var(--card-bg)FFF;
+  background: var(--card-bg);
   color: var(--text-heading);
   font-weight: 700;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.04);
@@ -78,7 +78,7 @@
 .add-resource-card:hover {
   transform: translateY(-6px);
   border-color: var(--primary, #D65A31);
-  background: var(--card-bg)FFF;
+  background: var(--card-bg);
   box-shadow: 0 15px 35px -10px rgba(214, 90, 49, 0.15);
 }
 
@@ -122,8 +122,8 @@
 
 /* --- STANDARD RESOURCE CARD --- */
 .resource-card {
-  background: var(--card-bg)FFF;
-  border: 1px solid rgba(231, 229, 228, 0.9);
+  background: var(--card-bg);
+  border: 1px solid var(--border-light);
   border-radius: 22px;
   padding: 26px;
   display: flex;
@@ -281,11 +281,11 @@
 }
 
 .file-drop-zone {
-  border: 2px dashed #D6D3D1;
+  border: 2px dashed var(--border);
   border-radius: 16px;
   padding: 28px 20px;
   text-align: center;
-  background: #FAFAF9;
+  background: var(--bg-secondary);
   cursor: pointer;
   transition: all 0.2s ease;
   position: relative;
@@ -293,7 +293,7 @@
 
 .file-drop-zone:hover {
   border-color: var(--primary, #D65A31);
-  background: var(--card-bg)BF9;
+  background: var(--card-bg);
 }
 
 .file-drop-zone input[type="file"] {

@@ -39,7 +39,7 @@ function Register() {
     setLoading(true);
     try {
       const data = await registerUser({ fullName: formData.name, email: formData.email, password: formData.password });
-      login(data.token);
+      login(data.token, data.user);
     } catch (err) {
       setError(err.message || "Failed to create account.");
       setLoading(false);

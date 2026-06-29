@@ -47,7 +47,7 @@ function CreateTimetable() {
               <label htmlFor="create-time">Time Slot</label>
               <select id="create-time" className="form-input form-select">
                 <option value="">Select time</option>
-                <option>08:00 – 09:00</option><option>09:00 – 10:00</option>
+                <option>00:00 – 01:00</option><option>08:00 – 09:00</option><option>09:00 – 10:00</option>
                 <option>10:00 – 11:00</option><option>11:00 – 12:00</option>
                 <option>14:00 – 15:00</option><option>15:00 – 16:00</option>
               </select>

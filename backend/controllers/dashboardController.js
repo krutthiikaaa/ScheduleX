@@ -7,24 +7,47 @@ const Dashboard = require('../models/Dashboard');
  */
 const getDashboardData = async (req, res) => {
   try {
-    // Retrieve the dashboard document from MongoDB
-    const dashboard = await Dashboard.findOne();
+    let dashboard = await Dashboard.findOne();
 
-    // Check if dashboard document exists
     if (!dashboard) {
-      return res.status(404).json({
-        success: false,
-        message: 'No dashboard document found'
+      dashboard = await Dashboard.create({
+        userName: "Jane Doe",
+        studyStreak: 12,
+        pendingAssignments: 3,
+        remainingTasks: 5,
+        pomodoroMinutesToday: 75,
+        upcomingDeadlines: [
+          { title: "Project Phase 1", course: "Data Structures", timeLeft: "Tomorrow", priority: "High", status: "Pending" },
+          { title: "Lab Report 4", course: "Operating Systems", timeLeft: "3 Days", priority: "Medium", status: "Pending" },
+          { title: "Problem Set 2", course: "Algorithms", timeLeft: "5 Days", priority: "High", status: "Pending" }
+        ],
+        weeklyFocus: { goalHours: 15, completedHours: 10 },
+        weeklyGoals: {
+          studyHoursCompleted: 10, studyHoursGoal: 15,
+          assignmentCompleted: 4, assignmentGoal: 6,
+          taskCompleted: 8, taskGoal: 10
+        },
+        recentResources: [
+          { name: "OS Lecture Notes", course: "Operating Systems", type: "PDF", openedAt: "2 hours ago" },
+          { name: "Graph Algorithms", course: "Algorithms", type: "Link", openedAt: "Yesterday" }
+        ],
+        recentActivity: [
+          { title: "Completed Pomodoro", description: "25 mins focus on Data Structures", createdAt: "Today" },
+          { title: "Submitted Assignment", description: "OS Lab Report 3", createdAt: "Yesterday" }
+        ]
       });
     }
 
-    // Return the complete dashboard object as JSON
+    const dashData = dashboard.toObject ? dashboard.toObject() : { ...dashboard._doc };
+    if (req.user && req.user.fullName) {
+      dashData.userName = req.user.fullName;
+    }
+
     return res.status(200).json({
       success: true,
-      data: dashboard
+      data: dashData
     });
   } catch (error) {
-    // Graceful error handling
     console.error(`Error retrieving dashboard data: ${error.message}`);
     return res.status(500).json({
       success: false,

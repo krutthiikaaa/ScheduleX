@@ -3,8 +3,10 @@ import AppLayout from "../components/AppLayout";
 import { Link } from "react-router-dom";
 import { fetchDashboard, fetchAssignments, fetchFocusSessions, fetchResources, fetchProfile } from "../utils/api";
 import { useTasksGoals } from "../context/TasksGoalsContext";
+import { useAuth } from "../context/AuthContext";
 
 function Dashboard() {
+  const { user } = useAuth();
   const [assignments, setAssignments] = useState([]);
   const [focusSessions, setFocusSessions] = useState([]);
   const [resources, setResources] = useState([]);
@@ -19,6 +21,25 @@ function Dashboard() {
   });
 
   const { habits } = useTasksGoals();
+
+  // Reminders State
+  const [reminders, setReminders] = useState(() => {
+    const saved = localStorage.getItem("dashboard_reminders");
+    if (!saved) return [];
+    try {
+      const parsed = JSON.parse(saved);
+      const now = Date.now();
+      return parsed.filter(item => {
+        const timeDiff = now - new Date(item.createdAt).getTime();
+        return timeDiff < 24 * 60 * 60 * 1000;
+      });
+    } catch (e) {
+      return [];
+    }
+  });
+
+  const [showAddInput, setShowAddInput] = useState(false);
+  const [reminderText, setReminderText] = useState("");
 
   useEffect(() => {
     Promise.all([fetchAssignments(), fetchFocusSessions(), fetchResources()]).then(([assignData, focusData, resData]) => {
@@ -35,169 +56,371 @@ function Dashboard() {
     }).catch(() => {});
   }, []);
 
+  // Save reminders to localStorage
+  useEffect(() => {
+    localStorage.setItem("dashboard_reminders", JSON.stringify(reminders));
+  }, [reminders]);
+
+  // Real-time automatic dissolution of expired reminders
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const now = Date.now();
+      setReminders(prev => prev.filter(item => {
+        const timeDiff = now - new Date(item.createdAt).getTime();
+        return timeDiff < 24 * 60 * 60 * 1000;
+      }));
+    }, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleAddReminder = (e) => {
+    e.preventDefault();
+    if (!reminderText.trim()) return;
+    const newReminder = {
+      id: Math.random().toString(36).substr(2, 9),
+      text: reminderText.trim(),
+      createdAt: new Date().toISOString()
+    };
+    setReminders(prev => [newReminder, ...prev]);
+    setReminderText("");
+    setShowAddInput(false);
+  };
+
+  const handleDeleteReminder = (id) => {
+    setReminders(prev => prev.filter(item => item.id !== id));
+  };
+
+  const formatReminderTime = (dateStr) => {
+    const d = new Date(dateStr);
+    return d.toLocaleString('en-US', { 
+      month: 'short', 
+      day: 'numeric', 
+      hour: '2-digit', 
+      minute: '2-digit' 
+    });
+  };
+
   const today = new Date().toDateString();
-  const dayIndex = new Date().getDate() - 1; // 0-30 for habit days
+  const dayIndex = new Date().getDate() - 1;
+  const recentCompletedHabits = habits.filter(h => h.days && h.days[dayIndex]).slice(-3);
   
-  const todayHabitsCompleted = habits.filter(h => h.days[dayIndex]).length;
-  const recentCompletedHabits = habits.filter(h => h.days[dayIndex]).slice(-3);
-  
-  const totalChecks = habits.reduce((acc, h) => acc + h.days.filter(d => d).length, 0);
-  const totalPossible = habits.length * 31;
-  const completionRate = totalPossible ? Math.round((totalChecks / totalPossible) * 100) : 0;
+  const pendingAssignments = assignments.filter(a => a.status !== "Completed");
+  const overdueCount = pendingAssignments.length;
 
   if (loading) {
-    return <AppLayout><div style={{ padding: 48, textAlign: "center" }}>Loading...</div></AppLayout>;
+    return <AppLayout><div style={{ padding: 48, textAlign: "center", color: "var(--text-muted)", fontWeight: 600 }}>Loading workspace...</div></AppLayout>;
   }
+
+  const kpiLabelStyle = {
+    fontSize: "0.7rem", 
+    color: "var(--text-muted)", 
+    fontWeight: 700, 
+    letterSpacing: "0.05em", 
+    textTransform: "uppercase", 
+    marginBottom: 6
+  };
+
+  const kpiValueStyle = {
+    fontSize: "1.65rem", 
+    fontWeight: 800, 
+    color: "var(--text-heading)", 
+    lineHeight: 1.1
+  };
+
+  // Determine greeting based on local time
+  const getGreeting = () => {
+    const hrs = new Date().getHours();
+    if (hrs < 12) return "Good Morning";
+    if (hrs < 17) return "Good Afternoon";
+    return "Good Evening";
+  };
 
   return (
     <AppLayout>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 32 }}>
-        <div>
-          <h1 style={{ fontSize: "2rem", fontWeight: 800, marginBottom: 4, color: "var(--text-heading)" }}>Good Morning, {dashboard?.userName ?? "User"}</h1>
-          <p style={{ color: "var(--text-muted)", margin: 0 }}>{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</p>
-        </div>
-        <div style={{ display: "flex", gap: 12 }}>
-          <Link to="/focus" className="btn btn-secondary">Focus Mode</Link>
-          <Link to="/habits" className="btn btn-primary">Track Habits</Link>
-        </div>
-      </div>
-
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 20, marginBottom: 32 }}>
-        <div className="card hover-card" style={{ padding: 24, borderLeft: "4px solid var(--primary)" }}>
-          <div style={{ fontSize: "0.85rem", color: "var(--text-muted)", fontWeight: 600, marginBottom: 8 }}>Study Streak</div>
-          <div style={{ fontSize: "1.75rem", fontWeight: 800, color: "var(--text-heading)" }}>{stats.studyStreak} Days</div>
-        </div>
-
-        <div className="card hover-card" style={{ padding: 24, borderLeft: "4px solid var(--info)" }}>
-          <div style={{ fontSize: "0.85rem", color: "var(--text-muted)", fontWeight: 600, marginBottom: 8 }}>Total Study Hours</div>
-          <div style={{ fontSize: "1.75rem", fontWeight: 800, color: "var(--text-heading)" }}>{stats.totalStudyHours} hrs</div>
-        </div>
-
-        <div className="card hover-card" style={{ padding: 24, borderLeft: "4px solid var(--success)" }}>
-          <div style={{ fontSize: "0.85rem", color: "var(--text-muted)", fontWeight: 600, marginBottom: 8 }}>Completed Assignments</div>
-          <div style={{ fontSize: "1.75rem", fontWeight: 800, color: "var(--text-heading)" }}>{stats.completedAssignments}</div>
-        </div>
-
-        <div className="card hover-card" style={{ padding: 24, borderLeft: "4px solid var(--warning)" }}>
-          <div style={{ fontSize: "0.85rem", color: "var(--text-muted)", fontWeight: 600, marginBottom: 8 }}>Pomodoro Sessions</div>
-          <div style={{ fontSize: "1.75rem", fontWeight: 800, color: "var(--text-heading)" }}>{stats.pomodoroSessions}</div>
-        </div>
-
-        <div className="card hover-card" style={{ padding: 24, borderLeft: "4px solid var(--text-heading)" }}>
-          <div style={{ fontSize: "0.85rem", color: "var(--text-muted)", fontWeight: 600, marginBottom: 8 }}>Weekly Productivity</div>
-          <div style={{ fontSize: "1.75rem", fontWeight: 800, color: "var(--text-heading)" }}>{stats.weeklyProductivity}%</div>
-          <div style={{ width: "100%", height: 4, background: "var(--bg-secondary)", borderRadius: 2, marginTop: 12, overflow: "hidden" }}>
-            <div style={{ width: `${stats.weeklyProductivity}%`, height: "100%", background: "var(--text-heading)" }} />
+      <div style={{ display: "flex", flexDirection: "column", gap: 32, maxWidth: 1360, width: "100%", margin: "0 auto", paddingBottom: 60 }}>
+        
+        {/* Modern Welcome Banner Card */}
+        <div style={{
+          background: "linear-gradient(135deg, var(--primary) 0%, #E26E4A 100%)",
+          borderRadius: "28px",
+          padding: "36px 40px",
+          color: "#FFF",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          flexWrap: "wrap",
+          gap: 24,
+          boxShadow: "0 12px 32px rgba(214, 90, 49, 0.2)"
+        }}>
+          <div>
+            <h1 style={{ color: "#FFF", fontSize: "2.2rem", fontWeight: 800, marginBottom: 8, letterSpacing: "-0.5px" }}>
+              {getGreeting()}, {user?.fullName || dashboard?.userName || "User"}
+            </h1>
+            <p style={{ color: "rgba(255, 255, 255, 0.9)", margin: 0, fontSize: "1rem", fontWeight: 500 }}>
+              You have <strong style={{ color: "#FFE8E1" }}>{overdueCount} pending assignment{overdueCount !== 1 ? 's' : ''}</strong> and <strong style={{ color: "#FFE8E1" }}>{reminders.length} active reminder{reminders.length !== 1 ? 's' : ''}</strong>.
+            </p>
+          </div>
+          <div style={{ display: "flex", gap: 14 }}>
+            <Link to="/focus" className="btn" style={{ background: "rgba(255, 255, 255, 0.15)", color: "#FFF", border: "1px solid rgba(255, 255, 255, 0.25)", padding: "12px 24px", borderRadius: "14px", fontWeight: 700, fontSize: "0.9rem", transition: "background 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.background = "rgba(255, 255, 255, 0.25)"} onMouseLeave={(e) => e.currentTarget.style.background = "rgba(255, 255, 255, 0.15)"}>
+              Pomodoro
+            </Link>
+            <Link to="/habits" className="btn" style={{ background: "#FFF", color: "var(--primary)", padding: "12px 24px", borderRadius: "14px", fontWeight: 700, fontSize: "0.9rem", boxShadow: "0 4px 12px rgba(0,0,0,0.05)" }}>
+              Habits
+            </Link>
           </div>
         </div>
-      </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "65% 1fr", gap: 24 }}>
-        <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-          
-          <div className="card">
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-              <h2 style={{ margin: 0, fontSize: "1.2rem" }}>Recent Completed Habits</h2>
-              <Link to="/habits" className="btn btn-secondary" style={{ padding: "4px 12px", fontSize: "0.8rem" }}>View All</Link>
+        {/* Unified KPI Grid */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(5, minmax(0, 1fr))", gap: 16 }}>
+          <div className="card" style={{ padding: "18px 20px", borderRadius: "20px", border: "1px solid var(--border-light)" }}>
+            <div style={kpiLabelStyle}>STUDY STREAK</div>
+            <div style={{ ...kpiValueStyle, color: "var(--primary)" }}>
+              {stats.studyStreak} <span style={{ fontSize: "0.85rem", color: "var(--text-muted)", fontWeight: 600 }}>Days</span>
             </div>
+          </div>
+
+          <div className="card" style={{ padding: "18px 20px", borderRadius: "20px", border: "1px solid var(--border-light)" }}>
+            <div style={kpiLabelStyle}>TOTAL STUDY HOURS</div>
+            <div style={kpiValueStyle}>
+              {stats.totalStudyHours} <span style={{ fontSize: "0.85rem", color: "var(--text-muted)", fontWeight: 600 }}>hrs</span>
+            </div>
+          </div>
+
+          <div className="card" style={{ padding: "18px 20px", borderRadius: "20px", border: "1px solid var(--border-light)" }}>
+            <div style={kpiLabelStyle}>PENDING ASSIGNMENTS</div>
+            <div style={{ ...kpiValueStyle, color: overdueCount > 0 ? "var(--danger)" : "var(--success)" }}>
+              {overdueCount}
+            </div>
+          </div>
+
+          <div className="card" style={{ padding: "18px 20px", borderRadius: "20px", border: "1px solid var(--border-light)" }}>
+            <div style={kpiLabelStyle}>POMODORO SESSIONS</div>
+            <div style={kpiValueStyle}>
+              {stats.pomodoroSessions}
+            </div>
+          </div>
+
+          <div className="card" style={{ padding: "18px 20px", borderRadius: "20px", border: "1px solid var(--border-light)" }}>
+            <div style={kpiLabelStyle}>ACTIVE REMINDERS</div>
+            <div style={{ ...kpiValueStyle, color: "#0EA5E9" }}>
+              {reminders.length}
+            </div>
+          </div>
+        </div>
+
+        {/* Reorganized 2-Column Main Section */}
+        <div style={{ display: "grid", gridTemplateColumns: "1.65fr 1fr", gap: 32, alignItems: "start" }}>
+          
+          {/* Left Column (Academic Focus) */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
             
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-              {recentCompletedHabits.map((h, i) => (
-                <div key={`h-${i}`} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: 12, background: 'var(--bg-secondary)', borderRadius: 'var(--radius-sm)' }}>
-                  <span style={{ fontSize: '1.2rem' }}>{h.icon}</span>
-                  <div>
-                    <div style={{ fontWeight: 'bold', fontSize: '0.9rem' }}>{h.title}</div>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Habit completed today</div>
-                  </div>
+            {/* Upcoming Deadlines Card */}
+            <div className="card" style={{ padding: "32px", borderRadius: "24px", border: "1px solid var(--border-light)" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
+                <div>
+                  <h2 style={{ margin: 0, fontSize: "1.3rem", fontWeight: 800 }}>Upcoming Deadlines</h2>
+                  <p style={{ margin: "4px 0 0", fontSize: "0.85rem", color: "var(--text-muted)" }}>Assignments and deliverables due soon</p>
                 </div>
-              ))}
-              {recentCompletedHabits.length === 0 && (
-                 <p style={{ textAlign: "center", color: "var(--text-muted)", padding: 24 }}>No habits completed today.</p>
-              )}
+                <Link to="/assignments" className="btn btn-secondary" style={{ padding: "8px 16px", borderRadius: "12px", fontSize: "0.8rem", fontWeight: 700 }}>View All</Link>
+              </div>
+              
+              <div style={{ overflowX: "auto" }}>
+                <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
+                  <thead>
+                    <tr style={{ borderBottom: "1px solid var(--border)", color: "var(--text-muted)", fontSize: "0.72rem", fontWeight: 800, letterSpacing: "0.06em" }}>
+                      <th style={{ paddingBottom: 12 }}>ASSIGNMENT</th>
+                      <th style={{ paddingBottom: 12 }}>SUBJECT</th>
+                      <th style={{ paddingBottom: 12 }}>TIME LEFT</th>
+                      <th style={{ paddingBottom: 12, textAlign: "right" }}>PRIORITY</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {dashboard?.upcomingDeadlines?.slice(0, 4).map((ast, idx) => (
+                      <tr key={idx} style={{ borderBottom: "1px solid var(--border-light)", transition: "background 0.2s" }}>
+                        <td style={{ padding: "14px 0", fontWeight: 700, fontSize: "0.95rem", color: "var(--text-heading)" }}>{ast?.title}</td>
+                        <td style={{ padding: "14px 0" }}>
+                          <span style={{ padding: "4px 8px", background: "var(--bg-secondary)", borderRadius: "8px", fontSize: "0.8rem", fontWeight: 600, color: "var(--text-muted)" }}>
+                            {ast?.course}
+                          </span>
+                        </td>
+                        <td style={{ padding: "14px 0", color: "var(--danger)", fontSize: "0.88rem", fontWeight: 700 }}>{ast?.timeLeft}</td>
+                        <td style={{ padding: "14px 0", textAlign: "right" }}>
+                          <span style={{ 
+                            padding: "4px 10px", 
+                            borderRadius: "99px", 
+                            fontSize: "0.75rem", 
+                            fontWeight: 700, 
+                            background: ast?.priority === "High" ? "var(--danger-light)" : "var(--warning-light)", 
+                            color: ast?.priority === "High" ? "var(--danger)" : "var(--warning)" 
+                          }}>
+                            {ast?.priority}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                    {(!dashboard?.upcomingDeadlines || dashboard.upcomingDeadlines.length === 0) && (
+                      <tr>
+                        <td colSpan="4" style={{ padding: "32px 0", textAlign: "center", color: "var(--text-muted)", fontSize: "0.9rem" }}>
+                          No upcoming deadlines.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </div>
-          </div>
 
-          <div className="card">
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-              <h2 style={{ margin: 0, fontSize: "1.2rem" }}>Upcoming Deadlines</h2>
-              <Link to="/assignments" className="btn btn-secondary" style={{ padding: "4px 12px", fontSize: "0.8rem" }}>View All</Link>
-            </div>
-            
-            <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
-              <thead>
-                <tr style={{ borderBottom: "1px solid var(--border)", color: "var(--text-muted)", fontSize: "0.85rem" }}>
-                  <th style={{ paddingBottom: 12, fontWeight: 500 }}>Assignment</th>
-                  <th style={{ paddingBottom: 12, fontWeight: 500 }}>Subject</th>
-                  <th style={{ paddingBottom: 12, fontWeight: 500 }}>Time Left</th>
-                  <th style={{ paddingBottom: 12, fontWeight: 500 }}>Priority</th>
-                </tr>
-              </thead>
-              <tbody>
-                {dashboard?.upcomingDeadlines?.slice(0, 4).map((ast, idx) => (
-                  <tr key={idx} style={{ borderBottom: "1px solid var(--border-light)" }}>
-                    <td style={{ padding: "12px 0", fontWeight: "bold", fontSize: "0.95rem" }}>{ast?.title}</td>
-                    <td style={{ padding: "12px 0", color: "var(--text-muted)", fontSize: "0.9rem" }}>{ast?.course}</td>
-                    <td style={{ padding: "12px 0", color: "var(--danger)", fontSize: "0.9rem", fontWeight: 600 }}>{ast?.timeLeft}</td>
-                    <td style={{ padding: "12px 0" }}>
-                      <span style={{ padding: "4px 8px", borderRadius: "12px", fontSize: "0.75rem", background: ast?.priority === "High" ? "var(--danger-light)" : "var(--warning-light)", color: ast?.priority === "High" ? "var(--danger)" : "var(--warning)" }}>
-                        {ast?.priority}
-                      </span>
-                    </td>
-                  </tr>
+            {/* Recent Completed Habits Card */}
+            <div className="card" style={{ padding: "32px", borderRadius: "24px", border: "1px solid var(--border-light)" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+                <div>
+                  <h2 style={{ margin: 0, fontSize: "1.3rem", fontWeight: 800 }}>Completed Habits Today</h2>
+                  <p style={{ margin: "4px 0 0", fontSize: "0.85rem", color: "var(--text-muted)" }}>Track routines established today</p>
+                </div>
+                <Link to="/habits" className="btn btn-secondary" style={{ padding: "8px 16px", borderRadius: "12px", fontSize: "0.8rem", fontWeight: 700 }}>View Habits</Link>
+              </div>
+              
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                {recentCompletedHabits.map((h, i) => (
+                  <div key={`h-${i}`} style={{ display: 'flex', alignItems: 'center', gap: 14, padding: "14px 16px", background: 'var(--bg-secondary)', borderRadius: '14px', border: "1px solid var(--border-light)" }}>
+                    <div>
+                      <div style={{ fontWeight: 700, fontSize: '0.92rem', color: "var(--text-heading)" }}>{h.title}</div>
+                      <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 500, marginTop: 2 }}>Routine completed today</div>
+                    </div>
+                  </div>
                 ))}
-              </tbody>
-            </table>
+                {recentCompletedHabits.length === 0 && (
+                  <div style={{ 
+                    padding: "36px 24px", 
+                    textAlign: "center", 
+                    background: "var(--bg-secondary)", 
+                    borderRadius: "16px",
+                    border: "1px dashed var(--border)"
+                  }}>
+                    <p style={{ color: "var(--text-muted)", margin: 0, fontSize: "0.88rem", fontWeight: 500 }}>No habits completed yet today.</p>
+                  </div>
+                )}
+              </div>
+            </div>
+
           </div>
 
-        </div>
-
-        <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-          
-          <div className="card">
-            <h2 style={{ margin: 0, marginBottom: 16, fontSize: "1.1rem" }}>Focus Time (Weekly)</h2>
-            <div style={{ marginBottom: 16 }}>
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.85rem", marginBottom: 8 }}>
-                <span style={{ color: "var(--text-muted)" }}>Goal: {dashboard?.weeklyFocus?.goalHours ?? 10} hours</span>
-                <span style={{ color: "var(--info)", fontWeight: 600 }}>{dashboard?.weeklyFocus?.completedHours ?? 0} Hours</span>
-              </div>
-              <div style={{ width: "100%", height: "8px", background: "var(--bg-secondary)", borderRadius: "4px" }}>
-                <div style={{ width: `${Math.min(((dashboard?.weeklyFocus?.completedHours ?? 0) / (dashboard?.weeklyFocus?.goalHours || 10)) * 100, 100)}%`, height: "100%", background: "var(--primary)", borderRadius: "4px", transition: "width 0.5s ease" }}></div>
-              </div>
-            </div>
-          </div>
-
-          <div className="card">
-            <h2 style={{ margin: 0, marginBottom: 16, fontSize: "1.1rem" }}>Weekly Goals</h2>
+          {/* Right Column (Goals & Actions) */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
             
-            <div style={{ marginBottom: 16 }}>
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.85rem", marginBottom: 8 }}>
-                <span style={{ color: "var(--text-muted)" }}>Study ({dashboard?.weeklyGoals?.studyHoursGoal || 15} hrs)</span>
-                <span style={{ color: "var(--success)", fontWeight: 600 }}>{dashboard?.weeklyGoals?.studyHoursCompleted || 8}</span>
+            {/* Quick Reminders Box */}
+            <div className="card" style={{ padding: "32px", borderRadius: "24px", border: "1px solid var(--border-light)" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+                <div>
+                  <h2 style={{ margin: 0, fontSize: "1.2rem", fontWeight: 800, color: "var(--text-heading)" }}>Reminders</h2>
+                  <p style={{ margin: "2px 0 0", fontSize: "0.78rem", color: "var(--text-muted)" }}>Expires in 24 hours</p>
+                </div>
+                <button 
+                  onClick={() => setShowAddInput(!showAddInput)} 
+                  className="btn btn-primary" 
+                  style={{ padding: "6px 14px", fontSize: "0.78rem", borderRadius: "12px", background: "var(--primary)", border: "none", color: "#FFF", fontWeight: 700, cursor: "pointer" }}
+                >
+                  {showAddInput ? "Cancel" : "+ Add"}
+                </button>
               </div>
-              <div style={{ width: "100%", height: "6px", background: "var(--bg-secondary)", borderRadius: "4px" }}>
-                <div style={{ width: `${Math.min(((dashboard?.weeklyGoals?.studyHoursCompleted || 8) / (dashboard?.weeklyGoals?.studyHoursGoal || 15)) * 100, 100)}%`, height: "100%", background: "var(--success)", borderRadius: "4px", transition: "width 0.5s ease" }}></div>
-              </div>
-            </div>
-            
-            <div style={{ marginBottom: 16 }}>
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.85rem", marginBottom: 8 }}>
-                <span style={{ color: "var(--text-muted)" }}>Assignments ({dashboard?.weeklyGoals?.assignmentGoal || 5})</span>
-                <span style={{ color: "var(--warning)", fontWeight: 600 }}>{dashboard?.weeklyGoals?.assignmentCompleted || 2}</span>
-              </div>
-              <div style={{ width: "100%", height: "6px", background: "var(--bg-secondary)", borderRadius: "4px" }}>
-                <div style={{ width: `${Math.min(((dashboard?.weeklyGoals?.assignmentCompleted || 2) / (dashboard?.weeklyGoals?.assignmentGoal || 5)) * 100, 100)}%`, height: "100%", background: "var(--warning)", borderRadius: "4px", transition: "width 0.5s ease" }}></div>
+
+              {showAddInput && (
+                <form onSubmit={handleAddReminder} style={{ display: 'flex', gap: 8, marginBottom: 20 }}>
+                  <input 
+                    type="text" 
+                    value={reminderText} 
+                    onChange={(e) => setReminderText(e.target.value)} 
+                    placeholder="e.g. math at 9 am"
+                    style={{ flex: 1, padding: "10px 14px", borderRadius: "12px", border: "1px solid var(--border)", background: "var(--bg-secondary)", color: "var(--text-heading)", outline: "none", fontSize: "0.85rem", fontWeight: 600 }}
+                    autoFocus
+                  />
+                  <button type="submit" style={{ padding: "10px 16px", fontSize: "0.85rem", borderRadius: "12px", background: "var(--text-heading)", color: "var(--card-bg)", border: "none", fontWeight: 700, cursor: "pointer" }}>Save</button>
+                </form>
+              )}
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                {reminders.map((item) => (
+                  <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: "14px 16px", background: 'var(--bg-secondary)', borderRadius: '14px', border: "1px solid var(--border-light)" }}>
+                    <div>
+                      <div style={{ fontWeight: 700, fontSize: '0.9rem', color: 'var(--text-heading)', lineHeight: 1.3 }}>{item.text}</div>
+                      <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: 4 }}>
+                        {formatReminderTime(item.createdAt)}
+                      </div>
+                    </div>
+                    <button 
+                      onClick={() => handleDeleteReminder(item.id)}
+                      style={{ background: "transparent", border: "none", color: "var(--text-muted)", cursor: "pointer", fontSize: "1.1rem", padding: "4px", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "50%", transition: "color 0.2s" }}
+                      onMouseEnter={(e) => e.currentTarget.style.color = "var(--danger)"}
+                      onMouseLeave={(e) => e.currentTarget.style.color = "var(--text-muted)"}
+                      title="Delete Reminder"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
+                {reminders.length === 0 && (
+                  <div style={{ 
+                    padding: "24px 16px", 
+                    textAlign: "center", 
+                    background: "var(--bg-secondary)", 
+                    borderRadius: "16px",
+                    border: "1px dashed var(--border)"
+                  }}>
+                    <p style={{ color: "var(--text-muted)", margin: 0, fontSize: "0.8rem", fontWeight: 500 }}>No active reminders.</p>
+                  </div>
+                )}
               </div>
             </div>
 
-            <div>
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.85rem", marginBottom: 8 }}>
-                <span style={{ color: "var(--text-muted)" }}>Tasks ({dashboard?.weeklyGoals?.taskGoal || 10})</span>
-                <span style={{ color: "var(--primary)", fontWeight: 600 }}>{dashboard?.weeklyGoals?.taskCompleted || 6}</span>
-              </div>
-              <div style={{ width: "100%", height: "6px", background: "var(--bg-secondary)", borderRadius: "4px" }}>
-                <div style={{ width: `${Math.min(((dashboard?.weeklyGoals?.taskCompleted || 6) / (dashboard?.weeklyGoals?.taskGoal || 10)) * 100, 100)}%`, height: "100%", background: "var(--primary)", borderRadius: "4px", transition: "width 0.5s ease" }}></div>
+            {/* Focus Time Card */}
+            <div className="card" style={{ padding: "32px", borderRadius: "24px", border: "1px solid var(--border-light)" }}>
+              <h2 style={{ margin: 0, marginBottom: 16, fontSize: "1.1rem", fontWeight: 800 }}>Focus Time (Weekly)</h2>
+              <div>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.85rem", marginBottom: 8 }}>
+                  <span style={{ color: "var(--text-muted)", fontWeight: 500 }}>Goal: {dashboard?.weeklyFocus?.goalHours ?? 10} hours</span>
+                  <span style={{ color: "var(--info)", fontWeight: 700 }}>{dashboard?.weeklyFocus?.completedHours ?? 0} Hours</span>
+                </div>
+                <div style={{ width: "100%", height: "8px", background: "var(--bg-secondary)", borderRadius: "4px", overflow: "hidden" }}>
+                  <div style={{ width: `${Math.min(((dashboard?.weeklyFocus?.completedHours ?? 0) / (dashboard?.weeklyFocus?.goalHours || 10)) * 100, 100)}%`, height: "100%", background: "var(--primary)", borderRadius: "4px", transition: "width 0.5s ease" }}></div>
+                </div>
               </div>
             </div>
+
+            {/* Weekly Goals Card */}
+            <div className="card" style={{ padding: "32px", borderRadius: "24px", border: "1px solid var(--border-light)" }}>
+              <h2 style={{ margin: 0, marginBottom: 18, fontSize: "1.1rem", fontWeight: 800 }}>Weekly Goals</h2>
+              
+              <div style={{ marginBottom: 16 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.85rem", marginBottom: 8 }}>
+                  <span style={{ color: "var(--text-muted)", fontWeight: 500 }}>Study ({dashboard?.weeklyGoals?.studyHoursGoal || 15} hrs)</span>
+                  <span style={{ color: "var(--success)", fontWeight: 700 }}>{dashboard?.weeklyGoals?.studyHoursCompleted || 8}</span>
+                </div>
+                <div style={{ width: "100%", height: "6px", background: "var(--bg-secondary)", borderRadius: "4px" }}>
+                  <div style={{ width: `${Math.min(((dashboard?.weeklyGoals?.studyHoursCompleted || 8) / (dashboard?.weeklyGoals?.studyHoursGoal || 15)) * 100, 100)}%`, height: "100%", background: "var(--success)", borderRadius: "4px", transition: "width 0.5s ease" }}></div>
+                </div>
+              </div>
+              
+              <div style={{ marginBottom: 16 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.85rem", marginBottom: 8 }}>
+                  <span style={{ color: "var(--text-muted)", fontWeight: 500 }}>Assignments ({dashboard?.weeklyGoals?.assignmentGoal || 5})</span>
+                  <span style={{ color: "var(--warning)", fontWeight: 700 }}>{dashboard?.weeklyGoals?.assignmentCompleted || 2}</span>
+                </div>
+                <div style={{ width: "100%", height: "6px", background: "var(--bg-secondary)", borderRadius: "4px" }}>
+                  <div style={{ width: `${Math.min(((dashboard?.weeklyGoals?.assignmentCompleted || 2) / (dashboard?.weeklyGoals?.assignmentGoal || 5)) * 100, 100)}%`, height: "100%", background: "var(--warning)", borderRadius: "4px", transition: "width 0.5s ease" }}></div>
+                </div>
+              </div>
+
+              <div>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.85rem", marginBottom: 8 }}>
+                  <span style={{ color: "var(--text-muted)", fontWeight: 500 }}>Tasks ({dashboard?.weeklyGoals?.taskGoal || 10})</span>
+                  <span style={{ color: "var(--primary)", fontWeight: 700 }}>{dashboard?.weeklyGoals?.taskCompleted || 6}</span>
+                </div>
+                <div style={{ width: "100%", height: "6px", background: "var(--bg-secondary)", borderRadius: "4px" }}>
+                  <div style={{ width: `${Math.min(((dashboard?.weeklyGoals?.taskCompleted || 6) / (dashboard?.weeklyGoals?.taskGoal || 10)) * 100, 100)}%`, height: "100%", background: "var(--primary)", borderRadius: "4px", transition: "width 0.5s ease" }}></div>
+                </div>
+              </div>
+            </div>
+
           </div>
 
         </div>

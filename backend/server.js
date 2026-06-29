@@ -6,6 +6,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('./models/User');
 const Resource = require('./models/Resource');
+const Course = require('./models/Course');
 const Assignment = require('./models/Assignment');
 const Task = require('./models/Task');
 const Habit = require('./models/Habit');
@@ -48,6 +49,18 @@ const createCrudRoutes = (model, path) => {
             { title: "Read 1 Non-fiction Book", type: "Monthly", deadline: "June 30", priority: "Medium", progress: 40 }
           ];
           await model.insertMany(initialGoals);
+        } else if (path === '/api/resources') {
+          await model.insertMany([
+            { title: "Operating Systems Lecture Notes", type: "PDF", subject: "Operating Systems", url: "https://example.com/os.pdf", fileName: "OS_Notes.pdf", fileSize: "2.4 MB", isFavorite: true },
+            { title: "Algorithms Cheatsheet", type: "Document", subject: "Algorithms", url: "https://example.com/algo.pdf", fileName: "Algo_Sheet.pdf", fileSize: "1.1 MB", isFavorite: false },
+            { title: "MIT 6.006 Video Lectures", type: "Video", subject: "Algorithms", url: "https://youtube.com", fileName: "Video Link", fileSize: "N/A", isFavorite: true }
+          ]);
+        } else if (path === '/api/courses') {
+          await model.insertMany([
+            { name: "Data Structures", code: "CS201", instructor: "Dr. Smith", credits: 4, color: "#4a6cf7" },
+            { name: "Operating Systems", code: "CS301", instructor: "Prof. Davis", credits: 4, color: "#28a745" },
+            { name: "Algorithms", code: "CS202", instructor: "Dr. Alan", credits: 3, color: "#ffc107" }
+          ]);
         }
       }
       let query = model.find();
@@ -84,6 +97,7 @@ const createCrudRoutes = (model, path) => {
 
 // --- REGISTER ROUTES ---
 createCrudRoutes(Resource, '/api/resources');
+createCrudRoutes(Course, '/api/courses');
 createCrudRoutes(Habit, '/api/habits');
 createCrudRoutes(Goal, '/api/goals');
 

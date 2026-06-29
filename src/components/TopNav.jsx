@@ -51,7 +51,7 @@ function TopNav() {
               background: isActive ? "#D65A31" : "var(--text-muted)",
               boxShadow: isActive ? "0 0 8px #D65A31" : "none" 
             }}></span>
-            <span>Focus: {formatTime(timeLeft)}</span>
+            <span>Pomodoro: {formatTime(timeLeft)}</span>
           </Link>
         )}
 

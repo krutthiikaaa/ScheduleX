@@ -28,7 +28,7 @@ const HabitTracker = () => {
     setShowAddModal(false);
   };
 
-  const gridCols = `240px repeat(${daysInMonth}, minmax(32px, 1fr))`;
+  const gridCols = `minmax(160px, 200px) repeat(${daysInMonth}, minmax(0, 1fr))`;
 
   return (
     <div className="card" style={{ padding: 24, position: 'relative' }}>

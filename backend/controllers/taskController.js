@@ -5,6 +5,15 @@ const Task = require('../models/Task');
 // @access  Public
 const getTasks = async (req, res) => {
   try {
+    const count = await Task.countDocuments();
+    if (count === 0) {
+      await Task.insertMany([
+        { title: 'Review Operating Systems notes', category: 'Academic', priority: 'High', isCompleted: true },
+        { title: 'Submit DBMS assignment', category: 'Academic', priority: 'High', isCompleted: false },
+        { title: 'Practice 5 LeetCode DP questions', category: 'Coding', priority: 'Medium', isCompleted: false },
+        { title: 'Read Chapter 4 of Clean Code', category: 'Reading', priority: 'Low', isCompleted: false }
+      ]);
+    }
     const tasks = await Task.find().sort({ createdAt: -1 });
     res.status(200).json({
       success: true,

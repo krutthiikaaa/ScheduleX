@@ -3,17 +3,19 @@ import { useAuth } from "../context/AuthContext";
 
 function Sidebar() {
   const location = useLocation();
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
 
   const navItems = [
-    { path: "/dashboard", label: "Dashboard", icon: "" },
-    { path: "/timetable", label: "Timetable", icon: "" },
+    { path: "/dashboard", label: "Home", icon: "" },
+    { path: "/timetable", label: "Schedule", icon: "" },
     { path: "/assignments", label: "Assignments", icon: "" },
-    { path: "/habits", label: "Habit Tracker", icon: "" },
-    { path: "/focus", label: "Focus Mode", icon: "" },
-    { path: "/resources", label: "Resources", icon: "" },
-    { path: "/profile", label: "Profile", icon: "" },
+    { path: "/habits", label: "Habits", icon: "" },
+    { path: "/focus", label: "Pomodoro", icon: "" },
+    { path: "/resources", label: "Library", icon: "" },
   ];
+
+  const displayName = user?.fullName || "Jane Doe";
+  const initials = displayName.split(" ").filter(Boolean).map(n => n[0]).join("").slice(0, 2).toUpperCase() || "JD";
 
   return (
     <div className="sidebar">
@@ -39,13 +41,13 @@ function Sidebar() {
       </nav>
 
       <div className="sidebar-footer">
-        <div className="user-profile-card">
-          <div className="user-avatar">JD</div>
+        <Link to="/profile" className="user-profile-card" style={{ textDecoration: "none", color: "inherit", display: "flex", alignItems: "center", gap: "12px", cursor: "pointer" }}>
+          <div className="user-avatar">{initials}</div>
           <div className="user-info">
-            <span className="user-name">Jane Doe</span>
+            <span className="user-name">{displayName}</span>
             <span className="user-role">Student</span>
           </div>
-        </div>
+        </Link>
         <button onClick={logout} className="sidebar-link" style={{ color: "var(--danger)", background: "transparent", border: "none", width: "100%", textAlign: "left", cursor: "pointer", fontFamily: "var(--font)", fontSize: "0.95rem", padding: "12px 16px" }}>
           Logout
         </button>

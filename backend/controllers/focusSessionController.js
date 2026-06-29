@@ -5,6 +5,14 @@ const FocusSession = require('../models/FocusSession');
 // @access  Public
 const getFocusSessions = async (req, res) => {
   try {
+    const count = await FocusSession.countDocuments();
+    if (count === 0) {
+      await FocusSession.insertMany([
+        { durationMinutes: 25, subject: 'Operating Systems', completedAt: new Date(Date.now() - 3600000) },
+        { durationMinutes: 50, subject: 'Algorithms', completedAt: new Date(Date.now() - 86400000) },
+        { durationMinutes: 25, subject: 'Data Structures', completedAt: new Date(Date.now() - 172800000) }
+      ]);
+    }
     const sessions = await FocusSession.find().sort({ completedAt: -1 });
     res.status(200).json({
       success: true,

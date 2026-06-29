@@ -5,6 +5,14 @@ const StudySession = require('../models/StudySession');
 // @access  Public
 const getStudySessions = async (req, res) => {
   try {
+    const count = await StudySession.countDocuments();
+    if (count === 0) {
+      await StudySession.insertMany([
+        { title: 'OS Midterm Prep', duration: 45, category: 'Exam' },
+        { title: 'LeetCode Graph Practice', duration: 60, category: 'Coding' },
+        { title: 'Read Research Paper', duration: 30, category: 'Reading' }
+      ]);
+    }
     const sessions = await StudySession.find().sort({ createdAt: -1 });
     res.status(200).json({
       success: true,

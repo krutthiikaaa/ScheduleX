@@ -24,11 +24,12 @@ function BottomDock() {
   }, []);
 
   const items = [
-    { path: "/dashboard", icon: "", label: "Dashboard" },
-    { path: "/view", icon: "", label: "Schedules" },
-    { path: "/create", icon: "", label: "Create" },
-    { path: "/resources", icon: "", label: "Resources" },
-    { path: "/profile", icon: "", label: "Profile" },
+    { path: "/dashboard", icon: "", label: "Home" },
+    { path: "/timetable", icon: "", label: "Schedule" },
+    { path: "/assignments", icon: "", label: "Assignments" },
+    { path: "/habits", icon: "", label: "Habits" },
+    { path: "/focus", icon: "", label: "Pomodoro" },
+    { path: "/resources", icon: "", label: "Library" },
   ];
 
   return (
