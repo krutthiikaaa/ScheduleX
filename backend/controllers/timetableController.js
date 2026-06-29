@@ -15,6 +15,16 @@ const dayOrder = {
 // @access  Public
 const getTimetableEvents = async (req, res) => {
   try {
+    const count = await Timetable.countDocuments();
+    if (count === 0) {
+      await Timetable.insertMany([
+        { subject: 'Operating Systems', day: 'Monday', startTime: '09:00', endTime: '10:30', notes: 'Room 304' },
+        { subject: 'Data Structures', day: 'Monday', startTime: '11:00', endTime: '12:30', notes: 'Lab 2' },
+        { subject: 'Algorithms', day: 'Tuesday', startTime: '10:00', endTime: '11:30', notes: 'Room 101' },
+        { subject: 'Database Management', day: 'Wednesday', startTime: '14:00', endTime: '15:30', notes: 'Room 205' },
+        { subject: 'Computer Networks', day: 'Thursday', startTime: '09:00', endTime: '10:30', notes: 'Room 304' }
+      ]);
+    }
     const events = await Timetable.find();
     
     // Sort by Day of Week, then Start Time

@@ -5,6 +5,14 @@ const Assignment = require('../models/Assignment');
 // @access  Public
 const getAssignments = async (req, res) => {
   try {
+    const count = await Assignment.countDocuments();
+    if (count === 0) {
+      await Assignment.insertMany([
+        { title: 'Project Phase 1', subject: 'Data Structures', dueDate: 'Tomorrow', priority: 'High', status: 'Pending', description: 'Complete the graph implementation' },
+        { title: 'Lab Report 4', subject: 'Operating Systems', dueDate: 'In 3 Days', priority: 'Medium', status: 'In Progress', description: 'Memory management simulation' },
+        { title: 'Problem Set 2', subject: 'Algorithms', dueDate: 'Next Week', priority: 'High', status: 'Pending', description: 'Dynamic programming problems' }
+      ]);
+    }
     const assignments = await Assignment.find().sort({ createdAt: -1 });
     res.status(200).json({
       success: true,

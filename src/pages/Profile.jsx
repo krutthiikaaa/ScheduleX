@@ -217,7 +217,7 @@ function Profile() {
         </div>
       )}
 
-      <div style={{ display: "flex", flexDirection: "column", gap: 32, maxWidth: 1040, paddingBottom: 40, margin: "0 auto" }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 32, maxWidth: 1360, width: "100%", paddingBottom: 40, margin: "0 auto" }}>
         
         {/* Profile Header */}
         <div className="card" style={{ padding: 32, display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 24 }}>
