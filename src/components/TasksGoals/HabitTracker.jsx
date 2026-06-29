@@ -48,7 +48,7 @@ const HabitTracker = () => {
             <button 
               onClick={prevMonth}
               className="btn" 
-              style={{ padding: '4px 10px', fontSize: '0.85rem', background: "var(--card-bg)"FFF', borderRadius: '6px', border: '1px solid var(--border-light)', cursor: 'pointer', fontWeight: 600 }}
+              style={{ padding: '4px 10px', fontSize: '0.85rem', background: 'var(--card-bg)', color: 'var(--text-heading)', borderRadius: '6px', border: '1px solid var(--border-light)', cursor: 'pointer', fontWeight: 600 }}
               title="Previous Month"
             >
               ◀ Prev
@@ -64,6 +64,7 @@ const HabitTracker = () => {
                 padding: '4px 10px', 
                 fontSize: '0.85rem', 
                 background: isCurrentOrFutureMonth ? 'var(--bg-secondary)' : 'var(--card-bg)', 
+                color: 'var(--text-heading)',
                 borderRadius: '6px', 
                 border: '1px solid var(--border-light)',
                 cursor: isCurrentOrFutureMonth ? 'not-allowed' : 'pointer',
