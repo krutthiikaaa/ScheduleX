@@ -519,20 +519,8 @@ function Profile() {
             <div style={{ marginTop: "auto" }}>
               <button
                 onClick={logout}
-                style={{
-                  width: "100%",
-                  padding: "12px 24px",
-                  borderRadius: "var(--radius-sm)",
-                  background: "var(--danger)",
-                  color: "#FFF",
-                  fontWeight: 600,
-                  border: "none",
-                  cursor: "pointer",
-                  fontSize: "0.9rem",
-                  transition: "opacity 0.2s"
-                }}
-                onMouseOver={e => e.target.style.opacity = 0.9}
-                onMouseOut={e => e.target.style.opacity = 1}
+                className="btn btn-primary"
+                style={{ width: "100%", padding: "12px 24px" }}
               >
                 Logout
               </button>
