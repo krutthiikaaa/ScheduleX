@@ -39,7 +39,7 @@ const HabitRow = ({ habit }) => {
             }}
             title="Click to edit title or delete habit"
             style={{ 
-              color: '#1C1917', 
+              color: "var(--text-heading)", 
               fontWeight: '700', 
               cursor: 'pointer',
               borderBottom: '1.5px dashed rgba(28, 25, 23, 0.25)',
@@ -51,7 +51,7 @@ const HabitRow = ({ habit }) => {
               e.currentTarget.style.borderBottomColor = 'var(--primary, #D65A31)';
             }}
             onMouseOut={(e) => {
-              e.currentTarget.style.color = '#1C1917';
+              e.currentTarget.style.color = 'var(--text-heading)';
               e.currentTarget.style.borderBottomColor = 'rgba(28, 25, 23, 0.25)';
             }}
           >

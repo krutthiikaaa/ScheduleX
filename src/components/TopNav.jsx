@@ -36,7 +36,7 @@ function TopNav() {
               padding: "6px 14px", 
               borderRadius: "20px", 
               textDecoration: "none",
-              color: "#1C1917",
+              color: "var(--text-heading)",
               fontWeight: 700,
               fontSize: "0.85rem",
               boxShadow: isActive ? "0 0 12px rgba(214, 90, 49, 0.25)" : "none",

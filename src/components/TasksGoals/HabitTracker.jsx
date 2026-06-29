@@ -48,12 +48,12 @@ const HabitTracker = () => {
             <button 
               onClick={prevMonth}
               className="btn" 
-              style={{ padding: '4px 10px', fontSize: '0.85rem', background: '#FFFFFF', borderRadius: '6px', border: '1px solid var(--border-light)', cursor: 'pointer', fontWeight: 600 }}
+              style={{ padding: '4px 10px', fontSize: '0.85rem', background: "var(--card-bg)"FFF', borderRadius: '6px', border: '1px solid var(--border-light)', cursor: 'pointer', fontWeight: 600 }}
               title="Previous Month"
             >
               ◀ Prev
             </button>
-            <span style={{ fontWeight: 700, padding: '0 8px', minWidth: '110px', textAlign: 'center', color: '#2F2A27', fontSize: '0.9rem' }}>
+            <span style={{ fontWeight: 700, padding: '0 8px', minWidth: '110px', textAlign: 'center', color: 'var(--text-heading)', fontSize: '0.9rem' }}>
               {monthName} {year}
             </span>
             <button 
@@ -63,7 +63,7 @@ const HabitTracker = () => {
               style={{ 
                 padding: '4px 10px', 
                 fontSize: '0.85rem', 
-                background: isCurrentOrFutureMonth ? 'var(--bg-secondary)' : '#FFFFFF', 
+                background: isCurrentOrFutureMonth ? 'var(--bg-secondary)' : 'var(--card-bg)', 
                 borderRadius: '6px', 
                 border: '1px solid var(--border-light)',
                 cursor: isCurrentOrFutureMonth ? 'not-allowed' : 'pointer',
@@ -83,7 +83,7 @@ const HabitTracker = () => {
       <div className="habit-tracker-grid">
         {/* Weeks Banner Row */}
         <div className="habit-header-row" style={{ gridTemplateColumns: gridCols, marginBottom: 4 }}>
-          <div style={{ textAlign: 'left', paddingLeft: 8, color: '#2F2A27' }}>Weeks of Month</div>
+          <div style={{ textAlign: 'left', paddingLeft: 8, color: 'var(--text-heading)' }}>Weeks of Month</div>
           <div className="week-1" style={{ gridColumn: 'span 7', padding: '6px 0', borderRadius: '4px', color: '#B85D34', fontSize: '0.8rem' }}>Week 1 (Days 1-7)</div>
           <div className="week-2" style={{ gridColumn: 'span 7', padding: '6px 0', borderRadius: '4px', color: '#A06E50', fontSize: '0.8rem' }}>Week 2 (Days 8-14)</div>
           <div className="week-3" style={{ gridColumn: 'span 7', padding: '6px 0', borderRadius: '4px', color: '#687B52', fontSize: '0.8rem' }}>Week 3 (Days 15-21)</div>
@@ -110,7 +110,7 @@ const HabitTracker = () => {
                    padding: isTodayDay ? '6px 0' : '4px 0', 
                    borderRadius: '6px',
                    backgroundColor: isTodayDay ? '#D65A31' : undefined,
-                   color: isTodayDay ? '#FFFFFF' : undefined,
+                   color: isTodayDay ? 'var(--card-bg)' : undefined,
                    fontWeight: isTodayDay ? '800' : undefined,
                    boxShadow: isTodayDay ? '0 4px 14px rgba(214, 90, 49, 0.45)' : undefined,
                    transform: isTodayDay ? 'scale(1.15) translateY(-2px)' : undefined,

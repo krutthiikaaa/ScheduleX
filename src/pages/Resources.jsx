@@ -259,13 +259,13 @@ function Resources() {
                     />
                     {fileName ? (
                       <div>
-                        <div style={{ fontWeight: 700, color: "#1C1917", wordBreak: "break-all" }}>{fileName}</div>
+                        <div style={{ fontWeight: 700, color: "var(--text-heading)", wordBreak: "break-all" }}>{fileName}</div>
                         <div style={{ fontSize: "0.85rem", color: "#10B981", marginTop: 4 }}>Ready to attach ({fileSize})</div>
                       </div>
                     ) : (
                       <div>
-                        <div style={{ fontWeight: 600, color: "#44403C" }}>Click to browse or drag file here</div>
-                        <div style={{ fontSize: "0.8rem", color: "#A8A29E", marginTop: 4 }}>Supports PDF, Word Docs, PPT, TXT (Max 15MB)</div>
+                        <div style={{ fontWeight: 600, color: "var(--text-body)" }}>Click to browse or drag file here</div>
+                        <div style={{ fontSize: "0.8rem", color: "var(--text-muted)", marginTop: 4 }}>Supports PDF, Word Docs, PPT, TXT (Max 15MB)</div>
                       </div>
                     )}
                   </div>

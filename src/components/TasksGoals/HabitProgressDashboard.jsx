@@ -70,7 +70,7 @@ const HabitProgressDashboard = () => {
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
       return (
-        <div style={{ background: '#fff', padding: '12px', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', border: '1px solid var(--border-light)' }}>
+        <div style={{ background: "var(--card-bg)", padding: '12px', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', border: '1px solid var(--border-light)' }}>
           <p style={{ margin: '0 0 8px 0', fontWeight: 'bold' }}>Day {label}</p>
           <p style={{ margin: '0', color: '#D65A31', fontWeight: 600 }}>Completion: {payload[0].value}%</p>
           <p style={{ margin: '4px 0 0 0', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
