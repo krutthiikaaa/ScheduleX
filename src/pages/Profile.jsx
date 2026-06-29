@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import AppLayout from "../components/AppLayout";
 import { fetchProfile, updateProfileApi, changePasswordApi } from "../utils/api";
 import { useAuth } from "../context/AuthContext";
-import { CalendarDays, BarChart3 } from "lucide-react";
+
 
 const ToggleSwitch = ({ checked, onChange }) => (
   <div

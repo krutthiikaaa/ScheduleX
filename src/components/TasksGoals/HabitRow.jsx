@@ -29,7 +29,7 @@ const HabitRow = ({ habit }) => {
 
   return (
     <>
-      <div className="habit-row" style={{ gridTemplateColumns: `240px repeat(${daysInMonth}, minmax(32px, 1fr))` }}>
+      <div className="habit-row" style={{ gridTemplateColumns: `minmax(160px, 200px) repeat(${daysInMonth}, minmax(0, 1fr))` }}>
         <div className="habit-info" style={{ display: 'flex', alignItems: 'center', paddingRight: 12 }}>
           <span 
             onClick={() => {

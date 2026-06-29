@@ -138,7 +138,7 @@ function Timetable() {
 
   const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
   const times = [];
-  for (let h = 1; h <= 23; h++) {
+  for (let h = 0; h <= 23; h++) {
     const val = `${String(h).padStart(2, '0')}:00`;
     const h12 = h % 12 || 12;
     const ampm = h >= 12 ? 'PM' : 'AM';
@@ -146,7 +146,7 @@ function Timetable() {
   }
 
   const timeSelectOptions = [];
-  for (let h = 1; h <= 23; h++) {
+  for (let h = 0; h <= 23; h++) {
     for (let m of ['00', '30']) {
       const val = `${String(h).padStart(2, '0')}:${m}`;
       const h12 = h % 12 || 12;
