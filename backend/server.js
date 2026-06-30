@@ -26,7 +26,6 @@ app.use(express.urlencoded({ limit: '50mb', extended: true }));
 const connectDB = require('./config/db');
 connectDB();
 
-
 // --- GENERIC CRUD UTILITY ---
 const createCrudRoutes = (model, path) => {
   app.get(path, auth, async (req, res) => {
@@ -88,7 +87,7 @@ const createCrudRoutes = (model, path) => {
       res.json(data);
     } catch (err) { res.status(500).json({ error: err.message }); }
   });
-  
+
   app.post(path, auth, async (req, res) => {
     try {
       if (path === '/api/habits' && !req.isDemoUser) {
@@ -161,16 +160,16 @@ app.post('/api/auth/google', async (req, res) => {
   try {
     const { email, fullName } = req.body;
     let user = await User.findOne({ email });
-    
+
     if (!user) {
       // Create a new user with a random secure password for users logging in via Google
       const randomPassword = require('crypto').randomBytes(16).toString('hex');
       const hashedPassword = await bcrypt.hash(randomPassword, 10);
-      
+
       user = new User({ fullName, email, password: hashedPassword });
       await user.save();
     }
-    
+
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET || 'secret123', { expiresIn: '1d' });
     res.json({ token, user: { id: user._id, fullName: user.fullName, email: user.email } });
   } catch (err) {
@@ -184,7 +183,7 @@ app.post('/api/seed', async (req, res) => {
   if (count === 0) {
     await Assignment.create({ title: 'Project Phase 1', subject: 'Data Structures', dueDate: new Date(Date.now() + 86400000), priority: 'High', status: 'Pending' });
     await Task.create({ title: 'Finish OS Assignment', category: 'Academic', priority: 'High', isCompleted: false });
-    
+
     res.json({ message: 'Seeded successfully' });
   } else {
     res.json({ message: 'Already seeded' });
