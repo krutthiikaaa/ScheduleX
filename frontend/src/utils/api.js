@@ -1,5 +1,6 @@
-const API_URL =
-  import.meta.env.VITE_API_URL || 'https://schedulex-59ur.onrender.com/api';
+const API_URL = import.meta.env.DEV
+  ? '/api'
+  : 'https://schedulex-59ur.onrender.com/api';
 const getAuthHeaders = () => ({
   'Content-Type': 'application/json',
   'Authorization': `Bearer ${localStorage.getItem('schedulex_token') || ''}`
