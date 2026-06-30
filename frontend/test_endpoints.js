@@ -1,4 +1,4 @@
-const http = require('http');
+// Use native fetch instead of http
 
 const endpoints = [
   '/api/dashboard',
@@ -16,20 +16,16 @@ const endpoints = [
 
 async function test() {
   console.log("Testing endpoints...");
+  const baseUrl = 'https://schedulex-59ur.onrender.com';
+  
   for (const ep of endpoints) {
-    await new Promise((resolve) => {
-      http.get(`http://localhost:5000${ep}`, (res) => {
-        let data = '';
-        res.on('data', chunk => data += chunk);
-        res.on('end', () => {
-          console.log(`${ep} -> Status: ${res.statusCode}, Length: ${data.length}`);
-          resolve();
-        });
-      }).on('error', (err) => {
-        console.error(`${ep} -> ERROR: ${err.message}`);
-        resolve();
-      });
-    });
+    try {
+      const res = await fetch(`${baseUrl}${ep}`);
+      const text = await res.text();
+      console.log(`${ep} -> Status: ${res.status}, Length: ${text.length}`);
+    } catch (err) {
+      console.error(`${ep} -> ERROR: ${err.message}`);
+    }
   }
 }
 
