@@ -21,10 +21,10 @@ const Goal = require('./models/Goal');
 const app = express();
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      "https://schedule-x-krutthiikaaas-projects.vercel.app"
-    ],
+    origin: function (origin, callback) {
+      // Dynamic origin approval allows fresh frontend deployments (Vercel/Render/Netlify) to connect cleanly without CORS errors
+      callback(null, true);
+    },
     credentials: true,
   })
 );

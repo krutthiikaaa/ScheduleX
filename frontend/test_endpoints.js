@@ -16,7 +16,7 @@ const endpoints = [
 
 async function test() {
   console.log("Testing endpoints...");
-  const baseUrl = 'https://schedulex-59ur.onrender.com';
+  const baseUrl = process.env.API_URL || 'http://localhost:5000';
   
   for (const ep of endpoints) {
     try {

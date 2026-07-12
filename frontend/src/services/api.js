@@ -1,4 +1,4 @@
-const rawApiUrl = import.meta.env.VITE_API_URL || 'https://schedulex-59ur.onrender.com/api';
+const rawApiUrl = import.meta.env.VITE_API_URL || '/api';
 const API_URL = rawApiUrl.endsWith('/api') ? rawApiUrl : `${rawApiUrl.replace(/\/$/, '')}/api`;
 const getAuthHeaders = () => ({
   'Content-Type': 'application/json',
