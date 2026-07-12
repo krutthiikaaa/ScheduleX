@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import AppLayout from "../components/AppLayout";
-import { fetchProfile, updateProfileApi, changePasswordApi } from "../utils/api";
+import AppLayout from "../layouts/AppLayout";
+import { fetchProfile, updateProfileApi, changePasswordApi } from "../services/api";
 import { useAuth } from "../context/AuthContext";
 
 

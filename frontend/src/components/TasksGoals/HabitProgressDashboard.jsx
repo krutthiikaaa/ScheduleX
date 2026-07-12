@@ -6,16 +6,16 @@ const HabitProgressDashboard = () => {
   const { habits, daysInMonth = 30 } = useTasksGoals();
 
   const data = useMemo(() => {
-    if (!habits || habits.length === 0) return [];
+    const totalHabits = habits && habits.length > 0 ? habits.length : 1;
     const chartData = [];
     for (let i = 0; i < daysInMonth; i++) {
-      const checkedCount = habits.filter(h => h.days && h.days[i]).length;
-      const percentage = Math.round((checkedCount / habits.length) * 100);
+      const checkedCount = habits && habits.length > 0 ? habits.filter(h => h.days && h.days[i]).length : 0;
+      const percentage = habits && habits.length > 0 ? Math.round((checkedCount / habits.length) * 100) : 0;
       chartData.push({
         day: i + 1,
         completion: percentage,
         checked: checkedCount,
-        total: habits.length
+        total: habits && habits.length > 0 ? habits.length : 0
       });
     }
     return chartData;
@@ -45,8 +45,8 @@ const HabitProgressDashboard = () => {
     }
   });
 
-  const missedHabits = totalPossible - totalChecks;
-  const bestDay = [...data].sort((a, b) => b.completion - a.completion)[0]?.day || 1;
+  const missedHabits = totalChecks === 0 ? 0 : Math.max(0, totalPossible - totalChecks);
+  const bestDay = totalChecks === 0 ? "-" : `Day ${[...data].sort((a, b) => b.completion - a.completion)[0]?.day || 1}`;
   const consistencyScore = Math.round((overallCompletion + (currentStreak / daysInMonth * 100)) / 2) || 0;
 
   // Weekly breakdown
@@ -65,7 +65,7 @@ const HabitProgressDashboard = () => {
     return { ...w, checks: weekChecks, completion: weekCompletion };
   });
 
-  const mostConsistentWeek = [...weeklyData].sort((a, b) => b.completion - a.completion)[0]?.label || 'Week 1';
+  const mostConsistentWeek = totalChecks === 0 ? "-" : ([...weeklyData].sort((a, b) => b.completion - a.completion)[0]?.label || '-');
 
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
@@ -81,10 +81,6 @@ const HabitProgressDashboard = () => {
     }
     return null;
   };
-
-  if (!habits || habits.length === 0) {
-    return null;
-  }
 
   return (
     <div className="card" style={{ padding: 32, marginBottom: 24, animation: 'fadeIn 0.5s ease', boxShadow: '0 8px 24px rgba(0,0,0,0.04)' }}>
@@ -173,7 +169,7 @@ const HabitProgressDashboard = () => {
           </div>
           <div className="summary-stat" style={{ padding: '8px 0' }}>
             <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: 4 }}>Best Day</div>
-            <div style={{ fontSize: '1.15rem', fontWeight: 600, color: 'var(--text-main)' }}>Day {bestDay}</div>
+            <div style={{ fontSize: '1.15rem', fontWeight: 600, color: 'var(--text-main)' }}>{bestDay}</div>
           </div>
           <div className="summary-stat" style={{ padding: '8px 0' }}>
             <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: 4 }}>Most Consistent</div>

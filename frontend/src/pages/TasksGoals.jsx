@@ -1,5 +1,5 @@
 import React from 'react';
-import AppLayout from "../components/AppLayout";
+import AppLayout from "../layouts/AppLayout";
 import HabitTracker from "../components/TasksGoals/HabitTracker";
 import HabitProgressDashboard from "../components/TasksGoals/HabitProgressDashboard";
 import "../components/TasksGoals/TasksGoals.css";

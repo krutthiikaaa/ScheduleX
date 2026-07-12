@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useEffect, useRef } from "react";
-import { createFocusSession } from "../utils/api";
+import { createFocusSession } from "../services/api";
 
 const FocusContext = createContext();
 

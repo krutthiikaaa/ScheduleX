@@ -1,4 +1,4 @@
-import AppLayout from "../components/AppLayout";
+import AppLayout from "../layouts/AppLayout";
 import { Link } from "react-router-dom";
 import { Eye, Edit2, Trash2 } from "lucide-react";
 

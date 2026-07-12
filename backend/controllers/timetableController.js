@@ -18,11 +18,11 @@ const getTimetableEvents = async (req, res) => {
     const count = await Timetable.countDocuments(req.userQuery);
     if (count === 0 && req.isDemoUser) {
       await Timetable.insertMany([
-        { subject: 'Operating Systems', day: 'Monday', startTime: '09:00', endTime: '10:30', notes: 'Room 304' },
-        { subject: 'Data Structures', day: 'Monday', startTime: '11:00', endTime: '12:30', notes: 'Lab 2' },
-        { subject: 'Algorithms', day: 'Tuesday', startTime: '10:00', endTime: '11:30', notes: 'Room 101' },
-        { subject: 'Database Management', day: 'Wednesday', startTime: '14:00', endTime: '15:30', notes: 'Room 205' },
-        { subject: 'Computer Networks', day: 'Thursday', startTime: '09:00', endTime: '10:30', notes: 'Room 304' }
+        { subject: 'Operating Systems', day: 'Monday', startTime: '09:00', endTime: '10:30', notes: 'Room 304', isRecurring: true },
+        { subject: 'Data Structures', day: 'Monday', startTime: '11:00', endTime: '12:30', notes: 'Lab 2', isRecurring: true },
+        { subject: 'Algorithms', day: 'Tuesday', startTime: '10:00', endTime: '11:30', notes: 'Room 101', isRecurring: true },
+        { subject: 'Database Management', day: 'Wednesday', startTime: '14:00', endTime: '15:30', notes: 'Room 205', isRecurring: true },
+        { subject: 'Computer Networks', day: 'Thursday', startTime: '09:00', endTime: '10:30', notes: 'Room 304', isRecurring: true }
       ]);
     }
     const events = await Timetable.find(req.userQuery);
@@ -49,7 +49,7 @@ const getTimetableEvents = async (req, res) => {
 // @access  Public
 const createTimetableEvent = async (req, res) => {
   try {
-    const { subject, day, startTime, endTime, notes } = req.body;
+    const { subject, day, startTime, endTime, notes, date, isRecurring } = req.body;
 
     if (!subject || !day || !startTime || !endTime) {
       return res.status(400).json({
@@ -64,7 +64,9 @@ const createTimetableEvent = async (req, res) => {
       day,
       startTime,
       endTime,
-      notes: notes || ''
+      notes: notes || '',
+      date: date || '',
+      isRecurring: Boolean(isRecurring)
     });
 
     res.status(201).json({
@@ -87,7 +89,7 @@ const createTimetableEvent = async (req, res) => {
 // @access  Public
 const updateTimetableEvent = async (req, res) => {
   try {
-    const { subject, day, startTime, endTime, notes } = req.body;
+    const { subject, day, startTime, endTime, notes, date, isRecurring } = req.body;
     let event = await Timetable.findOne({ _id: req.params.id, ...req.userQuery });
 
     if (!event) {
@@ -99,6 +101,8 @@ const updateTimetableEvent = async (req, res) => {
     event.startTime = startTime ?? event.startTime;
     event.endTime = endTime ?? event.endTime;
     if (notes !== undefined) event.notes = notes;
+    if (date !== undefined) event.date = date;
+    if (isRecurring !== undefined) event.isRecurring = Boolean(isRecurring);
 
     const updatedEvent = await event.save();
 

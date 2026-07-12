@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import AppLayout from "../components/AppLayout";
+import AppLayout from "../layouts/AppLayout";
 import { Link } from "react-router-dom";
-import { fetchDashboard, fetchAssignments, fetchFocusSessions, fetchResources, fetchProfile } from "../utils/api";
+import { fetchDashboard, fetchAssignments, fetchFocusSessions, fetchResources, fetchProfile } from "../services/api";
 import { useTasksGoals } from "../context/TasksGoalsContext";
 import { useAuth } from "../context/AuthContext";
 
@@ -13,11 +13,11 @@ function Dashboard() {
   const [dashboard, setDashboard] = useState(null);
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({
-    studyStreak: 12,
-    totalStudyHours: 42,
-    completedAssignments: 8,
-    pomodoroSessions: 18,
-    weeklyProductivity: 88
+    studyStreak: 0,
+    totalStudyHours: 0,
+    completedAssignments: 0,
+    pomodoroSessions: 0,
+    weeklyProductivity: 0
   });
 
   const { habits } = useTasksGoals();
@@ -42,19 +42,55 @@ function Dashboard() {
   const [reminderText, setReminderText] = useState("");
 
   useEffect(() => {
-    Promise.all([fetchAssignments(), fetchFocusSessions(), fetchResources()]).then(([assignData, focusData, resData]) => {
-      setAssignments(assignData);
-      setFocusSessions(focusData);
-      setResources(resData);
-    });
-    fetchDashboard().then(data => {
-      setDashboard(data);
-      setLoading(false);
-    });
-    fetchProfile().then(data => {
-      if (data && data.stats) setStats(data.stats);
-    }).catch(() => {});
-  }, []);
+    Promise.all([fetchAssignments(), fetchFocusSessions(), fetchResources()])
+      .then(([assignData, focusData, resData]) => {
+        setAssignments(assignData || []);
+        setFocusSessions(focusData || []);
+        setResources(resData || []);
+      })
+      .catch(() => {
+        setAssignments([]);
+        setFocusSessions([]);
+        setResources([]);
+      });
+
+    fetchDashboard()
+      .then(data => {
+        if (data) {
+          setDashboard(data);
+        } else {
+          throw new Error("Empty dashboard data");
+        }
+      })
+      .catch(err => {
+        console.error("Dashboard load error, using clean fallback:", err);
+        setDashboard({
+          userName: user?.name || user?.fullName || "Student",
+          studyStreak: 0,
+          pendingAssignments: 0,
+          remainingTasks: 0,
+          pomodoroMinutesToday: 0,
+          upcomingDeadlines: [],
+          weeklyFocus: { goalHours: 10, completedHours: 0 },
+          weeklyGoals: {
+            studyHoursCompleted: 0, studyHoursGoal: 10,
+            assignmentCompleted: 0, assignmentGoal: 5,
+            taskCompleted: 0, taskGoal: 5
+          },
+          recentResources: [],
+          recentActivity: []
+        });
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+
+    fetchProfile()
+      .then(data => {
+        if (data && data.stats) setStats(data.stats);
+      })
+      .catch(() => {});
+  }, [user]);
 
   // Save reminders to localStorage
   useEffect(() => {
@@ -171,18 +207,18 @@ function Dashboard() {
         </div>
 
         {/* Unified KPI Grid */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(5, minmax(0, 1fr))", gap: 16 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 1fr))", gap: 16 }}>
           <div className="card" style={{ padding: "18px 20px", borderRadius: "20px", border: "1px solid var(--border-light)" }}>
             <div style={kpiLabelStyle}>STUDY STREAK</div>
             <div style={{ ...kpiValueStyle, color: "var(--primary)" }}>
-              {stats.studyStreak} <span style={{ fontSize: "0.85rem", color: "var(--text-muted)", fontWeight: 600 }}>Days</span>
+              {dashboard?.studyStreak ?? stats.studyStreak ?? 0} <span style={{ fontSize: "0.85rem", color: "var(--text-muted)", fontWeight: 600 }}>Days</span>
             </div>
           </div>
 
           <div className="card" style={{ padding: "18px 20px", borderRadius: "20px", border: "1px solid var(--border-light)" }}>
             <div style={kpiLabelStyle}>TOTAL STUDY HOURS</div>
             <div style={kpiValueStyle}>
-              {stats.totalStudyHours} <span style={{ fontSize: "0.85rem", color: "var(--text-muted)", fontWeight: 600 }}>hrs</span>
+              {dashboard?.weeklyFocus?.completedHours ?? stats.totalStudyHours ?? 0} <span style={{ fontSize: "0.85rem", color: "var(--text-muted)", fontWeight: 600 }}>hrs</span>
             </div>
           </div>
 
@@ -196,14 +232,7 @@ function Dashboard() {
           <div className="card" style={{ padding: "18px 20px", borderRadius: "20px", border: "1px solid var(--border-light)" }}>
             <div style={kpiLabelStyle}>POMODORO SESSIONS</div>
             <div style={kpiValueStyle}>
-              {stats.pomodoroSessions}
-            </div>
-          </div>
-
-          <div className="card" style={{ padding: "18px 20px", borderRadius: "20px", border: "1px solid var(--border-light)" }}>
-            <div style={kpiLabelStyle}>ACTIVE REMINDERS</div>
-            <div style={{ ...kpiValueStyle, color: "#0EA5E9" }}>
-              {reminders.length}
+              {(dashboard?.pomodoroMinutesToday ? Math.round(dashboard.pomodoroMinutesToday / 25) : stats.pomodoroSessions) ?? 0}
             </div>
           </div>
         </div>
@@ -377,46 +406,46 @@ function Dashboard() {
               <h2 style={{ margin: 0, marginBottom: 16, fontSize: "1.1rem", fontWeight: 800 }}>Focus Time (Weekly)</h2>
               <div>
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.85rem", marginBottom: 8 }}>
-                  <span style={{ color: "var(--text-muted)", fontWeight: 500 }}>Goal: {dashboard?.weeklyFocus?.goalHours ?? 10} hours</span>
+                  <span style={{ color: "var(--text-muted)", fontWeight: 500 }}>Completed</span>
                   <span style={{ color: "var(--info)", fontWeight: 700 }}>{dashboard?.weeklyFocus?.completedHours ?? 0} Hours</span>
                 </div>
                 <div style={{ width: "100%", height: "8px", background: "var(--bg-secondary)", borderRadius: "4px", overflow: "hidden" }}>
-                  <div style={{ width: `${Math.min(((dashboard?.weeklyFocus?.completedHours ?? 0) / (dashboard?.weeklyFocus?.goalHours || 10)) * 100, 100)}%`, height: "100%", background: "var(--primary)", borderRadius: "4px", transition: "width 0.5s ease" }}></div>
+                  <div style={{ width: `${Math.min(((dashboard?.weeklyFocus?.completedHours ?? 0) / 20) * 100, 100)}%`, height: "100%", background: "var(--primary)", borderRadius: "4px", transition: "width 0.5s ease" }}></div>
                 </div>
               </div>
             </div>
 
-            {/* Weekly Goals Card */}
+            {/* Weekly Activity Card */}
             <div className="card" style={{ padding: "32px", borderRadius: "24px", border: "1px solid var(--border-light)" }}>
-              <h2 style={{ margin: 0, marginBottom: 18, fontSize: "1.1rem", fontWeight: 800 }}>Weekly Goals</h2>
+              <h2 style={{ margin: 0, marginBottom: 18, fontSize: "1.1rem", fontWeight: 800 }}>Weekly Activity</h2>
               
               <div style={{ marginBottom: 16 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.85rem", marginBottom: 8 }}>
-                  <span style={{ color: "var(--text-muted)", fontWeight: 500 }}>Study ({dashboard?.weeklyGoals?.studyHoursGoal ?? 15} hrs)</span>
-                  <span style={{ color: "var(--success)", fontWeight: 700 }}>{dashboard?.weeklyGoals?.studyHoursCompleted ?? 8}</span>
+                  <span style={{ color: "var(--text-muted)", fontWeight: 500 }}>Study Hours</span>
+                  <span style={{ color: "var(--success)", fontWeight: 700 }}>{dashboard?.weeklyGoals?.studyHoursCompleted ?? 0} hrs</span>
                 </div>
                 <div style={{ width: "100%", height: "6px", background: "var(--bg-secondary)", borderRadius: "4px" }}>
-                  <div style={{ width: `${Math.min(((dashboard?.weeklyGoals?.studyHoursCompleted ?? 8) / (dashboard?.weeklyGoals?.studyHoursGoal ?? 15)) * 100, 100)}%`, height: "100%", background: "var(--success)", borderRadius: "4px", transition: "width 0.5s ease" }}></div>
+                  <div style={{ width: `${Math.min(((dashboard?.weeklyGoals?.studyHoursCompleted ?? 0) / 20) * 100, 100)}%`, height: "100%", background: "var(--success)", borderRadius: "4px", transition: "width 0.5s ease" }}></div>
                 </div>
               </div>
               
               <div style={{ marginBottom: 16 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.85rem", marginBottom: 8 }}>
-                  <span style={{ color: "var(--text-muted)", fontWeight: 500 }}>Assignments ({dashboard?.weeklyGoals?.assignmentGoal ?? 5})</span>
-                  <span style={{ color: "var(--warning)", fontWeight: 700 }}>{dashboard?.weeklyGoals?.assignmentCompleted ?? 2}</span>
+                  <span style={{ color: "var(--text-muted)", fontWeight: 500 }}>Assignments Completed</span>
+                  <span style={{ color: "var(--warning)", fontWeight: 700 }}>{dashboard?.weeklyGoals?.assignmentCompleted ?? 0}</span>
                 </div>
                 <div style={{ width: "100%", height: "6px", background: "var(--bg-secondary)", borderRadius: "4px" }}>
-                  <div style={{ width: `${Math.min(((dashboard?.weeklyGoals?.assignmentCompleted ?? 2) / (dashboard?.weeklyGoals?.assignmentGoal ?? 5)) * 100, 100)}%`, height: "100%", background: "var(--warning)", borderRadius: "4px", transition: "width 0.5s ease" }}></div>
+                  <div style={{ width: `${Math.min(((dashboard?.weeklyGoals?.assignmentCompleted ?? 0) / 10) * 100, 100)}%`, height: "100%", background: "var(--warning)", borderRadius: "4px", transition: "width 0.5s ease" }}></div>
                 </div>
               </div>
 
               <div>
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.85rem", marginBottom: 8 }}>
-                  <span style={{ color: "var(--text-muted)", fontWeight: 500 }}>Tasks ({dashboard?.weeklyGoals?.taskGoal ?? 10})</span>
-                  <span style={{ color: "var(--primary)", fontWeight: 700 }}>{dashboard?.weeklyGoals?.taskCompleted ?? 6}</span>
+                  <span style={{ color: "var(--text-muted)", fontWeight: 500 }}>Tasks Completed</span>
+                  <span style={{ color: "var(--primary)", fontWeight: 700 }}>{dashboard?.weeklyGoals?.taskCompleted ?? 0}</span>
                 </div>
                 <div style={{ width: "100%", height: "6px", background: "var(--bg-secondary)", borderRadius: "4px" }}>
-                  <div style={{ width: `${Math.min(((dashboard?.weeklyGoals?.taskCompleted ?? 6) / (dashboard?.weeklyGoals?.taskGoal ?? 10)) * 100, 100)}%`, height: "100%", background: "var(--primary)", borderRadius: "4px", transition: "width 0.5s ease" }}></div>
+                  <div style={{ width: `${Math.min(((dashboard?.weeklyGoals?.taskCompleted ?? 0) / 15) * 100, 100)}%`, height: "100%", background: "var(--primary)", borderRadius: "4px", transition: "width 0.5s ease" }}></div>
                 </div>
               </div>
             </div>

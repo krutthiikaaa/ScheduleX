@@ -21,6 +21,14 @@ const timetableSchema = new mongoose.Schema({
   notes: {
     type: String,
     default: ''
+  },
+  date: {
+    type: String,
+    default: ''
+  },
+  isRecurring: {
+    type: Boolean,
+    default: false
   }
 }, {
   timestamps: true

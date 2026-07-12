@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import AppLayout from "../components/AppLayout";
-import { fetchTimetableEvents, createTimetableEvent, updateTimetableEvent, deleteTimetableEvent } from "../utils/api";
+import AppLayout from "../layouts/AppLayout";
+import { fetchTimetableEvents, createTimetableEvent, updateTimetableEvent, deleteTimetableEvent } from "../services/api";
 
 function Timetable() {
   const [events, setEvents] = useState([]);
@@ -10,7 +10,23 @@ function Timetable() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [activeSlot, setActiveSlot] = useState(null);
   const [popupPos, setPopupPos] = useState({ top: 100, left: 100 });
-  const [newEvent, setNewEvent] = useState({ subject: "", day: "Monday", startTime: "09:00", endTime: "10:30", notes: "" });
+  const [newEvent, setNewEvent] = useState({ subject: "", day: "Monday", startTime: "09:00", endTime: "10:30", notes: "", date: "", isRecurring: false });
+
+  const getFormatDateStr = (dt) => {
+    return `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`;
+  };
+
+  const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  const dayOfWeek = currentDate.getDay();
+  const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+  const mondayDate = new Date(currentDate);
+  mondayDate.setDate(currentDate.getDate() + diffToMonday);
+
+  const weekDates = days.map((_, idx) => {
+    const dt = new Date(mondayDate);
+    dt.setDate(mondayDate.getDate() + idx);
+    return dt;
+  });
 
   useEffect(() => { loadData(); }, []);
 
@@ -22,16 +38,25 @@ function Timetable() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!newEvent.subject || !newEvent.day || !newEvent.startTime || !newEvent.endTime) return;
+    
+    const eventPayload = { ...newEvent };
+    if (!eventPayload.isRecurring && !eventPayload.date) {
+      const idx = days.indexOf(eventPayload.day);
+      if (idx >= 0 && weekDates[idx]) {
+        eventPayload.date = getFormatDateStr(weekDates[idx]);
+      }
+    }
+
     if (isEditing && editingId) {
-      await updateTimetableEvent(editingId, newEvent);
+      await updateTimetableEvent(editingId, eventPayload);
     } else {
-      await createTimetableEvent(newEvent);
+      await createTimetableEvent(eventPayload);
     }
     setShowModal(false);
     setIsEditing(false);
     setEditingId(null);
     setActiveSlot(null);
-    setNewEvent({ subject: "", day: "Monday", startTime: "09:00", endTime: "10:30", notes: "" });
+    setNewEvent({ subject: "", day: "Monday", startTime: "09:00", endTime: "10:30", notes: "", date: "", isRecurring: false });
     loadData();
   };
 
@@ -60,7 +85,9 @@ function Timetable() {
       day: evt.day || "Monday",
       startTime: evt.startTime || "09:00",
       endTime: evt.endTime || "10:30",
-      notes: evt.notes || evt.venue || ""
+      notes: evt.notes || evt.venue || "",
+      date: evt.date || "",
+      isRecurring: Boolean(evt.isRecurring)
     });
     setShowModal(true);
   };
@@ -79,6 +106,9 @@ function Timetable() {
       top = Math.max(20, window.innerHeight - 370);
     }
 
+    const idx = days.indexOf(d);
+    const colDateStr = idx >= 0 ? getFormatDateStr(weekDates[idx]) : "";
+
     setActiveSlot({ day: d, time: t });
     setPopupPos({ top, left });
     setIsEditing(false);
@@ -88,7 +118,9 @@ function Timetable() {
       day: d,
       startTime: t,
       endTime: `${endH}:00`,
-      notes: ""
+      notes: "",
+      date: colDateStr,
+      isRecurring: false
     });
     setShowModal(true);
   };
@@ -136,7 +168,6 @@ function Timetable() {
     setCurrentDate(next);
   };
 
-  const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
   const times = [];
   for (let h = 0; h <= 23; h++) {
     const val = `${String(h).padStart(2, '0')}:00`;
@@ -156,17 +187,6 @@ function Timetable() {
     }
   }
 
-  const dayOfWeek = currentDate.getDay();
-  const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
-  const mondayDate = new Date(currentDate);
-  mondayDate.setDate(currentDate.getDate() + diffToMonday);
-
-  const weekDates = days.map((_, idx) => {
-    const dt = new Date(mondayDate);
-    dt.setDate(mondayDate.getDate() + idx);
-    return dt;
-  });
-
   return (
     <AppLayout>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 28, flexWrap: "wrap", gap: 20 }}>
@@ -184,6 +204,22 @@ function Timetable() {
             <div style={{ width: "1px", height: "18px", background: "var(--border)" }}></div>
             <button className="btn" style={{ padding: "8px 16px", background: "transparent", border: "none", cursor: "pointer", color: "var(--text-heading)", fontSize: "0.95rem", fontWeight: 700 }} onClick={() => shiftWeek(7)}>Next →</button>
           </div>
+
+          <button
+            className="btn btn-primary"
+            style={{ padding: "10px 20px", borderRadius: "var(--radius-btn)", fontWeight: 700, fontSize: "0.95rem", boxShadow: "0 4px 12px rgba(214, 90, 49, 0.25)" }}
+            onClick={() => {
+              const defaultDateStr = weekDates[0] ? getFormatDateStr(weekDates[0]) : getFormatDateStr(new Date());
+              setPopupPos({ top: Math.max(50, window.innerHeight / 2 - 180), left: Math.max(20, window.innerWidth / 2 - 190) });
+              setIsEditing(false);
+              setEditingId(null);
+              setActiveSlot(null);
+              setNewEvent({ subject: "", day: "Monday", startTime: "09:00", endTime: "10:30", notes: "", date: defaultDateStr, isRecurring: false });
+              setShowModal(true);
+            }}
+          >
+            + Add Class
+          </button>
         </div>
       </div>
 
@@ -213,8 +249,20 @@ function Timetable() {
                   <td style={{ width: 90, minWidth: 90, borderBottom: "1px solid var(--border-light)", borderRight: "1px solid var(--border-light)", padding: "12px 14px 0 0", textAlign: "right", verticalAlign: "top", height: 64, boxSizing: "border-box", background: "var(--card-bg)" }}>
                     <span style={{ fontWeight: 700, fontSize: "0.78rem", color: "var(--text-muted)", letterSpacing: "0.02em" }}>{slot.label}</span>
                   </td>
-                  {days.map(d => {
-                    const dayEvents = events.filter(e => e.day === d || e.day === d.slice(0, 3)).filter(e => getHour(e.startTime) === slotHour);
+                  {days.map((d, idx) => {
+                    const colDateStr = getFormatDateStr(weekDates[idx]);
+                    const dayEvents = events.filter(e => {
+                      const dayMatch = e.day === d || e.day === d.slice(0, 3);
+                      if (!dayMatch) return false;
+                      if (e.isRecurring) return true;
+                      if (e.date && e.date !== "") return e.date === colDateStr;
+                      const now = new Date();
+                      const nowDayOfWeek = now.getDay();
+                      const nowDiff = nowDayOfWeek === 0 ? -6 : 1 - nowDayOfWeek;
+                      const nowMonday = new Date(now);
+                      nowMonday.setDate(now.getDate() + nowDiff);
+                      return mondayDate.toDateString() === nowMonday.toDateString();
+                    }).filter(e => getHour(e.startTime) === slotHour);
                     const activeStartH = parseHourDecimal(newEvent.startTime);
                     const activeEndH = parseHourDecimal(newEvent.endTime);
                     const isHighlighted = (showModal && newEvent.day === d && slotHour >= activeStartH && slotHour < activeEndH) || (!showModal && activeSlot && activeSlot.day === d && activeSlot.time === t);
@@ -302,7 +350,11 @@ function Timetable() {
                     className="form-input form-select"
                     style={{ fontWeight: 600 }}
                     value={newEvent.day}
-                    onChange={e => setNewEvent({...newEvent, day: e.target.value})}
+                    onChange={e => {
+                      const idx = days.indexOf(e.target.value);
+                      const updatedDate = idx >= 0 && weekDates[idx] ? getFormatDateStr(weekDates[idx]) : newEvent.date;
+                      setNewEvent({...newEvent, day: e.target.value, date: updatedDate});
+                    }}
                   >
                     {days.map(d => <option key={d} value={d}>{d}</option>)}
                   </select>
@@ -337,6 +389,19 @@ function Timetable() {
                   value={newEvent.notes}
                   onChange={e => setNewEvent({...newEvent, notes: e.target.value})}
                 />
+              </div>
+
+              <div style={{ display: "flex", alignItems: "center", gap: 10, paddingLeft: 28 }}>
+                <input
+                  type="checkbox"
+                  id="isRecurringCheck"
+                  checked={Boolean(newEvent.isRecurring)}
+                  onChange={e => setNewEvent({...newEvent, isRecurring: e.target.checked})}
+                  style={{ width: 16, height: 16, cursor: "pointer", accentColor: "var(--primary)" }}
+                />
+                <label htmlFor="isRecurringCheck" style={{ fontSize: "0.88rem", fontWeight: 600, color: "var(--text-main)", cursor: "pointer", userSelect: "none" }}>
+                  Repeat weekly every {newEvent.day || "week"}
+                </label>
               </div>
 
               <div style={{ display: "flex", justifyContent: "flex-end", gap: 12, marginTop: 12 }}>

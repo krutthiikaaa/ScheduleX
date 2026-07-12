@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import AppLayout from "../components/AppLayout";
+import AppLayout from "../layouts/AppLayout";
 import { useFocus } from "../context/FocusContext";
 
 function FocusMode() {
@@ -26,7 +26,7 @@ function FocusMode() {
 
   // Increment completed sessions count when context completes a session
   useEffect(() => {
-    if (showCompletion && activeMode === "focus") {
+    if (showCompletion && activeMode.startsWith("focus")) {
       setDoneCount(prev => prev + 1);
     }
   }, [showCompletion]);
@@ -36,6 +36,10 @@ function FocusMode() {
     setActiveMode(mode);
     if (mode === "focus") {
       setPreset(25);
+    } else if (mode === "focus60") {
+      setPreset(60);
+    } else if (mode === "focus90") {
+      setPreset(90);
     } else if (mode === "short") {
       setPreset(5);
     } else if (mode === "long") {
@@ -48,7 +52,7 @@ function FocusMode() {
 
   // Style helper for tabs
   const tabStyle = (mode) => {
-    const isSelected = activeMode === mode;
+    const isSelected = mode === "focus" ? activeMode.startsWith("focus") : activeMode === mode;
     return {
       padding: "12px 30px",
       borderRadius: "14px",
@@ -129,11 +133,42 @@ function FocusMode() {
 
           {/* Center Timer Overlay */}
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", zIndex: 2 }}>
-            <div style={{ fontSize: "6.8rem", fontWeight: 800, color: "var(--primary)", letterSpacing: "-2px", fontVariantNumeric: "tabular-nums", lineHeight: 1, marginBottom: 8 }}>
+            <div style={{ fontSize: "6.2rem", fontWeight: 800, color: "var(--primary)", letterSpacing: "-2px", fontVariantNumeric: "tabular-nums", lineHeight: 1, marginBottom: 10 }}>
               {formatTime(timeLeft)}
             </div>
-            <div style={{ fontSize: "0.85rem", fontWeight: 800, color: "var(--text-muted)", letterSpacing: "0.18em", textTransform: "uppercase" }}>
-              {activeMode === "focus" ? "Focus" : activeMode === "short" ? "Short Break" : "Long Break"}
+            <div style={{ fontSize: "0.82rem", fontWeight: 800, color: "var(--text-muted)", letterSpacing: "0.18em", textTransform: "uppercase", marginBottom: 16 }}>
+              {activeMode === "focus" ? "25m Focus" : activeMode === "focus60" ? "60m Focus" : activeMode === "focus90" ? "90m Focus" : activeMode === "short" ? "Short Break" : "Long Break"}
+            </div>
+
+            {/* Quick Timer Presets Inside Focus Circle */}
+            <div style={{ display: "flex", gap: 8, alignItems: "center", justifyContent: "center" }}>
+              {[
+                { label: "25m", mode: "focus", mins: 25 },
+                { label: "60m", mode: "focus60", mins: 60 },
+                { label: "90m", mode: "focus90", mins: 90 }
+              ].map(p => {
+                const isSelected = activeMode === p.mode || (activeMode.startsWith("focus") && duration === p.mins);
+                return (
+                  <button
+                    key={p.label}
+                    type="button"
+                    onClick={() => handleModeChange(p.mode)}
+                    style={{
+                      padding: "5px 14px",
+                      borderRadius: "16px",
+                      fontSize: "0.78rem",
+                      fontWeight: 700,
+                      border: isSelected ? "1.5px solid var(--primary)" : "1px solid var(--border)",
+                      background: isSelected ? "var(--primary)" : "var(--bg-secondary)",
+                      color: isSelected ? "#fff" : "var(--text-muted)",
+                      cursor: "pointer",
+                      transition: "all 0.2s ease"
+                    }}
+                  >
+                    {p.label}
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>

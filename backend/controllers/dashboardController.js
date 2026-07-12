@@ -44,17 +44,17 @@ const getDashboardData = async (req, res) => {
       } else {
         dashboard = await Dashboard.create({
           userId: req.userId,
-          userName: req.user ? req.user.fullName : "User",
+          userName: req.user ? (req.user.fullName || req.user.name || "Student") : "Student",
           studyStreak: 0,
           pendingAssignments: 0,
           remainingTasks: 0,
           pomodoroMinutesToday: 0,
           upcomingDeadlines: [],
-          weeklyFocus: { goalHours: 10, completedHours: 0 },
+          weeklyFocus: { goalHours: 0, completedHours: 0 },
           weeklyGoals: {
-            studyHoursCompleted: 0, studyHoursGoal: 10,
-            assignmentCompleted: 0, assignmentGoal: 5,
-            taskCompleted: 0, taskGoal: 5
+            studyHoursCompleted: 0, studyHoursGoal: 0,
+            assignmentCompleted: 0, assignmentGoal: 0,
+            taskCompleted: 0, taskGoal: 0
           },
           recentResources: [],
           recentActivity: []
@@ -63,52 +63,56 @@ const getDashboardData = async (req, res) => {
     }
 
     const dashData = dashboard.toObject ? dashboard.toObject() : { ...dashboard._doc };
-    if (req.user && req.user.fullName) {
-      dashData.userName = req.user.fullName;
+    if (req.user && (req.user.fullName || req.user.name)) {
+      dashData.userName = req.user.fullName || req.user.name;
     }
 
     // Dynamically calculate real stats for non-demo users
     if (!req.isDemoUser) {
-      const StudySession = require('../models/StudySession');
-      const pendingAsg = await Assignment.countDocuments({ ...req.userQuery, status: { $ne: 'Completed' } });
-      const completedAsg = await Assignment.countDocuments({ ...req.userQuery, status: 'Completed' });
-      const pendingTsk = await Task.countDocuments({ ...req.userQuery, isCompleted: false });
-      const completedTsk = await Task.countDocuments({ ...req.userQuery, isCompleted: true });
-      const focusList = await FocusSession.find(req.userQuery);
-      const studyList = await StudySession.find(req.userQuery);
+      try {
+        const StudySession = require('../models/StudySession');
+        const pendingAsg = await Assignment.countDocuments({ ...req.userQuery, status: { $ne: 'Completed' } });
+        const completedAsg = await Assignment.countDocuments({ ...req.userQuery, status: 'Completed' });
+        const pendingTsk = await Task.countDocuments({ ...req.userQuery, isCompleted: false });
+        const completedTsk = await Task.countDocuments({ ...req.userQuery, isCompleted: true });
+        const focusList = await FocusSession.find(req.userQuery);
+        const studyList = await StudySession.find(req.userQuery);
 
-      const totalPomodoro = focusList.reduce((sum, s) => sum + (s.durationMinutes || 0), 0);
-      const totalStudyMins = studyList.reduce((sum, s) => sum + (s.duration || 0), 0);
-      const totalStudyHours = Math.round((totalPomodoro + totalStudyMins) / 60 * 10) / 10;
+        const totalPomodoro = focusList.reduce((sum, s) => sum + (s.durationMinutes || 0), 0);
+        const totalStudyMins = studyList.reduce((sum, s) => sum + (s.duration || 0), 0);
+        const totalStudyHours = Math.round((totalPomodoro + totalStudyMins) / 60 * 10) / 10;
 
-      dashData.pendingAssignments = pendingAsg;
-      dashData.remainingTasks = pendingTsk;
-      dashData.pomodoroMinutesToday = totalPomodoro;
+        dashData.pendingAssignments = pendingAsg;
+        dashData.remainingTasks = pendingTsk;
+        dashData.pomodoroMinutesToday = totalPomodoro;
 
-      dashData.weeklyFocus = {
-        goalHours: dashData.weeklyFocus?.goalHours ?? 10,
-        completedHours: totalStudyHours
-      };
-      dashData.weeklyGoals = {
-        studyHoursCompleted: totalStudyHours,
-        studyHoursGoal: dashData.weeklyGoals?.studyHoursGoal ?? 10,
-        assignmentCompleted: completedAsg,
-        assignmentGoal: dashData.weeklyGoals?.assignmentGoal ?? 5,
-        taskCompleted: completedTsk,
-        taskGoal: dashData.weeklyGoals?.taskGoal ?? 5
-      };
+        dashData.weeklyFocus = {
+          goalHours: 0,
+          completedHours: totalStudyHours
+        };
+        dashData.weeklyGoals = {
+          studyHoursCompleted: totalStudyHours,
+          studyHoursGoal: 0,
+          assignmentCompleted: completedAsg,
+          assignmentGoal: 0,
+          taskCompleted: completedTsk,
+          taskGoal: 0
+        };
 
-      const pendingAssignmentsList = await Assignment.find({ ...req.userQuery, status: { $ne: 'Completed' } }).limit(3);
-      if (pendingAssignmentsList.length > 0) {
-        dashData.upcomingDeadlines = pendingAssignmentsList.map(a => ({
-          title: a.title,
-          course: a.subject,
-          timeLeft: a.dueDate || "Upcoming",
-          priority: a.priority,
-          status: a.status
-        }));
-      } else {
-        dashData.upcomingDeadlines = [];
+        const pendingAssignmentsList = await Assignment.find({ ...req.userQuery, status: { $ne: 'Completed' } }).limit(3);
+        if (pendingAssignmentsList.length > 0) {
+          dashData.upcomingDeadlines = pendingAssignmentsList.map(a => ({
+            title: a.title,
+            course: a.subject,
+            timeLeft: a.dueDate || "Upcoming",
+            priority: a.priority,
+            status: a.status
+          }));
+        } else {
+          dashData.upcomingDeadlines = [];
+        }
+      } catch (calcErr) {
+        console.error("Non-demo dynamic calculation fallback:", calcErr.message);
       }
     }
 
@@ -117,11 +121,25 @@ const getDashboardData = async (req, res) => {
       data: dashData
     });
   } catch (error) {
-    console.error(`Error retrieving dashboard data: ${error.message}`);
-    return res.status(500).json({
-      success: false,
-      message: 'Server Error: Unable to retrieve dashboard data',
-      error: error.message
+    console.error(`Error retrieving dashboard data, returning safe fallback: ${error.message}`);
+    return res.status(200).json({
+      success: true,
+      data: {
+        userName: req.user ? (req.user.fullName || req.user.name || "Student") : "Student",
+        studyStreak: 0,
+        pendingAssignments: 0,
+        remainingTasks: 0,
+        pomodoroMinutesToday: 0,
+        upcomingDeadlines: [],
+        weeklyFocus: { goalHours: 0, completedHours: 0 },
+        weeklyGoals: {
+          studyHoursCompleted: 0, studyHoursGoal: 0,
+          assignmentCompleted: 0, assignmentGoal: 0,
+          taskCompleted: 0, taskGoal: 0
+        },
+        recentResources: [],
+        recentActivity: []
+      }
     });
   }
 };

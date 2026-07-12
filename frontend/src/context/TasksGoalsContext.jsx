@@ -1,7 +1,7 @@
 import { createContext, useState, useContext, useEffect } from "react";
 import { 
   fetchHabits, createHabit, updateHabitApi, deleteHabitApi
-} from "../utils/api";
+} from "../services/api";
 
 const TasksGoalsContext = createContext();
 

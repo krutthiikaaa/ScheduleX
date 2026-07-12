@@ -29,11 +29,13 @@ app.use(
   })
 );
 app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use((req, res, next) => {
   res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
   next();
 });
+
+const passport = require('./config/passport');
+app.use(passport.initialize());
 
 const connectDB = require('./config/db');
 connectDB();
@@ -44,19 +46,7 @@ const createCrudRoutes = (model, path) => {
     try {
       const count = await model.countDocuments(req.userQuery);
       if (count === 0 && req.isDemoUser) {
-        if (path === '/api/habits') {
-          const initialHabits = [
-            { title: "Wake Up Early", category: "Health", history: {}, notes: "Felt great this week." },
-            { title: "Read 20 Pages", category: "Reading", history: {}, notes: "" },
-            { title: "DSA Practice", category: "Coding", history: {}, notes: "Completed Binary Search problems." },
-            { title: "Exercise", category: "Fitness", history: {}, notes: "Running 5k" },
-            { title: "Drink Water", category: "Health", history: {}, notes: "" },
-            { title: "Journal", category: "Personal", history: {}, notes: "" },
-            { title: "Revise Notes", category: "Study", history: {}, notes: "" },
-            { title: "Sleep Before 11 PM", category: "Health", history: {}, notes: "" }
-          ];
-          await model.insertMany(initialHabits);
-        } else if (path === '/api/goals') {
+        if (path === '/api/goals') {
           const initialGoals = [
             { title: "Complete OS Assignment", type: "Weekly", week: 1, completed: true, priority: "High" },
             { title: "Read 2 Research Papers", type: "Weekly", week: 1, completed: false, priority: "Medium" },
@@ -79,17 +69,9 @@ const createCrudRoutes = (model, path) => {
             { name: "Algorithms", code: "CS202", instructor: "Dr. Alan", credits: 3, color: "#ffc107" }
           ]);
         }
-      } else if (count === 0 && !req.isDemoUser && path === '/api/habits') {
-        await model.create({
-          userId: req.userId,
-          title: "example",
-          category: "Personal",
-          history: {},
-          notes: "Example habit — will disappear when you add your own!",
-          isExample: true
-        });
-      } else if (count > 0 && !req.isDemoUser && path === '/api/habits') {
-        await model.updateMany({ ...req.userQuery, isExample: true }, { title: "example", category: "Personal" });
+      }
+      if (path === '/api/habits') {
+        await model.deleteMany({ ...req.userQuery, $or: [{ isExample: true }, { title: /Example/i }] });
       }
       let query = model.find(req.userQuery);
       if (model.schema.paths.taskId) {
@@ -135,59 +117,9 @@ createCrudRoutes(Habit, '/api/habits');
 createCrudRoutes(Goal, '/api/goals');
 
 // --- AUTH ROUTES ---
-app.post('/api/auth/register', async (req, res) => {
-  try {
-    const { fullName, email, password } = req.body;
-    const existingUser = await User.findOne({ email });
-    if (existingUser) return res.status(400).json({ error: 'Email already exists' });
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new User({ fullName, email, password: hashedPassword });
-    await user.save();
-
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET || 'secret123', { expiresIn: '1d' });
-    res.status(201).json({ token, user: { id: user._id, fullName: user.fullName, email: user.email } });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-app.post('/api/auth/login', async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ error: 'Invalid credentials' });
-
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ error: 'Invalid credentials' });
-
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET || 'secret123', { expiresIn: '1d' });
-    res.json({ token, user: { id: user._id, fullName: user.fullName, email: user.email } });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-app.post('/api/auth/google', async (req, res) => {
-  try {
-    const { email, fullName } = req.body;
-    let user = await User.findOne({ email });
-
-    if (!user) {
-      // Create a new user with a random secure password for users logging in via Google
-      const randomPassword = require('crypto').randomBytes(16).toString('hex');
-      const hashedPassword = await bcrypt.hash(randomPassword, 10);
-
-      user = new User({ fullName, email, password: hashedPassword });
-      await user.save();
-    }
-
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET || 'secret123', { expiresIn: '1d' });
-    res.json({ token, user: { id: user._id, fullName: user.fullName, email: user.email } });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
+const authRoutes = require('./routes/authRoutes');
+app.use('/api/auth', authRoutes);
+app.use('/auth', authRoutes);
 
 // Seed some initial data if empty
 app.post('/api/seed', async (req, res) => {

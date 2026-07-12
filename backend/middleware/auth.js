@@ -1,6 +1,5 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
-const bcrypt = require('bcryptjs');
 
 const auth = async (req, res, next) => {
   try {
@@ -11,40 +10,32 @@ const auth = async (req, res, next) => {
       token = req.header('x-auth-token');
     }
 
-    let user = null;
-    if (token && token !== 'null' && token !== 'undefined') {
-      try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret123');
-        user = await User.findById(decoded.id);
-      } catch (err) {
-        // Token verification failed or expired
-      }
+    if (!token || token === 'null' || token === 'undefined') {
+      return res.status(401).json({ error: 'Not authorized, no token provided' });
     }
 
-    // If no user found via token, use or create demo user for fallback so profile page always works
-    if (!user) {
-      user = await User.findOne({ email: 'jane.doe@example.com' });
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret123');
+      const user = await User.findById(decoded.id);
       if (!user) {
-        const hashedPassword = await bcrypt.hash('password123', 10);
-        user = await User.create({
-          fullName: 'Jane Doe',
-          email: 'jane.doe@example.com',
-          password: hashedPassword,
-          preferences: { theme: 'light', notifications: true }
-        });
+        return res.status(401).json({ error: 'Not authorized, user not found' });
       }
-    }
 
-    req.user = user;
-    req.userId = user._id;
-    if (user.email === 'jane.doe@example.com') {
-      req.isDemoUser = true;
-      req.userQuery = { $or: [{ userId: user._id }, { userId: { $exists: false } }, { userId: null }] };
-    } else {
-      req.isDemoUser = false;
-      req.userQuery = { userId: user._id };
+      req.user = user;
+      req.userId = user._id;
+
+      if (user.email === 'jane.doe@example.com') {
+        req.isDemoUser = true;
+        req.userQuery = { $or: [{ userId: user._id }, { userId: { $exists: false } }, { userId: null }] };
+      } else {
+        req.isDemoUser = false;
+        req.userQuery = { userId: user._id };
+      }
+
+      next();
+    } catch (err) {
+      return res.status(401).json({ error: 'Not authorized, token failed or expired' });
     }
-    next();
   } catch (err) {
     res.status(500).json({ error: 'Server Auth Error' });
   }

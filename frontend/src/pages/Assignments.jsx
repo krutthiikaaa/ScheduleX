@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import AppLayout from "../components/AppLayout";
-import { fetchAssignments, createAssignment, updateAssignment, deleteAssignment } from "../utils/api";
+import AppLayout from "../layouts/AppLayout";
+import { fetchAssignments, createAssignment, updateAssignment, deleteAssignment } from "../services/api";
 
 function Assignments() {
   const [assignments, setAssignments] = useState([]);
@@ -54,12 +54,25 @@ function Assignments() {
   };
 
   const isOverdue = (ast) => {
-    return ast.status !== 'Completed';
+    if (!ast || ast.status === 'Completed') return false;
+    if (!ast.dueDate) return false;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const parts = ast.dueDate.split('-');
+    let due = null;
+    if (parts.length === 3) {
+      due = new Date(parts[0], parts[1] - 1, parts[2]);
+    } else {
+      due = new Date(ast.dueDate);
+    }
+    if (isNaN(due.getTime())) return false;
+    due.setHours(0, 0, 0, 0);
+    return due < today;
   };
 
   const totalCount = assignments.length;
   const completedCount = assignments.filter(a => a.status === 'Completed').length;
-  const overdueCount = assignments.filter(a => a.status !== 'Completed').length;
+  const overdueCount = assignments.filter(a => isOverdue(a)).length;
   const progressPercent = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
 
   const filtered = assignments.filter(a => {
@@ -176,11 +189,11 @@ function Assignments() {
                         fontWeight: 600,
                         padding: "4px 10px",
                         borderRadius: "12px",
-                        background: ast.status === 'Completed' ? "#e8f5e9" : "var(--danger-light, #ffebee)",
-                        color: ast.status === 'Completed' ? "#2e7d32" : "var(--danger, #c62828)"
+                        background: ast.status === 'Completed' ? "#e8f5e9" : isOverdue(ast) ? "var(--danger-light, #ffebee)" : "#fff8e1",
+                        color: ast.status === 'Completed' ? "#2e7d32" : isOverdue(ast) ? "var(--danger, #c62828)" : "#f57f17"
                       }}>
-                        {ast.status !== 'Completed' && <span style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--danger, #c62828)" }}></span>}
-                        {ast.status === 'Completed' ? "Completed" : "Overdue"}
+                        {ast.status !== 'Completed' && <span style={{ width: 6, height: 6, borderRadius: "50%", background: isOverdue(ast) ? "var(--danger, #c62828)" : "#f57f17" }}></span>}
+                        {ast.status === 'Completed' ? "Completed" : isOverdue(ast) ? "Overdue" : (ast.status || "Pending")}
                       </span>
                     </label>
                   </td>

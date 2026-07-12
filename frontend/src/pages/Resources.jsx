@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import AppLayout from "../components/AppLayout";
-import { fetchResources, createResource, deleteResource } from "../utils/api";
+import AppLayout from "../layouts/AppLayout";
+import { fetchResources, createResource, deleteResource } from "../services/api";
 import "./Resources.css";
 import "../components/TasksGoals/TasksGoals.css";
 

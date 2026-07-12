@@ -1,5 +1,5 @@
-const API_URL =
-  import.meta.env.VITE_API_URL || 'https://schedulex-59ur.onrender.com/api';
+const rawApiUrl = import.meta.env.VITE_API_URL || 'https://schedulex-59ur.onrender.com/api';
+const API_URL = rawApiUrl.endsWith('/api') ? rawApiUrl : `${rawApiUrl.replace(/\/$/, '')}/api`;
 const getAuthHeaders = () => ({
   'Content-Type': 'application/json',
   'Authorization': `Bearer ${localStorage.getItem('schedulex_token') || ''}`
@@ -29,14 +29,16 @@ export const loginUser = async (data) => {
   return res.json();
 };
 
-export const googleAuth = async (data) => {
-  const res = await fetch(`${API_URL}/auth/google`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
-  if (!res.ok) {
-    const errorData = await res.json().catch(() => ({}));
-    throw new Error(errorData.error || 'Google login failed');
-  }
+export const fetchAuthMe = async () => {
+  const res = await fetch(`${API_URL}/auth/me`, { headers: getAuthHeaders() });
+  if (!res.ok) throw new Error('Not authenticated');
   return res.json();
 };
+
+export const logoutUser = async () => {
+  return fetch(`${API_URL}/auth/logout`, { method: 'POST', headers: getAuthHeaders() }).catch(() => {});
+};
+
 
 export const fetchCourses = () => fetch(`${API_URL}/courses`, { headers: getAuthHeaders() }).then(res => res.json());
 export const createCourse = (data) => fetch(`${API_URL}/courses`, { method: 'POST', headers: getAuthHeaders(), body: JSON.stringify(data) }).then(res => res.json());
