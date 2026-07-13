@@ -31,3 +31,6 @@ coverage
 *.sln
 *.sw?
 .eslintcache
+
+# Firebase cache
+.firebase/

@@ -19,11 +19,33 @@ const Habit = require('./models/Habit');
 const Goal = require('./models/Goal');
 
 const app = express();
+
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://schedulex-4da65.web.app',
+  'https://schedulex-4da65.firebaseapp.com'
+];
+
+const clientUrlEnv = process.env.CLIENT_URL || process.env.FRONTEND_URL;
+if (clientUrlEnv) {
+  clientUrlEnv.split(',').forEach(url => {
+    const trimmed = url.trim();
+    if (trimmed && !allowedOrigins.includes(trimmed)) {
+      allowedOrigins.push(trimmed);
+    }
+  });
+}
+
 app.use(
   cors({
     origin: function (origin, callback) {
-      // Dynamic origin approval allows fresh frontend deployments (Vercel/Render/Netlify) to connect cleanly without CORS errors
-      callback(null, true);
+      if (!origin) return callback(null, true);
+      
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
     },
     credentials: true,
   })
