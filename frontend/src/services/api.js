@@ -1,5 +1,4 @@
-const rawApiUrl = import.meta.env.VITE_API_URL || '/api';
-const API_URL = rawApiUrl.endsWith('/api') ? rawApiUrl : `${rawApiUrl.replace(/\/$/, '')}/api`;
+const API_URL = import.meta.env.DEV ? '/api' : `${import.meta.env.VITE_API_URL}/api`;
 const getAuthHeaders = () => ({
   'Content-Type': 'application/json',
   'Authorization': `Bearer ${localStorage.getItem('schedulex_token') || ''}`

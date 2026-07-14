@@ -107,8 +107,7 @@ export function AuthProvider({ children }) {
   };
 
   const googleLogin = (mode = 'login') => {
-    const API_URL = import.meta.env.VITE_API_URL || "/api";
-    const BACKEND_BASE = API_URL.endsWith("/api") ? API_URL.slice(0, -4) : API_URL;
+    const BACKEND_BASE = import.meta.env.DEV ? "" : import.meta.env.VITE_API_URL;
     window.location.href = `${BACKEND_BASE}/auth/google?mode=${mode}`;
   };
 
